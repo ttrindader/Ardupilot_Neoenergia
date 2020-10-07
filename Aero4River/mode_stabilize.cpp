@@ -15,12 +15,12 @@ void ModeStabilize::run()
     float fy, fx, tn;
     get_pilot_desired_forces(fx, fy, tn);
 
-    // convert pilot input to lean angles
-    float target_roll, target_pitch;
-    get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max);
+    // // convert pilot input to lean angles
+    // float target_roll, target_pitch;
+    // get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max);
 
-    // get pilot's desired yaw rate
-    tn = get_pilot_desired_yaw_rate(channel_yaw->get_control_in())/ROLL_PITCH_YAW_INPUT_MAX;
+    // // get pilot's desired yaw rate
+    // tn = get_pilot_desired_yaw_rate(channel_yaw->get_control_in())/ROLL_PITCH_YAW_INPUT_MAX;
 
     if (!motors->armed()) {
         // Motors should be Stopped

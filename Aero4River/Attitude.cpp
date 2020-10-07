@@ -1,14 +1,23 @@
 #include "Copter.h"
+#include <GCS_MAVLink/GCS.h>
 
+int cou=0;
 // Mathaus
-float Copter::get_gain(){
-Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
-return Gain;
+float Copter::get_gain() {
+    Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
+
+    cou++;
+    if (cou > 100) {
+        cou = 0;
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "GAIN  =  %5.3f", (double)Gain);
+    }
+
+    return Gain;
 }
 
 // transform pilot's yaw input into a desired yaw rate
 // returns desired yaw rate in centi-degrees per second
-float Copter::get_pilot_desired_yaw_rate(int16_t stick_angle){
+float Copter::get_pilot_desired_yaw_rate(int16_t stick_angle) {
     // throttle failsafe check
     if (failsafe.radio || !ap.rc_receiver_present) {
         return 0.0f;
@@ -41,7 +50,7 @@ float Copter::get_pilot_desired_yaw_rate(int16_t stick_angle){
 
 // update estimated throttle required to hover (if necessary)
 //  called at 100hz
-void Copter::update_throttle_hover(){
+void Copter::update_throttle_hover() {
 #if FRAME_CONFIG != HELI_FRAME
     // if not armed or landed exit
     if (!motors->armed() || ap.land_complete) {
@@ -63,7 +72,7 @@ void Copter::update_throttle_hover(){
 
     // calc average throttle if we are in a level hover
     if (throttle > 0.0f && fabsf(inertial_nav.get_velocity_z()) < 60 &&
-        labs(ahrs.roll_sensor) < 500 && labs(ahrs.pitch_sensor) < 500) {
+            labs(ahrs.roll_sensor) < 500 && labs(ahrs.pitch_sensor) < 500) {
         // Can we set the time constant automatically
         motors->update_throttle_hover(0.01f);
 #if HAL_GYROFFT_ENABLED

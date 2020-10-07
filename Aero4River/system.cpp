@@ -70,14 +70,6 @@ void Copter::init_ardupilot()
     // update motor interlock state
     update_using_interlock();
 
-#if FRAME_CONFIG == HELI_FRAME
-    // trad heli specific initialisation
-    heli_init();
-#endif
-#if FRAME_CONFIG == HELI_FRAME
-    input_manager.set_loop_rate(scheduler.get_loop_rate_hz());
-#endif
-
     init_rc_in();               // sets up rc channels from radio
 
     // allocate the motors class
@@ -127,7 +119,6 @@ void Copter::init_ardupilot()
 
     attitude_control->parameter_sanity_check();
     pos_control->set_dt(scheduler.get_loop_period_s());
-
 
     // init the optical flow sensor
     init_optflow();

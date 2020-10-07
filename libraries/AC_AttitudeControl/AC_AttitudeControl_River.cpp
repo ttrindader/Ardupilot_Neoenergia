@@ -2,6 +2,8 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/AP_Math.h>
 
+#include <GCS_MAVLink/GCS.h>
+
 // table of user settable parameters
 const AP_Param::GroupInfo AC_AttitudeControl_River::var_info[] = {
     // parameters from parent vehicle
@@ -334,6 +336,7 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
+int counter =0;
 
 void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
     
@@ -347,6 +350,13 @@ void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
     _motors.set_forward(fx);
     _motors.set_lateral(fy);
     _motors.set_yaw(tn);
+
+        //DEBUG
+    counter++;
+    if (counter > 50) {
+        counter = 0;
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "fx fy tn:  %5.3f,   %5.3f,  %5.3f", fx, fy, tn);
+    }
 
 }
 

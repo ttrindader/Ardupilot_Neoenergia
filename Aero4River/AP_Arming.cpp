@@ -406,8 +406,7 @@ bool AP_Arming_Copter::rc_calibration_checks(bool display_failure)
         copter.channel_roll,
         copter.channel_pitch,
         copter.channel_throttle,
-        copter.channel_yaw,
-        copter.channel_gain
+        copter.channel_yaw
     };
 
     copter.ap.pre_arm_rc_check = rc_checks_copter_sub(display_failure, channels)
