@@ -1,18 +1,8 @@
 #include "Copter.h"
-#include <GCS_MAVLink/GCS.h>
 
-int cou=0;
 // Mathaus
-float Copter::get_gain() {
+float Copter::get_gain() {   
     Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
-
-    cou++;
-    if (cou > 100) {
-        cou = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "GAIN  =  %5.3f", (double)Gain);
-    }
-
-    return Gain;
 }
 
 // transform pilot's yaw input into a desired yaw rate

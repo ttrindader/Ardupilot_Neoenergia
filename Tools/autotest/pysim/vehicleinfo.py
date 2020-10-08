@@ -7,6 +7,20 @@ class VehicleInfo(object):
         extra_mavlink_cmds: extra parameters that will be passed to mavproxy
         """
         self.options = {
+    "Aero4River": {
+        "default_frame": "quad",
+        "frames": {
+            "+": {
+                "waf_target": "bin/aero4river",
+                "default_params_filename": "default_params/copter.parm",
+            },
+            "quad": {
+                "model": "+",
+                "waf_target": "bin/aero4river",
+                "default_params_filename": "default_params/copter.parm",
+            },
+        },
+    },
     "ArduCopter": {
         "default_frame": "quad",
         "frames": {

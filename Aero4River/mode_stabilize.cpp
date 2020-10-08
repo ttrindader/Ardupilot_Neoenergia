@@ -6,8 +6,7 @@
 
 // stabilize_run - runs the main stabilize controller
 // should be called at 100hz or more
-void ModeStabilize::run()
-{
+void ModeStabilize::run(){
     // apply simple mode transform to pilot inputs
     update_simple_mode();
 
@@ -18,7 +17,6 @@ void ModeStabilize::run()
     // // convert pilot input to lean angles
     // float target_roll, target_pitch;
     // get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, copter.aparm.angle_max);
-
     // // get pilot's desired yaw rate
     // tn = get_pilot_desired_yaw_rate(channel_yaw->get_control_in())/ROLL_PITCH_YAW_INPUT_MAX;
 

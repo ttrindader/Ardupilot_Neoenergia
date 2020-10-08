@@ -5,8 +5,7 @@
 #endif
 
 // performs pre-arm checks. expects to be called at 1hz.
-void AP_Arming_Copter::update(void)
-{
+void AP_Arming_Copter::update(void){
     // perform pre-arm checks & display failures every 30 seconds
     static uint8_t pre_arm_display_counter = PREARM_DISPLAY_PERIOD/2;
     pre_arm_display_counter++;
@@ -19,8 +18,7 @@ void AP_Arming_Copter::update(void)
     pre_arm_checks(display_fail);
 }
 
-bool AP_Arming_Copter::pre_arm_checks(bool display_failure)
-{
+bool AP_Arming_Copter::pre_arm_checks(bool display_failure){
     const bool passed = run_pre_arm_checks(display_failure);
     set_pre_arm_check(passed);
     return passed;
@@ -28,8 +26,7 @@ bool AP_Arming_Copter::pre_arm_checks(bool display_failure)
 
 // perform pre-arm checks
 //  return true if the checks pass successfully
-bool AP_Arming_Copter::run_pre_arm_checks(bool display_failure)
-{
+bool AP_Arming_Copter::run_pre_arm_checks(bool display_failure){
     // exit immediately if already armed
     if (copter.motors->armed()) {
         return true;
@@ -67,8 +64,7 @@ bool AP_Arming_Copter::run_pre_arm_checks(bool display_failure)
         & AP_Arming::pre_arm_checks(display_failure);
 }
 
-bool AP_Arming_Copter::barometer_checks(bool display_failure)
-{
+bool AP_Arming_Copter::barometer_checks(bool display_failure){
     if (!AP_Arming::barometer_checks(display_failure)) {
         return false;
     }
@@ -91,8 +87,7 @@ bool AP_Arming_Copter::barometer_checks(bool display_failure)
     return ret;
 }
 
-bool AP_Arming_Copter::compass_checks(bool display_failure)
-{
+bool AP_Arming_Copter::compass_checks(bool display_failure){
     bool ret = AP_Arming::compass_checks(display_failure);
 
     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_COMPASS)) {
@@ -108,8 +103,7 @@ bool AP_Arming_Copter::compass_checks(bool display_failure)
     return ret;
 }
 
-bool AP_Arming_Copter::ins_checks(bool display_failure)
-{
+bool AP_Arming_Copter::ins_checks(bool display_failure){
     bool ret = AP_Arming::ins_checks(display_failure);
 
     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_INS)) {
@@ -124,8 +118,7 @@ bool AP_Arming_Copter::ins_checks(bool display_failure)
     return ret;
 }
 
-bool AP_Arming_Copter::board_voltage_checks(bool display_failure)
-{
+bool AP_Arming_Copter::board_voltage_checks(bool display_failure){
     if (!AP_Arming::board_voltage_checks(display_failure)) {
         return false;
     }
@@ -146,8 +139,7 @@ bool AP_Arming_Copter::board_voltage_checks(bool display_failure)
     return true;
 }
 
-bool AP_Arming_Copter::parameter_checks(bool display_failure)
-{
+bool AP_Arming_Copter::parameter_checks(bool display_failure){
     // check various parameter values
     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_PARAMETERS)) {
 
@@ -294,8 +286,7 @@ bool AP_Arming_Copter::parameter_checks(bool display_failure)
 }
 
 // check motor setup was successful
-bool AP_Arming_Copter::motor_checks(bool display_failure)
-{
+bool AP_Arming_Copter::motor_checks(bool display_failure){
     // check motors initialised  correctly
     if (!copter.motors->initialised_ok()) {
         check_failed(display_failure, "Check firmware or FRAME_CLASS");
@@ -362,8 +353,7 @@ bool AP_Arming_Copter::motor_checks(bool display_failure)
     return true;
 }
 
-bool AP_Arming_Copter::pilot_throttle_checks(bool display_failure)
-{
+bool AP_Arming_Copter::pilot_throttle_checks(bool display_failure){
     // check throttle is above failsafe throttle
     // this is near the bottom to allow other failures to be displayed before checking pilot throttle
     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_RC)) {
@@ -381,8 +371,7 @@ bool AP_Arming_Copter::pilot_throttle_checks(bool display_failure)
     return true;
 }
 
-bool AP_Arming_Copter::oa_checks(bool display_failure)
-{
+bool AP_Arming_Copter::oa_checks(bool display_failure){
 #if AC_OAPATHPLANNER_ENABLED == ENABLED
     char failure_msg[50];
     if (copter.g2.oa.pre_arm_check(failure_msg, ARRAY_SIZE(failure_msg))) {
@@ -400,13 +389,13 @@ bool AP_Arming_Copter::oa_checks(bool display_failure)
 #endif
 }
 
-bool AP_Arming_Copter::rc_calibration_checks(bool display_failure)
-{
+bool AP_Arming_Copter::rc_calibration_checks(bool display_failure){
     const RC_Channel *channels[] = {
         copter.channel_roll,
         copter.channel_pitch,
         copter.channel_throttle,
-        copter.channel_yaw
+        copter.channel_yaw,
+        copter.channel_gain
     };
 
     copter.ap.pre_arm_rc_check = rc_checks_copter_sub(display_failure, channels)
@@ -416,8 +405,7 @@ bool AP_Arming_Copter::rc_calibration_checks(bool display_failure)
 }
 
 // performs pre_arm gps related checks and returns true if passed
-bool AP_Arming_Copter::gps_checks(bool display_failure)
-{
+bool AP_Arming_Copter::gps_checks(bool display_failure){
     // run mandatory gps checks first
     if (!mandatory_gps_checks(display_failure)) {
         AP_Notify::flags.pre_arm_gps_check = false;
@@ -465,8 +453,7 @@ bool AP_Arming_Copter::gps_checks(bool display_failure)
 }
 
 // check ekf attitude is acceptable
-bool AP_Arming_Copter::pre_arm_ekf_attitude_check()
-{
+bool AP_Arming_Copter::pre_arm_ekf_attitude_check(){
     // get ekf filter status
     nav_filter_status filt_status = copter.inertial_nav.get_filter_status();
 
@@ -474,8 +461,7 @@ bool AP_Arming_Copter::pre_arm_ekf_attitude_check()
 }
 
 // check nothing is too close to vehicle
-bool AP_Arming_Copter::proximity_checks(bool display_failure) const
-{
+bool AP_Arming_Copter::proximity_checks(bool display_failure) const{
 #if PROXIMITY_ENABLED == ENABLED
 
     if (!AP_Arming::proximity_checks(display_failure)) {
@@ -505,8 +491,7 @@ bool AP_Arming_Copter::proximity_checks(bool display_failure) const
 }
 
 // performs mandatory gps checks.  returns true if passed
-bool AP_Arming_Copter::mandatory_gps_checks(bool display_failure)
-{
+bool AP_Arming_Copter::mandatory_gps_checks(bool display_failure){
     // always check if inertial nav has started and is ready
     const AP_AHRS_NavEKF &ahrs = AP::ahrs_navekf();
     if (!ahrs.prearm_healthy()) {
@@ -577,8 +562,7 @@ bool AP_Arming_Copter::mandatory_gps_checks(bool display_failure)
 }
 
 // Check GCS failsafe
-bool AP_Arming_Copter::gcs_failsafe_check(bool display_failure)
-{
+bool AP_Arming_Copter::gcs_failsafe_check(bool display_failure){
     if (copter.failsafe.gcs) {
         check_failed(display_failure, "GCS failsafe on");
         return false;
@@ -587,8 +571,7 @@ bool AP_Arming_Copter::gcs_failsafe_check(bool display_failure)
 }
 
 // check winch
-bool AP_Arming_Copter::winch_checks(bool display_failure) const
-{
+bool AP_Arming_Copter::winch_checks(bool display_failure) const{
 #if WINCH_ENABLED == ENABLED
     // pass if parameter or all arming checks disabled
     if (((checks_to_perform & ARMING_CHECK_ALL) == 0) && ((checks_to_perform & ARMING_CHECK_PARAMETERS) == 0)) {
@@ -609,8 +592,7 @@ bool AP_Arming_Copter::winch_checks(bool display_failure) const
 }
 
 // performs altitude checks.  returns true if passed
-bool AP_Arming_Copter::alt_checks(bool display_failure)
-{
+bool AP_Arming_Copter::alt_checks(bool display_failure){
     // always EKF altitude estimate
     if (!copter.flightmode->has_manual_throttle() && !copter.ekf_alt_ok()) {
         check_failed(display_failure, "Need Alt Estimate");
@@ -623,8 +605,7 @@ bool AP_Arming_Copter::alt_checks(bool display_failure)
 // arm_checks - perform final checks before arming
 //  always called just before arming.  Return true if ok to arm
 //  has side-effect that logging is started
-bool AP_Arming_Copter::arm_checks(AP_Arming::Method method)
-{
+bool AP_Arming_Copter::arm_checks(AP_Arming::Method method){
     const AP_AHRS_NavEKF &ahrs = AP::ahrs_navekf();
 
     // always check if inertial nav has started and is ready
@@ -741,8 +722,7 @@ bool AP_Arming_Copter::arm_checks(AP_Arming::Method method)
 }
 
 // mandatory checks that will be run if ARMING_CHECK is zero or arming forced
-bool AP_Arming_Copter::mandatory_checks(bool display_failure)
-{
+bool AP_Arming_Copter::mandatory_checks(bool display_failure){
     // call mandatory gps checks and update notify status because regular gps checks will not run
     bool result = mandatory_gps_checks(display_failure);
     AP_Notify::flags.pre_arm_gps_check = result;
@@ -755,14 +735,12 @@ bool AP_Arming_Copter::mandatory_checks(bool display_failure)
     return result;
 }
 
-void AP_Arming_Copter::set_pre_arm_check(bool b)
-{
+void AP_Arming_Copter::set_pre_arm_check(bool b){
     copter.ap.pre_arm_check = b;
     AP_Notify::flags.pre_arm_check = b;
 }
 
-bool AP_Arming_Copter::arm(const AP_Arming::Method method, const bool do_arming_checks)
-{
+bool AP_Arming_Copter::arm(const AP_Arming::Method method, const bool do_arming_checks){
     static bool in_arm_motors = false;
 
     // exit immediately if already in this function
@@ -872,8 +850,7 @@ bool AP_Arming_Copter::arm(const AP_Arming::Method method, const bool do_arming_
 }
 
 // arming.disarm - disarm motors
-bool AP_Arming_Copter::disarm(const AP_Arming::Method method)
-{
+bool AP_Arming_Copter::disarm(const AP_Arming::Method method){
     // return immediately if we are already disarmed
     if (!copter.motors->armed()) {
         return true;

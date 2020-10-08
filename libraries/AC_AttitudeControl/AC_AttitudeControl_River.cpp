@@ -336,8 +336,6 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-int counter =0;
-
 void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
     
     X*=-1.0f;
@@ -351,18 +349,11 @@ void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
     _motors.set_lateral(fy);
     _motors.set_yaw(tn);
 
-        //DEBUG
-    counter++;
-    if (counter > 50) {
-        counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "fx fy tn:  %5.3f,   %5.3f,  %5.3f", fx, fy, tn);
-    }
-
 }
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
-void AC_AttitudeControl_River::input_fx_fy_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds) // Mathaus
-{
+void AC_AttitudeControl_River::input_fx_fy_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds){ // Mathaus
+    
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
 
     // Convert from centidegrees on public interface to radians
@@ -372,7 +363,6 @@ void AC_AttitudeControl_River::input_fx_fy_rate_yaw(float roll, float pitch, flo
     _attitude_target_quat.to_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
 
     // Add roll trim to compensate tail rotor thrust in heli (will return zero on multirotors)
-
 
     if (_rate_bf_ff_enabled) {
         // translate the roll pitch and yaw acceleration limits to the euler axis
@@ -412,8 +402,8 @@ void AC_AttitudeControl_River::input_fx_fy_rate_yaw(float roll, float pitch, flo
 }
 
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
-void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw) // Mathaus
-{
+void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw){
+
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_angle_cd/_aparm.angle_max); //Mathaus
 
     // Convert from centidegrees on public interface to radians
@@ -468,8 +458,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, floa
 
 
 // Command an euler roll, pitch, and yaw rate with angular velocity feedforward and smoothing
-void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds)
-{
+void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds){
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
 
     // Convert from centidegrees on public interface to radians
@@ -510,8 +499,7 @@ void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float roll, float
 }
 
 
-void AC_AttitudeControl_River::rate_controller_run()
-{
+void AC_AttitudeControl_River::rate_controller_run(){
     // move throttle vs attitude mixing towards desired (called from here because this is conveniently called on every iteration)
     update_throttle_rpy_mix();
 
