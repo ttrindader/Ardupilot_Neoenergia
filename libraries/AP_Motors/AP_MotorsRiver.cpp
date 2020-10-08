@@ -133,7 +133,6 @@ void AP_MotorsRiver::output_to_motors() {
 
 }
 
-
 /* ****************************** Mathaus *********************************
 ***************************************************************************/
 void AP_MotorsRiver::direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
@@ -176,7 +175,7 @@ uint8_t counter = 0;
 void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
     /// todos os angulos devem estar em graus nesta função
 
-    if (!armed()) {
+    if (!armed()|| get_throttle()<0.1f) {
         theta_1 = 0.0f;
         theta_2 = 0.0f;
         theta_3 = 0.0f;
@@ -310,8 +309,7 @@ void AP_MotorsRiver::output_armed_stabilizing() {
 }
 /* ****************************** Mathaus *********************************
 ***************************************************************************/
-void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type)
-{
+void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
     // remove existing motors
     for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         remove_motor(i);
@@ -319,14 +317,6 @@ void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_typ
 
     bool success = true;
 
-    // switch (frame_class)
-    // {
-
-    // case MOTOR_FRAME_QUAD:
-    //     switch (frame_type)
-    //     {
-    //     case MOTOR_FRAME_TYPE_PLUS:
-    //     case MOTOR_FRAME_TYPE_X:
     add_motor(AP_MOTORS_MOT_1, 45, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 1);
     add_motor(AP_MOTORS_MOT_2, -135, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 3);
     add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
@@ -336,8 +326,19 @@ void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_typ
     add_motor_raw(AP_MOTORS_MOT_10, 0, 0, 0, 6);
     add_motor_raw(AP_MOTORS_MOT_11, 0, 0, 0, 7);
     add_motor_raw(AP_MOTORS_MOT_12, 0, 0, 0, 8);
-    //         break;
+  
+    normalise_rpy_factors();
 
+    set_initialised_ok(success);
+
+    // switch (frame_class)
+    // {
+    // case MOTOR_FRAME_QUAD:
+    //     switch (frame_type)
+    //     {
+    //     case MOTOR_FRAME_TYPE_PLUS:
+    //     case MOTOR_FRAME_TYPE_X:
+    //         break;
     //     default:
     //         // quad frame class does not support this frame type
     //             // success = false
@@ -348,13 +349,8 @@ void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_typ
     //     // quad frame class does not support this frame type
     //     // success = false;
     //     break;
-
     // } // switch frame_class
-
     // normalise factors to magnitude 0.5
-    normalise_rpy_factors();
-
-    set_initialised_ok(success);
 }
 
 // // check for failed motor
