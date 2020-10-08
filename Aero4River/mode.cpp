@@ -192,81 +192,73 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
     }
 
     Mode *new_flightmode = mode_from_mode_num((Mode::Number)mode);
-    if (new_flightmode == nullptr) {
-        gcs().send_text(MAV_SEVERITY_WARNING,"No such mode");
-        AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-        return false;
-    }
 
-    bool ignore_checks = !motors->armed();   // allow switching to any mode if disarmed.  We rely on the arming check to perform
+    // MATHAUS ---- NÃO APAGAR (IMPEDE DE MUDAR DE MODO NA HORA ERRADA. HABILITAR QUANDO ESTIVER TESTANDO EM CAMPO)
+//     if (new_flightmode == nullptr) {
+//         gcs().send_text(MAV_SEVERITY_WARNING,"No such mode");
+//         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+//         return false;
+//     }
 
-#if FRAME_CONFIG == HELI_FRAME
-    // do not allow helis to enter a non-manual throttle mode if the
-    // rotor runup is not complete
-    if (!ignore_checks && !new_flightmode->has_manual_throttle() &&
-        (motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_UP || motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_DOWN)) {
-        #if MODE_AUTOROTATE_ENABLED == ENABLED
-            //if the mode being exited is the autorotation mode allow mode change despite rotor not being at
-            //full speed.  This will reduce altitude loss on bail-outs back to non-manual throttle modes
-            bool in_autorotation_check = (flightmode != &mode_autorotate || new_flightmode != &mode_autorotate);
-        #else
-            bool in_autorotation_check = false;
-        #endif
+//     bool ignore_checks = !motors->armed();   // allow switching to any mode if disarmed.  We rely on the arming check to perform
 
-        if (!in_autorotation_check) {
-            gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
-            AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-            return false;
-        }
-    }
-#endif
+// // #if FRAME_CONFIG == HELI_FRAME
+// //     // do not allow helis to enter a non-manual throttle mode if the
+// //     // rotor runup is not complete
+// //     if (!ignore_checks && !new_flightmode->has_manual_throttle() &&
+// //         (motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_UP || motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_DOWN)) {
+// //         #if MODE_AUTOROTATE_ENABLED == ENABLED
+// //             //if the mode being exited is the autorotation mode allow mode change despite rotor not being at
+// //             //full speed.  This will reduce altitude loss on bail-outs back to non-manual throttle modes
+// //             bool in_autorotation_check = (flightmode != &mode_autorotate || new_flightmode != &mode_autorotate);
+// //         #else
+// //             bool in_autorotation_check = false;
+// //         #endif
+// //         if (!in_autorotation_check) {
+// //             gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
+// //             AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+// //             return false;
+// //         }
+// //     }
+// // #endif
 
-#if FRAME_CONFIG != HELI_FRAME
-    // ensure vehicle doesn't leap off the ground if a user switches
-    // into a manual throttle mode from a non-manual-throttle mode
-    // (e.g. user arms in guided, raises throttle to 1300 (not enough to
-    // trigger auto takeoff), then switches into manual):
-    bool user_throttle = new_flightmode->has_manual_throttle();
-#if MODE_DRIFT_ENABLED == ENABLED
-    if (new_flightmode == &mode_drift) {
-        user_throttle = true;
-    }
-#endif
-    if (!ignore_checks &&
-        ap.land_complete &&
-        user_throttle &&
-        !copter.flightmode->has_manual_throttle() &&
-        new_flightmode->get_pilot_desired_throttle() > copter.get_non_takeoff_throttle()) {
-        gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: throttle too high");
-        AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-        return false;
-    }
-#endif
+// #if FRAME_CONFIG != HELI_FRAME
+//     // ensure vehicle doesn't leap off the ground if a user switches
+//     // into a manual throttle mode from a non-manual-throttle mode
+//     // (e.g. user arms in guided, raises throttle to 1300 (not enough to
+//     // trigger auto takeoff), then switches into manual):
+//     bool user_throttle = new_flightmode->has_manual_throttle();
+// #if MODE_DRIFT_ENABLED == ENABLED
+//     if (new_flightmode == &mode_drift) {
+//         user_throttle = true;
+//     }
+// #endif
+//     if (!ignore_checks && ap.land_complete && user_throttle && !copter.flightmode->has_manual_throttle() && new_flightmode->get_pilot_desired_throttle() > copter.get_non_takeoff_throttle()) {
+//         gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: throttle too high");
+//         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+//         return false;
+//     }
+// #endif
 
-    if (!ignore_checks &&
-        new_flightmode->requires_GPS() &&
-        !copter.position_ok()) {
-        gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: %s requires position", new_flightmode->name());
-        AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-        return false;
-    }
+//     if (!ignore_checks && new_flightmode->requires_GPS() && !copter.position_ok()) {
+//         gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: %s requires position", new_flightmode->name());
+//         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+//         return false;
+//     }
 
-    // check for valid altitude if old mode did not require it but new one does
-    // we only want to stop changing modes if it could make things worse
-    if (!ignore_checks &&
-        !copter.ekf_alt_ok() &&
-        flightmode->has_manual_throttle() &&
-        !new_flightmode->has_manual_throttle()) {
-        gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: %s need alt estimate", new_flightmode->name());
-        AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-        return false;
-    }
+//     // check for valid altitude if old mode did not require it but new one does
+//     // we only want to stop changing modes if it could make things worse
+//     if (!ignore_checks && !copter.ekf_alt_ok() && flightmode->has_manual_throttle() && !new_flightmode->has_manual_throttle()) {
+//         gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: %s need alt estimate", new_flightmode->name());
+//         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+//         return false;
+//     }
 
-    if (!new_flightmode->init(ignore_checks)) {
-        gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
-        AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-        return false;
-    }
+//     if (!new_flightmode->init(ignore_checks)) {
+//         gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
+//         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
+//         return false;
+//     }
 
     // perform any cleanup required by previous flight mode
     exit_mode(flightmode, new_flightmode);

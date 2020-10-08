@@ -3,6 +3,7 @@
 // Mathaus
 float Copter::get_gain() {   
     Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
+    return Gain;
 }
 
 // transform pilot's yaw input into a desired yaw rate
