@@ -26,10 +26,11 @@ bool ModeAuto::init(bool ignore_checks)
         _mode = Auto_Loiter;
 
         // reject switching to auto mode if landed with motors armed but first command is not a takeoff (reduce chance of flips)
-        if (motors->armed() && copter.ap.land_complete && !mission.starts_with_takeoff_cmd()) {
-            gcs().send_text(MAV_SEVERITY_CRITICAL, "Auto: Missing Takeoff Cmd");
-            return false;
-        }
+        //Mathaus
+        // if (motors->armed() && copter.ap.land_complete && !mission.starts_with_takeoff_cmd()) {
+        //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Auto: Missing Takeoff Cmd");
+        //     return false;
+        // }
 
         // stop ROI from carrying over from previous runs of the mission
         // To-Do: reset the yaw as part of auto_wp_start when the previous command was not a wp command to remove the need for this special ROI check
@@ -374,8 +375,7 @@ bool ModeAuto::is_taking_off() const
 }
 
 // auto_payload_place_start - initialises controller to implement a placing
-void ModeAuto::payload_place_start()
-{
+void ModeAuto::payload_place_start(){
     // set target to stopping point
     Vector3f stopping_point;
     loiter_nav->get_stopping_point_xy(stopping_point);
@@ -386,8 +386,7 @@ void ModeAuto::payload_place_start()
 }
 
 // start_command - this function will be called when the ap_mission lib wishes to start a new command
-bool ModeAuto::start_command(const AP_Mission::Mission_Command& cmd)
-{
+bool ModeAuto::start_command(const AP_Mission::Mission_Command& cmd){
     // To-Do: logging when new commands start/end
     if (copter.should_log(MASK_LOG_CMD)) {
         copter.logger.Write_Mission_Cmd(mission, cmd);

@@ -511,7 +511,6 @@ const char* Copter::get_frame_string()
 void Copter::allocate_motors(void)
 {
     switch ((AP_Motors::motor_frame_class)g2.frame_class.get()) {
-#if FRAME_CONFIG != HELI_FRAME
         case AP_Motors::MOTOR_FRAME_QUAD:
         case AP_Motors::MOTOR_FRAME_HEXA:
         case AP_Motors::MOTOR_FRAME_Y6:
@@ -526,26 +525,6 @@ void Copter::allocate_motors(void)
             motors = new AP_MotorsRiver(copter.scheduler.get_loop_rate_hz());
             motors_var_info = AP_MotorsRiver::var_info;
             break;
-#else // FRAME_CONFIG == HELI_FRAME
-        case AP_Motors::MOTOR_FRAME_HELI_DUAL:
-            motors = new AP_MotorsHeli_Dual(copter.scheduler.get_loop_rate_hz());
-            motors_var_info = AP_MotorsHeli_Dual::var_info;
-            AP_Param::set_frame_type_flags(AP_PARAM_FRAME_HELI);
-            break;
-
-        case AP_Motors::MOTOR_FRAME_HELI_QUAD:
-            motors = new AP_MotorsHeli_Quad(copter.scheduler.get_loop_rate_hz());
-            motors_var_info = AP_MotorsHeli_Quad::var_info;
-            AP_Param::set_frame_type_flags(AP_PARAM_FRAME_HELI);
-            break;
-            
-        case AP_Motors::MOTOR_FRAME_HELI:
-        default:
-            motors = new AP_MotorsHeli_Single(copter.scheduler.get_loop_rate_hz());
-            motors_var_info = AP_MotorsHeli_Single::var_info;
-            AP_Param::set_frame_type_flags(AP_PARAM_FRAME_HELI);
-            break;
-#endif
     }
     if (motors == nullptr) {
         AP_HAL::panic("Unable to allocate FRAME_CLASS=%u", (unsigned)g2.frame_class.get());
@@ -559,13 +538,9 @@ void Copter::allocate_motors(void)
 
     const struct AP_Param::GroupInfo *ac_var_info;
 
-#if FRAME_CONFIG != HELI_FRAME
     attitude_control = new AC_AttitudeControl_River(*ahrs_view, aparm, *motors, scheduler.get_loop_period_s());
     ac_var_info = AC_AttitudeControl_River::var_info;
-#else
-    attitude_control = new AC_AttitudeControl_Heli(*ahrs_view, aparm, *motors, scheduler.get_loop_period_s());
-    ac_var_info = AC_AttitudeControl_Heli::var_info;
-#endif
+
     if (attitude_control == nullptr) {
         AP_HAL::panic("Unable to allocate AttitudeControl");
     }
