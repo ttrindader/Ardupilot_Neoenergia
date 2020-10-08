@@ -9,7 +9,7 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License 
+   You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -84,15 +84,15 @@ extern const AP_HAL::HAL &hal;
 
 // get_motor_mask - returns a bitmask of which outputs are being used for motors (1 means being used)
 
-void AP_MotorsRiver::output_to_motors(){
+void AP_MotorsRiver::output_to_motors() {
     int8_t i;
 
-    switch (_spool_state){
-    case SpoolState::SHUT_DOWN:{
+    switch (_spool_state) {
+    case SpoolState::SHUT_DOWN: {
         // no output
         for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++)
         {
-            if (motor_enabled[i]){
+            if (motor_enabled[i]) {
                 _actuator[i] = 0.0f;
             }
         }
@@ -100,8 +100,8 @@ void AP_MotorsRiver::output_to_motors(){
     }
     case SpoolState::GROUND_IDLE:
         // sends output to motors when armed but not flying
-        for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++){
-            if (motor_enabled[i]){
+        for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
+            if (motor_enabled[i]) {
                 set_actuator_with_slew(_actuator[i], actuator_spin_up_to_ground_idle());
             }
         }
@@ -110,20 +110,20 @@ void AP_MotorsRiver::output_to_motors(){
     case SpoolState::THROTTLE_UNLIMITED:
     case SpoolState::SPOOLING_DOWN:
         // set motor output based on thrust requests
-        for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++){
-            if (motor_enabled[i]){
+        for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
+            if (motor_enabled[i]) {
                 set_actuator_with_slew(_actuator[i], thrust_to_actuator(_thrust_rpyt_out[i]));
             }
         }
         break;
     }
-    
+
     pwm_servo_angle(_actuator[8],_actuator[9],_actuator[10],_actuator[11],theta_m1,theta_m2,theta_m3,theta_m4);
 
     // convert output to PWM and send to each motor
-    for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++){
-        if (motor_enabled[i]){
-            if(i<7){
+    for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
+        if (motor_enabled[i]) {
+            if(i<7) {
                 rc_write(i, output_to_pwm(_actuator[i]));
             } else {
                 rc_write(i, (int16_t)_actuator[i]);
@@ -136,24 +136,24 @@ void AP_MotorsRiver::output_to_motors(){
 
 /* ****************************** Mathaus *********************************
 ***************************************************************************/
-void AP_MotorsRiver::direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4){
+void AP_MotorsRiver::direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
     Fx_out = (float)(PWM1*k1*cosf(Theta1) + PWM2*k2*cosf(Theta2) + PWM3*k3*cosf(Theta3) + PWM4*k4*cosf(Theta4));
     Fy_out = (float)(PWM1*k1*sinf(Theta1) + PWM2*k2*sinf(Theta2) + PWM3*k3*sinf(Theta3) + PWM4*k4*sinf(Theta4));
     Tn_out = (float)(Lx*(PWM1*k1*sinf(Theta1) - PWM2*k2*sinf(Theta2) + PWM3*k3*sinf(Theta3) - PWM4*k4*sinf(Theta4)) - Ly*(PWM1*k1*cosf(Theta1) - PWM2*k2*cosf(Theta2) - PWM3*k3*cosf(Theta3) + PWM4*k4*cosf(Theta4)));
 }
 
-float AP_MotorsRiver::PWMtoNorm(float pwm){
+float AP_MotorsRiver::PWMtoNorm(float pwm) {
     /// Entra um valor de PWM e sai de 0 a 1
     float V = float(pwm - Pwmmin)/float(Pwmmax-Pwmmin);
     return constrain_float(V,0.0f,1.0f);
 }
 
-float AP_MotorsRiver::NormtoPWM(float val){
+float AP_MotorsRiver::NormtoPWM(float val) {
     /// Entra um valor de 0 a 1 e sai um PWM
     return val*(Pwmmax-Pwmmin) + Pwmmin;
 }
 
-int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_max_pwm){
+int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_max_pwm) {
     /// Nessa função deve-se inserir os valores mínimos e maxímos do pwm  considerando 0 a 180 como angulos mínimos e máximos
     //Entrada de angulo deve ser  de -180 a 180 ELE CHEGARÁ A 180 DEVIDO A ENGRENAGEM
     angle = constrain_float(angle,-180.0f,180.0f);
@@ -171,10 +171,12 @@ int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_
     return pwm;
 }
 
-void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4){
+uint8_t counter = 0;
+
+void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
     /// todos os angulos devem estar em graus nesta função
-    
-    if (!armed()){
+
+    if (!armed()) {
         theta_1 = 0.0f;
         theta_2 = 0.0f;
         theta_3 = 0.0f;
@@ -187,13 +189,26 @@ void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, f
     // Pwm_servo_m4 = servo_angle_to_pwm(theta_4,421.0,2501.0);//700.0,2345.0);
 
     // BARCO PEQUENO
-    Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 986.0, 1897.0);
-    Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2270.0);
-    Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 502.0, 2408.0);
-    Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 520.0, 2390.0);
+    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 986.0, 1897.0);
+    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2270.0);
+    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 502.0, 2408.0);
+    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 520.0, 2390.0);
+
+    Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
+    Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2500.0);
+    Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 550.0, 2500.0);
+    Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 550.0, 2500.0);
+
+    // Pwm_servo_m1 = get_forward()-2020-915;//(theta_1, 986.0, 1897.0);
+    // counter++;
+    // if (counter > 150) {
+    //     counter = 0;
+    //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Pwm_servo_m1 %5.3f", (double)Pwm_servo_m1);
+
+    // }
 }
 
-void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4){
+void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
     /// TRABALHA COM RADIANOS
     /// Fx = força no eixo X - Seu valor deve variar de -1 a 1
     /// Fy = força no eixo y - Seu valor deve variar de -1 a 1
@@ -223,7 +238,7 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
     Theta3 = Theta3 * DEG_TO_RAD;
     Theta4 = Theta4 * DEG_TO_RAD;
 
-    if(FT<0.02*Fmax){
+    if(FT<0.02*Fmax) {
         // Se as forças são muito pequenas (proximas a zero) nao executa a matriz de alocação envia todos os angulos  nulos
         Theta1 = 0.0f;
         Theta2 = 0.0f;
@@ -236,7 +251,7 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
         PWM3 = NormtoPWM(0.0f);
         PWM4 = NormtoPWM(0.0f);
 
-    }else{
+    } else {
         // ========================================== PWM calculado a partir da força e dos angulos ====================================
         PWM1 = (safe_sqrt(sq(FX/(4*k1) - (Ly*TN)/(4*k1*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k1) + (Lx*TN)/(4*k1*(sq(Lx) + sq(Ly))))));
         PWM2 = (safe_sqrt(sq(FX/(4*k2) + (Ly*TN)/(4*k2*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k2) - (Lx*TN)/(4*k2*(sq(Lx) + sq(Ly))))));
@@ -280,17 +295,17 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
 // output_armed - sends commands to the motors
 // includes new scaling stability patch
 
-void AP_MotorsRiver::output_armed_stabilizing(){
+void AP_MotorsRiver::output_armed_stabilizing() {
     Fx = get_forward();
     Fy = get_lateral();
     Tn = get_yaw();
 
     FOSSEN_alocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
-    
+
     motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
     motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
     motor_enabled[2] ? _thrust_rpyt_out[2] = Pwm3 : _thrust_rpyt_out[2] = 0.0f;
-    motor_enabled[3] ? _thrust_rpyt_out[3] = Pwm4 : _thrust_rpyt_out[3] = 0.0f; 
+    motor_enabled[3] ? _thrust_rpyt_out[3] = Pwm4 : _thrust_rpyt_out[3] = 0.0f;
 
 }
 /* ****************************** Mathaus *********************************
@@ -298,7 +313,7 @@ void AP_MotorsRiver::output_armed_stabilizing(){
 void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type)
 {
     // remove existing motors
-    for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++){
+    for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         remove_motor(i);
     }
 

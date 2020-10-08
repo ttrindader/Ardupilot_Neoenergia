@@ -194,14 +194,13 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
     Mode *new_flightmode = mode_from_mode_num((Mode::Number)mode);
 
     // MATHAUS ---- NÃO APAGAR (IMPEDE DE MUDAR DE MODO NA HORA ERRADA. HABILITAR QUANDO ESTIVER TESTANDO EM CAMPO)
+
 //     if (new_flightmode == nullptr) {
 //         gcs().send_text(MAV_SEVERITY_WARNING,"No such mode");
 //         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
 //         return false;
 //     }
-
 //     bool ignore_checks = !motors->armed();   // allow switching to any mode if disarmed.  We rely on the arming check to perform
-
 // // #if FRAME_CONFIG == HELI_FRAME
 // //     // do not allow helis to enter a non-manual throttle mode if the
 // //     // rotor runup is not complete
@@ -221,7 +220,6 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
 // //         }
 // //     }
 // // #endif
-
 // #if FRAME_CONFIG != HELI_FRAME
 //     // ensure vehicle doesn't leap off the ground if a user switches
 //     // into a manual throttle mode from a non-manual-throttle mode
@@ -239,13 +237,11 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
 //         return false;
 //     }
 // #endif
-
 //     if (!ignore_checks && new_flightmode->requires_GPS() && !copter.position_ok()) {
 //         gcs().send_text(MAV_SEVERITY_WARNING, "Mode change failed: %s requires position", new_flightmode->name());
 //         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
 //         return false;
 //     }
-
 //     // check for valid altitude if old mode did not require it but new one does
 //     // we only want to stop changing modes if it could make things worse
 //     if (!ignore_checks && !copter.ekf_alt_ok() && flightmode->has_manual_throttle() && !new_flightmode->has_manual_throttle()) {
@@ -253,7 +249,6 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
 //         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
 //         return false;
 //     }
-
 //     if (!new_flightmode->init(ignore_checks)) {
 //         gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
 //         AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
@@ -469,6 +464,13 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
     // channel_roll->set_control_in(fy);
     // channel_pitch->set_control_in(fx);
     // channel_yaw->set_control_in(tn);
+}
+
+float Mode::CalibrateServo(){
+    float PWM;
+    PWM = channel_throttle->get_radio_in() + channel_gain->get_radio_in()*2;
+    
+    return PWM;
 }
 
 bool Mode::_TakeOff::triggered(const float target_climb_rate) const

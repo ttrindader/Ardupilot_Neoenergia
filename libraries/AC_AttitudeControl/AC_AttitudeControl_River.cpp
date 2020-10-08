@@ -351,6 +351,11 @@ void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
 
 }
 
+void AC_AttitudeControl_River::passthrough_servo(float PWM){
+    _motors.set_forward(PWM);
+}
+
+
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_fx_fy_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds){ // Mathaus
     

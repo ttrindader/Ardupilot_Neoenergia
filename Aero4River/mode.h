@@ -87,6 +87,7 @@ public:
     float get_pilot_desired_throttle() const;
 
     void get_pilot_desired_forces(float &roll_out, float &pitch_out, float &yaw_out) const ; //mathaus
+    float CalibrateServo();
 
     float get_gain();
     
