@@ -552,6 +552,30 @@ void Copter::update_simple_mode(void) //mathaus
     // rotate roll, pitch input from north facing to vehicle's perspective
     channel_roll->set_control_in(fy * ahrs.cos_yaw() + fx * ahrs.sin_yaw());
     channel_pitch->set_control_in(-fy * ahrs.sin_yaw() + fx * ahrs.cos_yaw());
+
+     // exit immediately if no new radio frame or not in simple mode
+    // if (simple_mode == SimpleMode::NONE || !ap.new_radio_frame)
+    // {
+    //     return;
+    // }
+
+    // // mark radio frame as consumed
+    // ap.new_radio_frame = false;
+
+    // if (simple_mode == SimpleMode::SIMPLE){
+    //     // rotate roll, pitch input by -initial simple heading (i.e. north facing)
+    //     fy = channel_roll->norm_input() * simple_cos_yaw - channel_pitch->norm_input() * simple_sin_yaw;
+    //     fx = channel_roll->norm_input() * simple_sin_yaw + channel_pitch->norm_input() * simple_cos_yaw;
+    // }
+    // else{
+    //     // rotate roll, pitch input by -super simple heading (reverse of heading to home)
+    //     fy = channel_roll->norm_input() * super_simple_cos_yaw - channel_pitch->norm_input() * super_simple_sin_yaw;
+    //     fx = channel_roll->norm_input() * super_simple_sin_yaw + channel_pitch->norm_input() * super_simple_cos_yaw;
+    // }
+
+    // // rotate roll, pitch input from north facing to vehicle's perspective
+    // channel_roll->set_control_in(fy * ahrs.cos_yaw() + fx * ahrs.sin_yaw());
+    // channel_pitch->set_control_in(-fy * ahrs.sin_yaw() + fx * ahrs.cos_yaw());
 }
 
 // update_simple_mode - rotates pilot input if we are in simple mode

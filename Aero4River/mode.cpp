@@ -459,11 +459,11 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
     fx = 1.0f * channel_pitch->norm_input();
     tn = 1.0f * channel_yaw->norm_input();
 
-    //VERIFICAR PARA HABILITAR
+    //VERIFICAR PARA HABILITAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // Set para o simple mode 
-    // channel_roll->set_control_in(fy);
-    // channel_pitch->set_control_in(fx);
-    // channel_yaw->set_control_in(tn);
+    channel_roll->set_control_in(fy);
+    channel_pitch->set_control_in(fx);
+    channel_yaw->set_control_in(tn);
 }
 
 float Mode::CalibrateServo(){
@@ -605,11 +605,10 @@ void Mode::land_run_vertical_control(bool pause_descent)
     pos_control->update_z_controller();
 }
 
-void Mode::land_run_horizontal_control()
-{
-    float target_roll = 0.0f;
-    float target_pitch = 0.0f;
-    float target_yaw_rate = 0;
+void Mode::land_run_horizontal_control(){
+    float target_roll     = 0.0f;
+    float target_pitch    = 0.0f;
+    float target_yaw_rate = 0.0f;
 
     // relax loiter target if we might be landed
     if (copter.ap.land_complete_maybe) {
