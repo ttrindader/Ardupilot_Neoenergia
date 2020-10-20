@@ -2,6 +2,8 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/AP_Math.h>
 
+#include <GCS_MAVLink/GCS.h>
+
 
 // table of user settable parameters
 const AP_Param::GroupInfo AC_AttitudeControl_River::var_info[] = {
@@ -369,10 +371,21 @@ void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
 void AC_AttitudeControl_River::passthrough_servo(float PWM){
     _motors.set_forward(PWM);
 }
+  
+static uint8_t counter = 0;
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds)
 {
+
+counter++;
+
+if (counter > 100) {
+    counter = 0;
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f",
+     (double)pitch/_aparm.angle_max, (double)roll/_aparm.angle_max, (double)euler_yaw_rate_cds/_aparm.angle_max);
+}
+
      output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
 
     // Convert from centidegrees on public interface to radians
@@ -422,6 +435,13 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
 
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw){
+
+counter++;
+
+if (counter > 100) {
+    counter = 0;
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f <<<< 2", (double)pitch, (double)roll, (double)euler_yaw_angle_cd);
+}
 
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_angle_cd/_aparm.angle_max); //Mathaus
 
@@ -477,6 +497,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, floa
 
 // Command an euler roll, pitch, and yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds){  
+
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
     // Convert from centidegrees on public interface to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);

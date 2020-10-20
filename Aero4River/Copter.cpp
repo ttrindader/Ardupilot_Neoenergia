@@ -144,7 +144,7 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(standby_update,        100,    75),
     SCHED_TASK(lost_vehicle_check,    10,     50),
     SCHED_TASK(Log_Write_Mathaus, 20, 100), // mathaus
-    SCHED_TASK(Log_Write_Grin, 20, 100),
+    SCHED_TASK(Log_Write_Grin,    20, 100),
     SCHED_TASK(Log_Write_Accacio, 20, 100),
     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_receive, 400, 180),
     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_send,    400, 550),
