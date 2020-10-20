@@ -310,10 +310,10 @@ void AC_AttitudeControl_River::rate_controller_run(){
     update_throttle_rpy_mix();
     _rate_target_ang_vel += _rate_sysid_ang_vel;
     Vector3f gyro_latest = _ahrs.get_gyro_latest();
-    _motors.set_roll(get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x);
-    _motors.set_roll_ff(get_rate_roll_pid().get_ff());
-    _motors.set_pitch(get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
-    _motors.set_pitch_ff(get_rate_pitch_pid().get_ff());
+    // _motors.set_roll(get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x);
+    // _motors.set_roll_ff(get_rate_roll_pid().get_ff());
+    // _motors.set_pitch(get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
+    // _motors.set_pitch_ff(get_rate_pitch_pid().get_ff());
     _motors.set_yaw(get_rate_yaw_pid().update_all(_rate_target_ang_vel.z, gyro_latest.z, _motors.limit.yaw) + _actuator_sysid.z);
     _motors.set_yaw_ff(get_rate_yaw_pid().get_ff()*_feedforward_scalar);
     _rate_sysid_ang_vel.zero();
@@ -353,8 +353,17 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
-    
+static uint8_t counter = 0;
+
+void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){    
+counter++;
+
+if (counter > 100) {
+    counter = 0;
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f",
+     (double)X, (double)Y, (double)Z);
+}
+
     X*=-1.0f;
 
     float fx = map_cube(X,Y,Z);
@@ -372,19 +381,10 @@ void AC_AttitudeControl_River::passthrough_servo(float PWM){
     _motors.set_forward(PWM);
 }
   
-static uint8_t counter = 0;
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds)
 {
-
-counter++;
-
-if (counter > 100) {
-    counter = 0;
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f",
-     (double)pitch/_aparm.angle_max, (double)roll/_aparm.angle_max, (double)euler_yaw_rate_cds/_aparm.angle_max);
-}
 
      output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
 
@@ -435,13 +435,6 @@ if (counter > 100) {
 
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw){
-
-counter++;
-
-if (counter > 100) {
-    counter = 0;
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f <<<< 2", (double)pitch, (double)roll, (double)euler_yaw_angle_cd);
-}
 
     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_angle_cd/_aparm.angle_max); //Mathaus
 

@@ -295,6 +295,7 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
 // includes new scaling stability patch
 
 void AP_MotorsRiver::output_armed_stabilizing() {
+    
     Fx = get_forward();
     Fy = get_lateral();
     Tn = get_yaw();
