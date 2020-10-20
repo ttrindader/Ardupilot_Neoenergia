@@ -353,16 +353,16 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-static uint8_t counter = 0;
+// static uint8_t counter = 0;
 
 void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){    
-counter++;
+// counter++;
 
-if (counter > 100) {
-    counter = 0;
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f",
-     (double)X, (double)Y, (double)Z);
-}
+// if (counter > 100) {
+//     counter = 0;
+//     gcs().send_text(MAV_SEVERITY_CRITICAL, "FX : %5.3f -- FY : %5.3f -- TN : %5.3f",
+//      (double)X, (double)Y, (double)Z);
+// }
 
     X*=-1.0f;
 
