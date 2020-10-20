@@ -497,9 +497,9 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
 
     //VERIFICAR PARA HABILITAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // Set para o simple mode 
-    channel_roll->set_control_in(fy);
-    channel_pitch->set_control_in(fx);
-    channel_yaw->set_control_in(tn);
+    // channel_roll->set_control_in(fy);
+    // channel_pitch->set_control_in(fx);
+    // channel_yaw->set_control_in(tn);
 }
 
 float Mode::CalibrateServo(){
