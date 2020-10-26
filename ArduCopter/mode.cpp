@@ -22,6 +22,7 @@ Mode::Mode(void) :
     channel_pitch(copter.channel_pitch),
     channel_throttle(copter.channel_throttle),
     channel_yaw(copter.channel_yaw),
+    channel_key(copter.channel_key),
     G_Dt(copter.G_Dt)
 { };
 
