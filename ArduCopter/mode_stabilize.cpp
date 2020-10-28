@@ -15,7 +15,7 @@ static uint8_t counter = 0;
 float t_atual = 0.0f ;
 
 // SetPoint
-uint16_t Tempo[10] = {5000,10000,15000,20000,25000,30000,35000,40000,45000,50000} ; // Aqui vc tem um precisão de ms (da pra colocar um seno se quser)
+uint16_t Tempo[10] = {1000,10000,15000,20000,25000,30000,35000,40000,45000,50000} ; // Aqui vc tem um precisão de ms (da pra colocar um seno se quser)
 float SP_roll[10]  = {1500,2000,2500,-2500,0000,-3000,-4500,000,000,000};
 float SP_pitch[10] = {0,0,0,-0,0000,-0,-0,000,000,000};
 
@@ -52,10 +52,10 @@ float SP_pitch[10] = {0,0,0,-0,0000,-0,-0,000,000,000};
 
 /// ---------------------->>>  NO CASO DE USAR FUNÇÃO -------
 
-void Mode::SinalAntonio(float &target_roll,float &target_pitch,uint16_t Vet_Tempo[], float Vet_SP_roll[],float Vet_SP_pitch[],float key)
+void Mode::SinalAntonio(float &target_roll,float &target_pitch,float &target_yaw_rate, uint16_t Vet_Tempo[], float Vet_SP_roll[],float Vet_SP_pitch[],float key, float Amp,float Freq)
 {
-        if(key>0){
-        
+        if(key>0)
+        {
         if(entra == 0){
         entra = 1;
         ini = AP_HAL::millis();
@@ -67,17 +67,18 @@ void Mode::SinalAntonio(float &target_roll,float &target_pitch,uint16_t Vet_Temp
         {
             if(t_atual>Vet_Tempo[i])
             {
-                target_roll  = 4500*sinf(t_atual/2000); // t/tau para calcular a frequencia do seno <-- se quiser usar outra função, só trocar cosf (o f é pq é pra float) varia de -1 a 1 então multiplica pela amplitude
-                target_pitch = Vet_SP_pitch[i];
-                
+                target_roll     = Amp*sinf(2.0f*M_PI*Freq*(t_atual/1000.0f)); // t/tau para calcular a frequencia do seno <-- se quiser usar outra função, só trocar cosf (o f é pq é pra float) varia de -1 a 1 então multiplica pela amplitude
+                target_pitch    = 0.0f;
+                target_yaw_rate = 0.0f;
             }
         }
 
     }else{
-        entra = 0;
+        entra   = 0.0f;
+        t_atual = 0.0f;
     }
     counter++;
-    if (counter > 150) {
+    if (counter > 200) {
         counter = 0;
         gcs().send_text(MAV_SEVERITY_CRITICAL, "target_roll: %5.3f target_pitch: %5.3f time: %5.3f", (double)target_roll, (double)target_pitch, (double)t_atual);
     }
@@ -134,11 +135,12 @@ void ModeStabilize::run()
 
 
     // A função deve ser chamada aqui, antes do input ...
-    SinalAntonio(target_roll,target_pitch, Tempo, SP_roll,SP_pitch,channel_key->norm_input());
+    SinalAntonio(target_roll,target_pitch,target_yaw_rate, Tempo, SP_roll,SP_pitch,channel_key->norm_input(),1500.0f,1.0f);
 
     // call attitude controller
-    attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
-
+    // attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
+    attitude_control->input_euler_angle_roll_pitch_yaw(target_roll, target_pitch, target_yaw_rate, true);
+    
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(), true,g.throttle_filt);
 }
