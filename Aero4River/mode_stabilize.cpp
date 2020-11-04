@@ -68,5 +68,5 @@ void ModeStabilize::run(){
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(),true,g.throttle_filt);
     
-    attitude_control->passthrough_servo(PWM);
+    // attitude_control->passthrough_servo(PWM);
 }

@@ -45,7 +45,7 @@ void AP_MotorsRiver::output_to_motors() {
 
     pwm_servo_angle(_actuator[8],_actuator[9],_actuator[10],_actuator[11],theta_m1,theta_m2,theta_m3,theta_m4);
 
-    CalibrateServo(_actuator[8]);// Descomentar se for calibrar
+    // CalibrateServo(_actuator[8]);// Descomentar se for calibrar
 
     // convert output to PWM and send to each motor
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
@@ -109,6 +109,24 @@ void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
         gcs().send_text(MAV_SEVERITY_CRITICAL, "Pwm_servo Calibrado %5.3f", (double)Pwm_servo);
 
     }
+}
+
+// output_armed - sends commands to the motors
+// includes new scaling stability patch
+
+void AP_MotorsRiver::output_armed_stabilizing() {
+    
+    Fx = get_forward();
+    Fy = get_lateral(); //Colocar zero para calibrar
+    Tn = get_yaw();
+
+    FOSSEN_alocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
+
+    motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
+    motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
+    motor_enabled[2] ? _thrust_rpyt_out[2] = Pwm3 : _thrust_rpyt_out[2] = 0.0f;
+    motor_enabled[3] ? _thrust_rpyt_out[3] = Pwm4 : _thrust_rpyt_out[3] = 0.0f;
+
 }
 
 void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
@@ -233,23 +251,7 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
     Theta4 = Theta4 * RAD_TO_DEG;
 }
 
-// output_armed - sends commands to the motors
-// includes new scaling stability patch
 
-void AP_MotorsRiver::output_armed_stabilizing() {
-    
-    Fx = get_forward();
-    Fy = 0.0f*get_lateral(); //Colocar zero para calibrar
-    Tn = get_yaw();
-
-    FOSSEN_alocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
-
-    motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
-    motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
-    motor_enabled[2] ? _thrust_rpyt_out[2] = Pwm3 : _thrust_rpyt_out[2] = 0.0f;
-    motor_enabled[3] ? _thrust_rpyt_out[3] = Pwm4 : _thrust_rpyt_out[3] = 0.0f;
-
-}
 /* ****************************** Mathaus *********************************
 ***************************************************************************/
 void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
