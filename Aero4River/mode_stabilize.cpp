@@ -14,7 +14,7 @@ void ModeStabilize::run(){
     // float fy, fx, tn;
     // get_pilot_desired_forces(fx, fy, tn);
 
-    float PWM = CalibrateServo();
+    // float PWM = CalibrateServo();
 
     // apply simple mode transform to pilot inputs
     update_simple_mode();
