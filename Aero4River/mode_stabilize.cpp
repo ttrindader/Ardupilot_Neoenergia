@@ -14,9 +14,9 @@ void ModeStabilize::run(){
     // float fy, fx, tn;
     // get_pilot_desired_forces(fx, fy, tn);
 
-    // float PWM = CalibrateServo();
+    float PWM = CalibrateServo();
 
-        // apply simple mode transform to pilot inputs
+    // apply simple mode transform to pilot inputs
     update_simple_mode();
 
     // convert pilot input to lean angles
@@ -61,17 +61,12 @@ void ModeStabilize::run(){
         // do nothing
         break;
     }
-    //  // call attitude controller
-    // attitude_control->output_to_boat(fx*get_gain(), fy*get_gain(), tn*get_gain());
 
-    // // output pilot's throttle
-    // attitude_control->set_throttle_out(get_pilot_desired_throttle(),true, g.throttle_filt);
-
-    // attitude_control->passthrough_servo(PWM);
-    
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll*get_gain(), target_pitch*get_gain(), target_yaw_rate*get_gain());
 
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(),true,g.throttle_filt);
+    
+    attitude_control->passthrough_servo(PWM);
 }

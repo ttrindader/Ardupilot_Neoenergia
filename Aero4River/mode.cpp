@@ -504,8 +504,7 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
 
 float Mode::CalibrateServo(){
     float PWM;
-    PWM = channel_throttle->get_radio_in() + channel_gain->get_radio_in()*2;
-    
+    PWM = channel_throttle->get_radio_in() + channel_gain->get_radio_in()*2.0f;   
     return PWM;
 }
 

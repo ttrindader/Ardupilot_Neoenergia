@@ -378,7 +378,7 @@ void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){
 }
 
 void AC_AttitudeControl_River::passthrough_servo(float PWM){
-    _motors.set_forward(PWM);
+    _motors.set_lateral(PWM);
 }
   
 

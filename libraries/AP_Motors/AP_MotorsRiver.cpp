@@ -1,19 +1,4 @@
 /*
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  *       AP_MotorsRiver.cpp - ArduCopter motors library
  *       Code by Mathaus. mathaus.silva@engenharia.ufjf.br
  */
@@ -23,66 +8,6 @@
 #include <GCS_MAVLink/GCS.h>
 
 extern const AP_HAL::HAL &hal;
-
-// // init
-// void AP_MotorsRiver::init(motor_frame_class frame_class, motor_frame_type frame_type)
-// {
-//     // record requested frame class and type
-//     _last_frame_class = frame_class;
-//     _last_frame_type = frame_type;
-//     // setup the motors
-//     setup_motors(frame_class, frame_type);
-//     // enable fast channels or instant pwm
-//     set_update_rate(_speed_hz);
-// }
-// // set update rate to motors - a value in hertz
-// void AP_MotorsRiver::set_update_rate(uint16_t speed_hz)
-// {
-//     // record requested speed
-//     _speed_hz = speed_hz;
-//     uint16_t mask = 0;
-//     for (uint8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++)
-//     {
-//         if (motor_enabled[i])
-//         {
-//             mask |= 1U << i;
-//         }
-//  this can be used to ensure other pwm outputs (i.e. for servos) do not conflict
-// uint16_t AP_MotorsRiver::get_motor_mask()
-// {
-//     uint16_t motor_mask = 0;
-//     for (uint8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++)
-//     {
-//         if (motor_enabled[i])
-//         {
-//             motor_mask |= 1U << i;
-//         }
-//     }
-//     uint16_t mask = rc_map_mask(motor_mask);
-//     // add parent's mask
-//     mask |= AP_MotorsMulticopter::get_motor_mask();
-//     return mask;
-// }
-//     }
-//     rc_set_freq(mask, _speed_hz);
-// }
-// // set frame class (i.e. quad, hexa, heli) and type (i.e. x, plus)
-// void AP_MotorsRiver::set_frame_class_and_type(motor_frame_class frame_class, motor_frame_type frame_type)
-// {
-//     // exit immediately if armed or no change
-//     if (armed() || (frame_class == _last_frame_class && _last_frame_type == frame_type))
-//     {
-//         return;
-//     }
-//     _last_frame_class = frame_class;
-//     _last_frame_type = frame_type;
-//     // setup the motors
-//     setup_motors(frame_class, frame_type);
-//     // enable fast channels or instant pwm
-//     set_update_rate(_speed_hz);
-// }
-
-// get_motor_mask - returns a bitmask of which outputs are being used for motors (1 means being used)
 
 void AP_MotorsRiver::output_to_motors() {
     int8_t i;
@@ -119,6 +44,8 @@ void AP_MotorsRiver::output_to_motors() {
     }
 
     pwm_servo_angle(_actuator[8],_actuator[9],_actuator[10],_actuator[11],theta_m1,theta_m2,theta_m3,theta_m4);
+
+    CalibrateServo(_actuator[8]);// Descomentar se for calibrar
 
     // convert output to PWM and send to each motor
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
@@ -172,39 +99,54 @@ int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_
 
 uint8_t counter = 0;
 
+void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
+       
+    Pwm_servo = get_lateral() -2930;//(theta_1, 986.0, 1897.0);
+
+    counter++;
+    if (counter > 150) {
+        counter = 0;
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "Pwm_servo Calibrado %5.3f", (double)Pwm_servo);
+
+    }
+}
+
 void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
     /// todos os angulos devem estar em graus nesta função
 
-    if (!armed()|| get_throttle()<0.1f) {
+    if (!armed() || get_throttle() < 0.1f) {
         theta_1 = 0.0f;
         theta_2 = 0.0f;
         theta_3 = 0.0f;
         theta_4 = 0.0f;
+    }else
+    {
+        if(armed() && get_throttle() < 0.1f){
+            theta_1 = 0.0f;
+            theta_2 = 0.0f;
+            theta_3 = 0.0f;
+            theta_4 = 0.0f;
+
+        }
     }
-    // // BARCO GRANDE
+    
+    // BARCO GRANDE
     // Pwm_servo_m1 = servo_angle_to_pwm(theta_1,444.0,2490.0);//675.0,2329.0);
     // Pwm_servo_m2 = servo_angle_to_pwm(theta_2,421.0,2501.0);//664.0,2144.0);
     // Pwm_servo_m3 = servo_angle_to_pwm(theta_3,418.0,2461.0);//656.0,2400.0);
     // Pwm_servo_m4 = servo_angle_to_pwm(theta_4,421.0,2501.0);//700.0,2345.0);
 
+    Pwm_servo_m1 = servo_angle_to_pwm(theta_1,550.0,2500.0);//675.0,2329.0);
+    Pwm_servo_m2 = servo_angle_to_pwm(theta_2,550.0,2500.0);//664.0,2144.0);
+    Pwm_servo_m3 = servo_angle_to_pwm(theta_3,550.0,2500.0);//656.0,2400.0);
+    Pwm_servo_m4 = servo_angle_to_pwm(theta_4,550.0,2500.0);//700.0,2345.0);
+
     // BARCO PEQUENO
-    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 986.0, 1897.0);
-    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2270.0);
-    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 502.0, 2408.0);
-    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 520.0, 2390.0);
+    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
+    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2500.0);
+    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 550.0, 2500.0);
+    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 550.0, 2500.0);
 
-    Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
-    Pwm_servo_m2 = servo_angle_to_pwm(theta_2, 550.0, 2500.0);
-    Pwm_servo_m3 = servo_angle_to_pwm(theta_3, 550.0, 2500.0);
-    Pwm_servo_m4 = servo_angle_to_pwm(theta_4, 550.0, 2500.0);
-
-    // Pwm_servo_m1 = get_forward()-2020-915;//(theta_1, 986.0, 1897.0);
-    // counter++;
-    // if (counter > 150) {
-    //     counter = 0;
-    //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Pwm_servo_m1 %5.3f", (double)Pwm_servo_m1);
-
-    // }
 }
 
 void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
@@ -297,7 +239,7 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
 void AP_MotorsRiver::output_armed_stabilizing() {
     
     Fx = get_forward();
-    Fy = get_lateral();
+    Fy = 0.0f*get_lateral(); //Colocar zero para calibrar
     Tn = get_yaw();
 
     FOSSEN_alocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
