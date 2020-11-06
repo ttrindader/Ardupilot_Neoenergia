@@ -660,11 +660,11 @@ private:
 
     //   Aero4River Code Mathaus
 
-    // Variáveis auxiliares para Fx e Fy
-    float X = 0.0f;
-    float Y = 0.0f;
-    float Z = 0.0f;
-    float Gain = 1.0f ;
+    // // Variáveis auxiliares para Fx e Fy
+    // float X = 0.0f;
+    // float Y = 0.0f;
+    // float Z = 0.0f;
+    // float Gain = 1.0f ;
 
     ////////////////////////////    Funções    ///////////////////////////////////
     

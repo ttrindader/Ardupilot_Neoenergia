@@ -776,10 +776,10 @@ void ModeAuto::wp_run()
     // call attitude controller
     if (auto_yaw.mode() == AUTO_YAW_HOLD) {
         // roll & pitch from waypoint controller, yaw rate from pilot
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), target_yaw_rate);
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), wp_nav->get_yaw()*get_gain());
     } else {
         // roll, pitch from waypoint controller, yaw heading from auto_heading()
-        attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), auto_yaw.yaw(), true);
+        attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), auto_yaw.yaw()*get_gain(), true);
     }
 }
 
@@ -796,6 +796,7 @@ void ModeAuto::spline_run()
 
     // process pilot's yaw input
     float target_yaw_rate = 0;
+    
     if (!copter.failsafe.radio) {
         // get pilot's desired yaw rate
         target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->get_control_in());
@@ -816,10 +817,10 @@ void ModeAuto::spline_run()
     // call attitude controller
     if (auto_yaw.mode() == AUTO_YAW_HOLD) {
         // roll & pitch from waypoint controller, yaw rate from pilot
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), target_yaw_rate);
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), target_yaw_rate*get_gain());
     } else {
         // roll, pitch from waypoint controller, yaw heading from auto_heading()
-        attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), auto_yaw.yaw(), true);
+        attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), auto_yaw.yaw()*get_gain(), true);
     }
 }
 

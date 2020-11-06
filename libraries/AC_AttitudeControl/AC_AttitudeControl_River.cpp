@@ -353,20 +353,26 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-// static uint8_t counter = 0;
+static uint8_t counter = 0;
 
-void AC_AttitudeControl_River::output_to_boat(float X, float Y, float Z){    
+void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){    
 
-    X*=-1.0f;
+    counter++;
+    if (counter > 150) {
+        counter = 0;
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
+    }
 
-    float fx = map_cube(X,Y,Z);
-    float fy = map_cube(Y,X,Z);
-    float tn = map_cube(Z,Y,X);
+    x*=-1.0f;
+
+    X = map_cube(x,y,z);
+    Y = map_cube(y,x,z);
+    Z = map_cube(z,y,x);
 
     // utilizado na alocação do barco
-    _motors.set_forward(fx);
-    _motors.set_lateral(fy);
-    _motors.set_yaw(tn);
+    _motors.set_forward(X);
+    _motors.set_lateral(Y);
+    _motors.set_yaw(Z);
 
 }
 
@@ -379,7 +385,7 @@ void AC_AttitudeControl_River::passthrough_servo(float PWM){
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds)
 {
 
-     output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_rate_cds/_aparm.angle_max); //Mathaus
+     output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_rate_cds/lean_angle_max()); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
@@ -429,7 +435,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw){
 
-    output_to_boat(pitch/_aparm.angle_max,roll/_aparm.angle_max,euler_yaw_angle_cd/_aparm.angle_max); //Mathaus
+    output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_angle_cd/lean_angle_max()); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float euler_yaw_angle = radians(euler_yaw_angle_cd * 0.01f);

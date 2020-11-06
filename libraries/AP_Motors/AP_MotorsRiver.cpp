@@ -84,13 +84,13 @@ int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_
     //Entrada de angulo deve ser  de -180 a 180 ELE CHEGARÁ A 180 DEVIDO A ENGRENAGEM
     angle = constrain_float(angle,-180.0f,180.0f);
 
-    angle = 180 - angle;
+    angle = 180.0f - angle;
 
     //valor que o servo entende como 0 graus
-    float srv_min_angle = 0.0;
+    float srv_min_angle = 0.0f;
 
     //valor que o servo entende como 360
-    float srv_max_angle = 360.0;
+    float srv_max_angle = 360.0f;
 
     int pwm =  srv_min_pwm + angle * (srv_max_pwm - srv_min_pwm)/(srv_max_angle - srv_min_angle);
 
@@ -107,7 +107,6 @@ void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
     if (counter > 150) {
         counter = 0;
         gcs().send_text(MAV_SEVERITY_CRITICAL, "Pwm_servo Calibrado %5.3f", (double)Pwm_servo);
-
     }
 }
 

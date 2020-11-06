@@ -46,6 +46,11 @@ public:
 	// empty destructor to suppress compiler warning
 	virtual ~AC_AttitudeControl_River() {}
 
+      // Variáveis auxiliares para Fx e Fy
+    float X = 0.0f;
+    float Y = 0.0f;
+    float Z = 0.0f;
+
     // pid accessors
     AC_PID& get_rate_roll_pid() override { return _pid_rate_roll; }
     AC_PID& get_rate_pitch_pid() override { return _pid_rate_pitch; }
