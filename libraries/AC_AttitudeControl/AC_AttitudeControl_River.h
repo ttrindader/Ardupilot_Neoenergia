@@ -86,7 +86,7 @@ public:
     float map_cube(float x, float y, float z);
     void output_to_boat(float fx, float fy, float tn);
     void passthrough_servo(float PWM);
-    void input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds);
+    void input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)override;
     void input_euler_angle_roll_pitch_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_angle_cd, bool slew_yaw)override;
     // void input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds) override;
     void input_euler_rate_roll_pitch_yaw(float euler_roll_rate_cds, float euler_pitch_rate_cds, float euler_yaw_rate_cds);

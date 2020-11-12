@@ -131,27 +131,14 @@ void AP_MotorsRiver::output_armed_stabilizing() {
 void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
     /// todos os angulos devem estar em graus nesta função
 
-    if (!armed() || get_throttle() < 0.1f) {
+    if (!armed() || get_throttle() < 0.05f) {
         theta_1 = 0.0f;
         theta_2 = 0.0f;
         theta_3 = 0.0f;
         theta_4 = 0.0f;
-    }else
-    {
-        if(armed() && get_throttle() < 0.1f){
-            theta_1 = 0.0f;
-            theta_2 = 0.0f;
-            theta_3 = 0.0f;
-            theta_4 = 0.0f;
-
-        }
     }
     
     // BARCO GRANDE
-    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1,444.0,2490.0);//675.0,2329.0);
-    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2,421.0,2501.0);//664.0,2144.0);
-    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3,418.0,2461.0);//656.0,2400.0);
-    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4,421.0,2501.0);//700.0,2345.0);
 
     Pwm_servo_m1 = servo_angle_to_pwm(theta_1,550.0,2500.0);//675.0,2329.0);
     Pwm_servo_m2 = servo_angle_to_pwm(theta_2,550.0,2500.0);//664.0,2144.0);
@@ -266,7 +253,7 @@ void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_typ
     add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
     add_motor(AP_MOTORS_MOT_4, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 2);
 
-    add_motor_raw(AP_MOTORS_MOT_9, 0, 0, 0, 5);
+    add_motor_raw(AP_MOTORS_MOT_9 , 0, 0, 0, 5);
     add_motor_raw(AP_MOTORS_MOT_10, 0, 0, 0, 6);
     add_motor_raw(AP_MOTORS_MOT_11, 0, 0, 0, 7);
     add_motor_raw(AP_MOTORS_MOT_12, 0, 0, 0, 8);

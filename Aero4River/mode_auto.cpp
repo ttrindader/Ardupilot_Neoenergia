@@ -73,18 +73,18 @@ void ModeAuto::run()
     // call the correct auto controller
     switch (_mode) {
 
-    case Auto_TakeOff:
-        takeoff_run();
-        break;
+        // takeoff_run();
+        // break;
 
+    case Auto_TakeOff:
     case Auto_WP:
     case Auto_CircleMoveToEdge:
+    case Auto_Land:
         wp_run();
         break;
 
-    case Auto_Land:
-        land_run();
-        break;
+        // land_run();
+        // break;
 
     case Auto_RTL:
         rtl_run();
@@ -796,7 +796,7 @@ void ModeAuto::spline_run()
 
     // process pilot's yaw input
     float target_yaw_rate = 0;
-    
+
     if (!copter.failsafe.radio) {
         // get pilot's desired yaw rate
         target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->get_control_in());
