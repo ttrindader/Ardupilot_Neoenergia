@@ -364,6 +364,10 @@ void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){
     }
 
     x*=-1.0f;
+    
+    x = constrain_float(x,-1.0f,1.0f);
+    y = constrain_float(y,-1.0f,1.0f);
+    z = constrain_float(z,-1.0f,1.0f);
 
     X = map_cube(x,y,z);
     Y = map_cube(y,x,z);
@@ -385,7 +389,7 @@ void AC_AttitudeControl_River::passthrough_servo(float PWM){
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds)
 {
 
-     output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_rate_cds/lean_angle_max()); //Mathaus
+     output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
@@ -490,7 +494,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, floa
 // Command an euler roll, pitch, and yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds){  
 
-    output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_rate_cds/lean_angle_max()); //Mathaus
+    output_to_boat(pitch/(4.5f*lean_angle_max()),roll/(4.5f*lean_angle_max()),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
     // Convert from centidegrees on public interface to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
     // calculate the attitude target euler angles

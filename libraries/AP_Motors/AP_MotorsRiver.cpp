@@ -131,11 +131,16 @@ void AP_MotorsRiver::output_armed_stabilizing() {
 void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, float &Pwm_servo_m3, float &Pwm_servo_m4, float theta_1, float theta_2, float theta_3, float theta_4) {
     /// todos os angulos devem estar em graus nesta função
 
-    if (!armed() || get_throttle() < 0.05f) {
+    if (get_throttle() < 0.05f) {
         theta_1 = 0.0f;
         theta_2 = 0.0f;
         theta_3 = 0.0f;
         theta_4 = 0.0f;
+
+        _thrust_rpyt_out[0] = get_pwm_output_min();
+        _thrust_rpyt_out[1] = get_pwm_output_min();
+        _thrust_rpyt_out[2] = get_pwm_output_min();
+        _thrust_rpyt_out[3] = get_pwm_output_min();
     }
     
     // BARCO GRANDE

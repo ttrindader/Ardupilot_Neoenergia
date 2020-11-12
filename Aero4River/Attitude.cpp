@@ -3,6 +3,10 @@
 // Mathaus
 float Copter::get_gain() {   
     Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
+
+    if ((channel_throttle->get_radio_in() - channel_throttle->get_radio_min())<10){
+        Gain = 0.0f;
+    }
     return Gain;
 }
 
