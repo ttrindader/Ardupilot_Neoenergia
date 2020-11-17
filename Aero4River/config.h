@@ -403,10 +403,10 @@
  # define FLIGHT_MODE_4                  Mode::Number::STABILIZE
 #endif
 #ifndef FLIGHT_MODE_5
- # define FLIGHT_MODE_5                  Mode::Number::STABILIZE
+ # define FLIGHT_MODE_5                  Mode::Number::AUTO
 #endif
 #ifndef FLIGHT_MODE_6
- # define FLIGHT_MODE_6                  Mode::Number::STABILIZE
+ # define FLIGHT_MODE_6                  Mode::Number::AUTO
 #endif
 
 
@@ -473,11 +473,11 @@
 
 // Acro Mode
 #ifndef ACRO_RP_P
- # define ACRO_RP_P                 4.5f
+ # define ACRO_RP_P                 1.0f
 #endif
 
 #ifndef ACRO_YAW_P
- # define ACRO_YAW_P                4.5f
+ # define ACRO_YAW_P                1.0f
 #endif
 
 #ifndef ACRO_LEVEL_MAX_ANGLE
@@ -539,11 +539,11 @@
 
 // AUTO Mode
 #ifndef WP_YAW_BEHAVIOR_DEFAULT
- # define WP_YAW_BEHAVIOR_DEFAULT   WP_YAW_BEHAVIOR_LOOK_AT_NEXT_WP_EXCEPT_RTL
+ # define WP_YAW_BEHAVIOR_DEFAULT   WP_YAW_BEHAVIOR_LOOK_AT_NEXT_WP
 #endif
 
 #ifndef AUTO_YAW_SLEW_RATE
- # define AUTO_YAW_SLEW_RATE    60              // degrees/sec
+ # define AUTO_YAW_SLEW_RATE    45 // Mathaus 60              // degrees/sec
 #endif
 
 #ifndef YAW_LOOK_AHEAD_MIN_SPEED

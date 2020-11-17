@@ -408,7 +408,6 @@ public:
     AP_Int16        poshold_brake_angle_max;    // PosHold flight mode's max lean angle during braking in centi-degrees
     
     // Waypoints
-    //
     AP_Int32        rtl_loiter_time;
     AP_Int16        land_speed;
     AP_Int16        land_speed_high;

@@ -68,23 +68,15 @@ bool ModeAuto::allows_arming(bool from_gcs) const
 // auto_run - runs the auto controller
 //      should be called at 100hz or more
 //      relies on run_autopilot being called at 10hz which handles decision making and non-navigation related commands
-void ModeAuto::run()
-{
+void ModeAuto::run(){
     // call the correct auto controller
     switch (_mode) {
-
-        // takeoff_run();
-        // break;
-
     case Auto_TakeOff:
     case Auto_WP:
     case Auto_CircleMoveToEdge:
     case Auto_Land:
         wp_run();
         break;
-
-        // land_run();
-        // break;
 
     case Auto_RTL:
         rtl_run();
@@ -776,7 +768,7 @@ void ModeAuto::wp_run()
     // call attitude controller
     if (auto_yaw.mode() == AUTO_YAW_HOLD) {
         // roll & pitch from waypoint controller, yaw rate from pilot
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), target_yaw_rate*get_gain());
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll()*get_gadin(), wp_nav->get_pitch()*get_gain(), target_yaw_rate*get_gain());
     } else {
         // roll, pitch from waypoint controller, yaw heading from auto_heading()
         attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll()*get_gain(), wp_nav->get_pitch()*get_gain(), auto_yaw.yaw()*get_gain(), true);
