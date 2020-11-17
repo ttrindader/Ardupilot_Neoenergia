@@ -32,18 +32,10 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
     Mode *ret = nullptr;
 
     switch (mode) {
-#if MODE_ACRO_ENABLED == ENABLED
-        case Mode::Number::ACRO:
-            ret = &mode_acro;
-            break;
-#endif
-
         case Mode::Number::STABILIZE:
-            ret = &mode_stabilize;
-            break;
-
         case Mode::Number::ALT_HOLD:
-            ret = &mode_althold;
+        case Mode::Number::LAND:
+            ret = &mode_stabilize;
             break;
 
 #if MODE_AUTO_ENABLED == ENABLED
@@ -70,10 +62,6 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-        case Mode::Number::LAND:
-            ret = &mode_land;
-            break;
-
 #if MODE_RTL_ENABLED == ENABLED
         case Mode::Number::RTL:
             ret = &mode_rtl;
@@ -92,11 +80,6 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if MODE_FLIP_ENABLED == ENABLED
-        case Mode::Number::FLIP:
-            ret = &mode_flip;
-            break;
-#endif
 
 // #if AUTOTUNE_ENABLED == ENABLED
 //         case Mode::Number::AUTOTUNE:
@@ -122,11 +105,11 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if HAL_ADSB_ENABLED
-        case Mode::Number::AVOID_ADSB:
-            ret = &mode_avoid_adsb;
-            break;
-#endif
+// #if HAL_ADSB_ENABLED
+//         case Mode::Number::AVOID_ADSB:
+//             ret = &mode_avoid_adsb;
+//             break;
+// #endif
 
 #if MODE_GUIDED_NOGPS_ENABLED == ENABLED
         case Mode::Number::GUIDED_NOGPS:
@@ -146,11 +129,11 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if MODE_FOLLOW_ENABLED == ENABLED
-        case Mode::Number::FOLLOW:
-            ret = &mode_follow;
-            break;
-#endif
+// #if MODE_FOLLOW_ENABLED == ENABLED
+//         case Mode::Number::FOLLOW:
+//             ret = &mode_follow;
+//             break;
+// #endif
 
 #if MODE_ZIGZAG_ENABLED == ENABLED
         case Mode::Number::ZIGZAG:
@@ -268,9 +251,9 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
     logger.Write_Mode((uint8_t)control_mode, reason);
     gcs().send_message(MSG_HEARTBEAT);
 
-#if HAL_ADSB_ENABLED
-    adsb.set_is_auto_mode((mode == Mode::Number::AUTO) || (mode == Mode::Number::RTL) || (mode == Mode::Number::GUIDED));
-#endif
+// #if HAL_ADSB_ENABLED
+//     adsb.set_is_auto_mode((mode == Mode::Number::AUTO) || (mode == Mode::Number::RTL) || (mode == Mode::Number::GUIDED));
+// #endif
 
 #if AC_FENCE == ENABLED
     // pilot requested flight mode change during a fence breach indicates pilot is attempting to manually recover
@@ -349,11 +332,11 @@ void Copter::exit_mode(Mode *&old_flightmode,
     }
 #endif
 
-#if MODE_FOLLOW_ENABLED == ENABLED
-    if (old_flightmode == &mode_follow) {
-        mode_follow.exit();
-    }
-#endif
+// #if MODE_FOLLOW_ENABLED == ENABLED
+//     if (old_flightmode == &mode_follow) {
+//         mode_follow.exit();
+//     }
+// #endif
 
 #if MODE_ZIGZAG_ENABLED == ENABLED
     if (old_flightmode == &mode_zigzag) {

@@ -717,9 +717,9 @@
   #error SmartRTL requires ModeRTL which is disabled
 #endif
 
-#if HAL_ADSB_ENABLED && !MODE_GUIDED_ENABLED
-  #error ADSB requires ModeGuided which is disabled
-#endif
+// #if HAL_ADSB_ENABLED && !MODE_GUIDED_ENABLED
+//   #error ADSB requires ModeGuided which is disabled
+// #endif
 
 #if MODE_FOLLOW_ENABLED && !MODE_GUIDED_ENABLED
   #error Follow requires ModeGuided which is disabled

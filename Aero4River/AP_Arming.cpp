@@ -271,12 +271,12 @@ bool AP_Arming_Copter::parameter_checks(bool display_failure)
 #endif
 
         // check adsb avoidance failsafe
-#if HAL_ADSB_ENABLED
-        if (copter.failsafe.adsb) {
-            check_failed(ARMING_CHECK_PARAMETERS, display_failure, "ADSB threat detected");
-            return false;
-        }
-#endif
+// #if HAL_ADSB_ENABLED
+//         if (copter.failsafe.adsb) {
+//             check_failed(ARMING_CHECK_PARAMETERS, display_failure, "ADSB threat detected");
+//             return false;
+//         }
+// #endif
 
         // ensure controllers are OK with us arming:
         char failure_msg[50];
@@ -488,17 +488,17 @@ bool AP_Arming_Copter::proximity_checks(bool display_failure) const
     }
 
     // get closest object if we might use it for avoidance
-#if AC_AVOID_ENABLED == ENABLED
-    float angle_deg, distance;
-    if (copter.avoid.proximity_avoidance_enabled() && copter.g2.proximity.get_closest_object(angle_deg, distance)) {
-        // display error if something is within 60cm
-        const float tolerance = 0.6f;
-        if (distance <= tolerance) {
-            check_failed(ARMING_CHECK_PARAMETERS, display_failure, "Proximity %d deg, %4.2fm (want > %0.1fm)", (int)angle_deg, (double)distance, (double)tolerance);
-            return false;
-        }
-    }
-#endif
+// #if AC_AVOID_ENABLED == ENABLED
+//     float angle_deg, distance;
+//     if (copter.avoid.proximity_avoidance_enabled() && copter.g2.proximity.get_closest_object(angle_deg, distance)) {
+//         // display error if something is within 60cm
+//         const float tolerance = 0.6f;
+//         if (distance <= tolerance) {
+//             check_failed(ARMING_CHECK_PARAMETERS, display_failure, "Proximity %d deg, %4.2fm (want > %0.1fm)", (int)angle_deg, (double)distance, (double)tolerance);
+//             return false;
+//         }
+//     }
+// #endif
 
 #endif
     return true;
@@ -689,14 +689,14 @@ bool AP_Arming_Copter::arm_checks(AP_Arming::Method method)
     }
 
     // check adsb
-#if HAL_ADSB_ENABLED
-    if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_PARAMETERS)) {
-        if (copter.failsafe.adsb) {
-            check_failed(ARMING_CHECK_PARAMETERS, true, "ADSB threat detected");
-            return false;
-        }
-    }
-#endif
+// #if HAL_ADSB_ENABLED
+//     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_PARAMETERS)) {
+//         if (copter.failsafe.adsb) {
+//             check_failed(ARMING_CHECK_PARAMETERS, true, "ADSB threat detected");
+//             return false;
+//         }
+//     }
+// #endif
 
     // check throttle
     if ((checks_to_perform == ARMING_CHECK_ALL) || (checks_to_perform & ARMING_CHECK_RC)) {

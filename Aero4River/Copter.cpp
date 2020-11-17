@@ -168,9 +168,9 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(compass_cal_update,   100,    100),
     SCHED_TASK(accel_cal_update,      10,    100),
     SCHED_TASK_CLASS(AP_TempCalibration,   &copter.g2.temp_calibration, update,          10, 100),
-#if HAL_ADSB_ENABLED
-    SCHED_TASK(avoidance_adsb_update, 10,    100),
-#endif
+// #if HAL_ADSB_ENABLED
+//     SCHED_TASK(avoidance_adsb_update, 10,    100),
+// #endif
 #if ADVANCED_FAILSAFE == ENABLED
     SCHED_TASK(afs_fs_check,          10,    100),
 #endif
@@ -500,9 +500,9 @@ void Copter::one_hz_loop()
     // log terrain data
     terrain_logging();
 
-#if HAL_ADSB_ENABLED
-    adsb.set_is_flying(!ap.land_complete);
-#endif
+// #if HAL_ADSB_ENABLED
+//     adsb.set_is_flying(!ap.land_complete);
+// #endif
 
     AP_Notify::flags.flying = !ap.land_complete;
 }

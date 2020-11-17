@@ -65,7 +65,7 @@
 #include <AC_AutoTune/AC_AutoTune.h>
 #include <AP_Parachute/AP_Parachute.h>
 #include <AC_Sprayer/AC_Sprayer.h>
-#include <AP_ADSB/AP_ADSB.h>
+// #include <AP_ADSB/AP_ADSB.h>
 
 // Configuration
 #include "defines.h"
@@ -105,9 +105,9 @@
  # include <AC_PrecLand/AC_PrecLand.h>
  # include <AP_IRLock/AP_IRLock.h>
 #endif
-#if MODE_FOLLOW_ENABLED == ENABLED
- # include <AP_Follow/AP_Follow.h>
-#endif
+// #if MODE_FOLLOW_ENABLED == ENABLED
+//  # include <AP_Follow/AP_Follow.h>
+// #endif
 #if AC_FENCE == ENABLED
  # include <AC_Fence/AC_Fence.h>
 #endif
@@ -159,9 +159,9 @@
 #include "UserParameters.h"
 #endif
 #include "Parameters.h"
-#if HAL_ADSB_ENABLED
-#include "avoidance_adsb.h"
-#endif
+// #if HAL_ADSB_ENABLED
+// #include "avoidance_adsb.h"
+// #endif
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <SITL/SITL.h>
@@ -191,16 +191,16 @@ public:
     friend class Mode;
     friend class ModeAcro;
     friend class ModeAcro_Heli;
-    friend class ModeAltHold;
+    // friend class ModeAltHold;
     friend class ModeAuto;
     friend class ModeAutoTune;
-    friend class ModeAvoidADSB;
+    // friend class ModeAvoidADSB;
     friend class ModeBrake;
     friend class ModeCircle;
     friend class ModeDrift;
-    friend class ModeFlip;
-    friend class ModeFlowHold;
-    friend class ModeFollow;
+    // friend class ModeFlip;
+    // friend class ModeFlowHold;
+    // friend class ModeFollow;
     friend class ModeGuided;
     friend class ModeLand;
     friend class ModeLoiter;
@@ -488,9 +488,9 @@ private:
     AC_Fence fence;
 #endif
 
-#if AC_AVOID_ENABLED == ENABLED
-    AC_Avoid avoid;
-#endif
+// #if AC_AVOID_ENABLED == ENABLED
+//     AC_Avoid avoid;
+// #endif
 
     // Rally library
 #if AC_RALLY == ENABLED
@@ -520,19 +520,6 @@ private:
     AC_PrecLand precland;
 #endif
 
-    // Pilot Input Management Library
-    // Only used for Helicopter for now
-#if FRAME_CONFIG == HELI_FRAME
-    AC_InputManager_Heli input_manager;
-#endif
-
-#if HAL_ADSB_ENABLED
-    AP_ADSB adsb;
-
-    // avoidance of adsb enabled vehicles (normally manned vehicles)
-    AP_Avoidance_Copter avoidance_adsb{adsb};
-#endif
-
     // last valid RC input time
     uint32_t last_radio_update_ms;
 
@@ -543,22 +530,6 @@ private:
     // setup the var_info table
     AP_Param param_loader;
 
-#if FRAME_CONFIG == HELI_FRAME
-    // Mode filter to reject RC Input glitches.  Filter size is 5, and it draws the 4th element, so it can reject 3 low glitches,
-    // and 1 high glitch.  This is because any "off" glitches can be highly problematic for a helicopter running an ESC
-    // governor.  Even a single "off" frame can cause the rotor to slow dramatically and take a long time to restart.
-    ModeFilterInt16_Size5 rotor_speed_deglitch_filter {4};
-
-    // Tradheli flags
-    typedef struct {
-        uint8_t dynamic_flight          : 1;    // 0   // true if we are moving at a significant speed (used to turn on/off leaky I terms)
-        uint8_t inverted_flight         : 1;    // 1   // true for inverted flight mode
-        uint8_t in_autorotation         : 1;    // 2   // true when heli is in autorotation
-    } heli_flags_t;
-    heli_flags_t heli_flags;
-
-    int16_t hover_roll_trim_scalar_slew;
-#endif
 
     // ground effect detector
     struct {
@@ -679,10 +650,10 @@ private:
     void Log_Write_Accacio();
     
 
-#if HAL_ADSB_ENABLED
-    // avoidance_adsb.cpp
-    void avoidance_adsb_update(void);
-#endif
+// #if HAL_ADSB_ENABLED
+//     // avoidance_adsb.cpp
+//     void avoidance_adsb_update(void);
+// #endif
 
     // baro_ground_effect.cpp
     void update_ground_effect_detector(void);
@@ -913,7 +884,7 @@ private:
     ModeAcro mode_acro;
 #endif
 #endif
-    ModeAltHold mode_althold;
+    // ModeAltHold mode_althold;
 #if MODE_AUTO_ENABLED == ENABLED
     ModeAuto mode_auto;
 #endif
@@ -930,12 +901,12 @@ private:
 #if MODE_DRIFT_ENABLED == ENABLED
     ModeDrift mode_drift;
 #endif
-#if MODE_FLIP_ENABLED == ENABLED
-    ModeFlip mode_flip;
-#endif
-#if MODE_FOLLOW_ENABLED == ENABLED
-    ModeFollow mode_follow;
-#endif
+// #if MODE_FLIP_ENABLED == ENABLED
+//     ModeFlip mode_flip;
+// #endif
+// #if MODE_FOLLOW_ENABLED == ENABLED
+//     ModeFollow mode_follow;
+// #endif
 #if MODE_GUIDED_ENABLED == ENABLED
     ModeGuided mode_guided;
 #endif
@@ -960,9 +931,9 @@ private:
 #if MODE_SYSTEMID_ENABLED == ENABLED
     ModeSystemId mode_systemid;
 #endif
-#if HAL_ADSB_ENABLED
-    ModeAvoidADSB mode_avoid_adsb;
-#endif
+// #if HAL_ADSB_ENABLED
+//     ModeAvoidADSB mode_avoid_adsb;
+// #endif
 #if MODE_THROW_ENABLED == ENABLED
     ModeThrow mode_throw;
 #endif
@@ -972,9 +943,9 @@ private:
 #if MODE_SMARTRTL_ENABLED == ENABLED
     ModeSmartRTL mode_smartrtl;
 #endif
-#if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    ModeFlowHold mode_flowhold;
-#endif
+// #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
+//     ModeFlowHold mode_flowhold;
+// #endif
 #if MODE_ZIGZAG_ENABLED == ENABLED
     ModeZigZag mode_zigzag;
 #endif

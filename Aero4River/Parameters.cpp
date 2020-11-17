@@ -603,9 +603,9 @@ const AP_Param::Info Copter::var_info[] = {
 
     // @Group: AVOID_
     // @Path: ../libraries/AC_Avoidance/AC_Avoid.cpp
-#if AC_AVOID_ENABLED == ENABLED
-    GOBJECT(avoid,      "AVOID_",   AC_Avoid),
-#endif
+// #if AC_AVOID_ENABLED == ENABLED
+//     GOBJECT(avoid,      "AVOID_",   AC_Avoid),
+// #endif
 
 #if AC_RALLY == ENABLED
     // @Group: RALLY_
@@ -679,15 +679,15 @@ const AP_Param::Info Copter::var_info[] = {
     GOBJECT(rpm_sensor, "RPM", AP_RPM),
 #endif
 
-#if HAL_ADSB_ENABLED
-    // @Group: ADSB_
-    // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp
-    GOBJECT(adsb,                "ADSB_", AP_ADSB),
+// #if HAL_ADSB_ENABLED
+//     // @Group: ADSB_
+//     // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp
+//     GOBJECT(adsb,                "ADSB_", AP_ADSB),
 
-    // @Group: AVD_
-    // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp
-    GOBJECT(avoidance_adsb, "AVD_", AP_Avoidance_Copter),
-#endif
+//     // @Group: AVD_
+//     // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp
+//     GOBJECT(avoidance_adsb, "AVD_", AP_Avoidance_Copter),
+// #endif
 
     // @Group: NTF_
     // @Path: ../libraries/AP_Notify/AP_Notify.cpp
@@ -888,11 +888,11 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("LAND_ALT_LOW", 25, ParametersG2, land_alt_low, 1000),
 
-#if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    // @Group: FHLD
-    // @Path: mode_flowhold.cpp
-    AP_SUBGROUPPTR(mode_flowhold_ptr, "FHLD", 26, ParametersG2, ModeFlowHold),
-#endif
+// #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
+//     // @Group: FHLD
+//     // @Path: mode_flowhold.cpp
+//     AP_SUBGROUPPTR(mode_flowhold_ptr, "FHLD", 26, ParametersG2, ModeFlowHold),
+// #endif
 
 #if MODE_FOLLOW_ENABLED == ENABLED
     // @Group: FOLL
@@ -1005,9 +1005,9 @@ ParametersG2::ParametersG2(void)
 #if MODE_SMARTRTL_ENABLED == ENABLED
     ,smart_rtl()
 #endif
-#if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    ,mode_flowhold_ptr(&copter.mode_flowhold)
-#endif
+// #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
+//     ,mode_flowhold_ptr(&copter.mode_flowhold)
+// #endif
 #if MODE_FOLLOW_ENABLED == ENABLED
     ,follow()
 #endif
