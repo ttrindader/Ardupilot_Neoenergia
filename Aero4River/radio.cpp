@@ -11,6 +11,7 @@ void Copter::default_dead_zones()
     channel_throttle->set_default_dead_zone(30);
     channel_yaw->set_default_dead_zone(20);
     channel_gain->set_default_dead_zone(0);
+    channel_key->set_default_dead_zone(0);
 }
 
 void Copter::init_rc_in()
@@ -20,6 +21,7 @@ void Copter::init_rc_in()
     channel_throttle = rc().channel(rcmap.throttle()-1);
     channel_yaw      = rc().channel(rcmap.yaw()-1);
     channel_gain     = rc().channel(CH_6);
+    channel_key      = rc().channel(CH_7);
 
     // set rc channel ranges
     channel_roll->set_angle(ROLL_PITCH_YAW_INPUT_MAX);
@@ -28,6 +30,7 @@ void Copter::init_rc_in()
     channel_throttle->set_range(1000);
 
     channel_gain->set_range(1000);
+    channel_key->set_range(1000);
 
     // set default dead zones
     default_dead_zones();
@@ -91,6 +94,8 @@ void Copter::read_radio()
 
         // pass pilot input through to motors (used to allow wiggling servos while disarmed on heli, single, coax copters)
         radio_passthrough_to_motors();
+
+        radio_key_passthrough_to_motors_key(channel_key->norm_input());
 
         const float dt = (tnow_ms - last_radio_update_ms)*1.0e-3f;
         rc_throttle_control_in_filter.apply(channel_throttle->get_control_in(), dt);

@@ -236,6 +236,8 @@ private:
     RC_Channel *channel_yaw;
 
     RC_Channel *channel_gain; //Mathaus
+    RC_Channel *channel_key; //Mathaus
+
     AP_Logger logger;
 
     // flight modes convenience array
