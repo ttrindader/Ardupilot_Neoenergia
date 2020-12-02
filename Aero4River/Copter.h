@@ -820,6 +820,7 @@ private:
     void set_throttle_and_failsafe(uint16_t throttle_pwm);
     void set_throttle_zero_flag(int16_t throttle_control);
     void radio_passthrough_to_motors();
+    void radio_key_passthrough_to_motors();
     int16_t get_throttle_mid(void);
 
     // sensors.cpp

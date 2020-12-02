@@ -97,7 +97,7 @@ public:
     // output_to_motors - sends minimum values out to the motors
     void                output_to_motors() override;
 
-    void radio_key_passthrough_to_motors_key( float key) ;
+    void radio_key_passthrough_to_motors( float key) ;
 
     // // get_motor_mask - returns a bitmask of which outputs are being used for motors (1 means being used)
     // //  this can be used to ensure other pwm outputs (i.e. for servos) do not conflict

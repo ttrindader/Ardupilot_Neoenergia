@@ -113,7 +113,7 @@ void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
 float _key_radio_passthrough = 0.0f;
 
 // pilot input in the -1 ~ +1 range for roll, pitch and yaw. 0~1 range for throttle
-void AP_MotorsRiver::radio_key_passthrough_to_motors_key(float key)
+void AP_MotorsRiver::radio_key_passthrough_to_motors(float key)
 {
     _key_radio_passthrough = key;
 }
@@ -270,6 +270,7 @@ void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,f
     TN = constrain_float(TN,-1.0f,1.0f);
 
     FY = 0.0f;
+    FY = FY;
 
     TN = TN * Nmax;
     FX = FX * Fmax;
