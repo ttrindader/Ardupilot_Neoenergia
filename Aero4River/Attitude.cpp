@@ -10,6 +10,8 @@ float Copter::get_gain() {
         Gain = Gain - 1.0f/400.0f;
     }    
 
+    Gain  = constrain_float(Gain,-1.0f,1.0f);
+
     // Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
 
     if ((channel_throttle->get_radio_in() - channel_throttle->get_radio_min())<10){
