@@ -4,13 +4,13 @@
 float Copter::get_gain() {
 
     if(channel_gain->norm_input()>0.7){
-        Gain = Gain + 1.0f/400.0f;
+        Gain = Gain - 1.0f/400.0f;
     }
     if(channel_gain->norm_input()<-0.7){
-        Gain = Gain - 1.0f/400.0f;
+        Gain = Gain + 1.0f/400.0f;
     }    
 
-    Gain  = constrain_float(Gain,-1.0f,1.0f);
+    Gain  = constrain_float(Gain,0.0f,1.0f);
 
     // Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
 
