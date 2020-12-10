@@ -1,22 +1,31 @@
 #include "Copter.h"
+#include <GCS_MAVLink/GCS.h>
 
+bool Max = false;
+static uint8_t counter = 0;
 // Mathaus
-float Copter::get_gain() {
-
-    if(channel_gain->norm_input()>0.7){
-        Gain = Gain + 1.0f/400.0f;
+float Copter::get_gain(){
+    if (channel_gain->norm_input() > 0.5){
+        Gain = Gain - 1.0f / 400.0f;
+        Max = false;
     }
-    if(channel_gain->norm_input()<-0.7){
-        Gain = Gain - 1.0f/400.0f;
-    }    
+    if (channel_gain->norm_input() < -0.5){
+        Gain = Gain + 1.0f / 400.0f;
+        Max = false;
+    }
 
-    Gain  = constrain_float(Gain,-1.0f,1.0f);
+    Gain = constrain_float(Gain, 0.0f, 1.0f);
+
+    if (Gain > 0.9975f && !Max){
+        counter++;
+        if (counter > 100){
+            counter = 0;
+            gcs().send_text(MAV_SEVERITY_WARNING, "MAXIMUM GAIN REACHED");
+            Max = true;
+        }
+    }
 
     // Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
-
-    if ((channel_throttle->get_radio_in() - channel_throttle->get_radio_min())<10){
-        Gain = 0.0f;
-    }
     return Gain;
 }
 
