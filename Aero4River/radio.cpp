@@ -1,11 +1,9 @@
 #include "Copter.h"
 
-
 // Function that will read the radio data, limit servos and trigger a failsafe
 // ----------------------------------------------------------------------------
 
-void Copter::default_dead_zones()
-{
+void Copter::default_dead_zones(){
     channel_roll->set_default_dead_zone(20);
     channel_pitch->set_default_dead_zone(20);
     channel_throttle->set_default_dead_zone(30);
@@ -14,8 +12,7 @@ void Copter::default_dead_zones()
     channel_key->set_default_dead_zone(0);
 }
 
-void Copter::init_rc_in()
-{
+void Copter::init_rc_in(){
     channel_roll     = rc().channel(rcmap.roll()-1);
     channel_pitch    = rc().channel(rcmap.pitch()-1);
     channel_throttle = rc().channel(rcmap.throttle()-1);
@@ -40,8 +37,7 @@ void Copter::init_rc_in()
 }
 
  // init_rc_out -- initialise motors
-void Copter::init_rc_out()
-{
+void Copter::init_rc_out(){
     motors->set_loop_rate(scheduler.get_loop_rate_hz());
     motors->init((AP_Motors::motor_frame_class)g2.frame_class.get(), (AP_Motors::motor_frame_type)g.frame_type.get());
 
@@ -51,13 +47,7 @@ void Copter::init_rc_out()
     // update rate must be set after motors->init() to allow for motor mapping
     motors->set_update_rate(g.rc_speed);
 
-#if FRAME_CONFIG != HELI_FRAME
     motors->set_throttle_range(channel_throttle->get_radio_min(), channel_throttle->get_radio_max());
-#else
-    // setup correct scaling for ESCs like the UAVCAN ESCs which
-    // take a proportion of speed.
-    hal.rcout->set_esc_scaling(channel_throttle->get_radio_min(), channel_throttle->get_radio_max());
-#endif
 
     // refresh auxiliary channel to function map
     SRV_Channels::update_aux_servo_function();
@@ -73,14 +63,12 @@ void Copter::init_rc_out()
 
 
 // enable_motor_output() - enable and output lowest possible value to motors
-void Copter::enable_motor_output()
-{
+void Copter::enable_motor_output(){
     // enable motors
     motors->output_min();
 }
 
-void Copter::read_radio()
-{
+void Copter::read_radio(){
     const uint32_t tnow_ms = millis();
 
     if (rc().read_input()) {

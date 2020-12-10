@@ -211,7 +211,7 @@ public:
     friend class ModeStabilize;
     friend class ModeStabilize_Heli;
     friend class ModeSystemId;
-    friend class ModeThrow;
+    // friend class ModeThrow;
     friend class ModeZigZag;
     friend class ModeAutorotate;
 
@@ -937,9 +937,9 @@ private:
 // #if HAL_ADSB_ENABLED
 //     ModeAvoidADSB mode_avoid_adsb;
 // #endif
-#if MODE_THROW_ENABLED == ENABLED
-    ModeThrow mode_throw;
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//     ModeThrow mode_throw;
+// #endif
 #if MODE_GUIDED_NOGPS_ENABLED == ENABLED
     ModeGuidedNoGPS mode_guided_nogps;
 #endif

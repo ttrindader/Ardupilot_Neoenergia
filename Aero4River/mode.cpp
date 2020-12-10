@@ -99,11 +99,11 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if MODE_THROW_ENABLED == ENABLED
-        case Mode::Number::THROW:
-            ret = &mode_throw;
-            break;
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//         case Mode::Number::THROW:
+//             ret = &mode_throw;
+//             break;
+// #endif
 
 // #if HAL_ADSB_ENABLED
 //         case Mode::Number::AVOID_ADSB:
@@ -184,25 +184,7 @@ bool Copter::set_mode(Mode::Number mode, ModeReason reason)
         return false;
     }
     bool ignore_checks = !motors->armed();   // allow switching to any mode if disarmed.  We rely on the arming check to perform
-// #if FRAME_CONFIG == HELI_FRAME
-//     // do not allow helis to enter a non-manual throttle mode if the
-//     // rotor runup is not complete
-//     if (!ignore_checks && !new_flightmode->has_manual_throttle() &&
-//         (motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_UP || motors->get_spool_state() == AP_Motors::SpoolState::SPOOLING_DOWN)) {
-//         #if MODE_AUTOROTATE_ENABLED == ENABLED
-//             //if the mode being exited is the autorotation mode allow mode change despite rotor not being at
-//             //full speed.  This will reduce altitude loss on bail-outs back to non-manual throttle modes
-//             bool in_autorotation_check = (flightmode != &mode_autorotate || new_flightmode != &mode_autorotate);
-//         #else
-//             bool in_autorotation_check = false;
-//         #endif
-//         if (!in_autorotation_check) {
-//             gcs().send_text(MAV_SEVERITY_WARNING,"Flight mode change failed %s", new_flightmode->name());
-//             AP::logger().Write_Error(LogErrorSubsystem::FLIGHT_MODE, LogErrorCode(mode));
-//             return false;
-//         }
-//     }
-// #endif
+
 #if FRAME_CONFIG != HELI_FRAME
     // ensure vehicle doesn't leap off the ground if a user switches
     // into a manual throttle mode from a non-manual-throttle mode
