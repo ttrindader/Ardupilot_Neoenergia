@@ -170,10 +170,10 @@ void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, f
     
     // BARCO GRANDE
 
-    Pwm_servo_m1 = servo_angle_to_pwm(theta_1,550.0,2500.0);//675.0,2329.0);
-    Pwm_servo_m2 = servo_angle_to_pwm(theta_2,550.0,2500.0);//664.0,2144.0);
-    Pwm_servo_m3 = servo_angle_to_pwm(theta_3,550.0,2500.0);//656.0,2400.0);
-    Pwm_servo_m4 = servo_angle_to_pwm(theta_4,550.0,2500.0);//700.0,2345.0);
+    Pwm_servo_m1 = servo_angle_to_pwm(theta_1,_r_srv_min_pwm,_r_srv_max_pwm);//675.0,2329.0);
+    Pwm_servo_m2 = servo_angle_to_pwm(theta_2,_r_srv_min_pwm,_r_srv_max_pwm);//664.0,2144.0);
+    Pwm_servo_m3 = servo_angle_to_pwm(theta_3,_r_srv_min_pwm,_r_srv_max_pwm);//656.0,2400.0);
+    Pwm_servo_m4 = servo_angle_to_pwm(theta_4,_r_srv_min_pwm,_r_srv_max_pwm);//700.0,2345.0);
 
     // BARCO PEQUENO
     // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
