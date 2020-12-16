@@ -6,6 +6,7 @@
 #include <AP_Math/AP_Math.h>        // ArduPilot Mega Vector/Matrix math Library
 #include <RC_Channel/RC_Channel.h>     // RC Channel Library
 #include "AP_MotorsMatrix.h"
+#include <AP_Param/AP_Param.h>
 
 #define AP_MOTORS_MATRIX_YAW_FACTOR_CW   -1
 #define AP_MOTORS_MATRIX_YAW_FACTOR_CCW   1
@@ -13,7 +14,7 @@
 /// @class      AP_MotorsRiver
 class AP_MotorsRiver : public AP_MotorsMatrix {
 public:
-
+    
  // Propriedade Física do Barco
     float FT = 0.0f;
     float FM1 = GRAVITY_MSS*2.1f;
@@ -108,50 +109,23 @@ public:
     // // using copter motors for forward flight
     // float               get_roll_factor(uint8_t i) override { return _roll_factor[i]; }
 
+    // var_info for holding Parameter information
+    static const struct AP_Param::GroupInfo var_info[];
+
 protected:
+// River Params
+    AP_Float        _r_srv_min_pwm; // valor de pwm para o  minimo do direcionamento dos servos (-180 graus)
+    AP_Float        _r_srv_max_pwm; // valor de pwm para o  máximo do direcionamento dos servos (+180 graus)
  
     void FOSSEN_alocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
-    int servo_angle_to_pwm(float angle,float srv_min_pwm,float srv_max_pwm);
     void pwm_servo_angle(float &Pwm_servo_m1,float &Pwm_servo_m2,float &Pwm_servo_m3,float &Pwm_servo_m4,float theta_m1,float theta_m2,float theta_m3,float theta_m4);
     void CalibrateServo(float &Pwm_servo);
+    void direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4);
     float PWMtoNorm(float pwm);
     float NormtoPWM(float pwm);
-    void direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4);
+    int servo_angle_to_pwm(float angle,float srv_min_pwm,float srv_max_pwm);
 
     // output - sends commands to the motors
     void                output_armed_stabilizing() override;
 
-    // // check for failed motor
-    // void                check_for_failed_motor(float throttle_thrust_best);
-
-    // // add_motor using raw roll, pitch, throttle and yaw factors
-    //  void                add_motor_raw(int8_t motor_num, float roll_fac, float pitch_fac, float yaw_fac, uint8_t testing_order);
-
-    // // add_motor using just position and yaw_factor (or prop direction)
-    // void                add_motor(int8_t motor_num, float angle_degrees, float yaw_factor, uint8_t testing_order);
-
-    // // add_motor using separate roll and pitch factors (for asymmetrical frames) and prop direction
-    // void                add_motor(int8_t motor_num, float roll_factor_in_degrees, float pitch_factor_in_degrees, float yaw_factor, uint8_t testing_order);
-
-    // // remove_motor
-    // void                remove_motor(int8_t motor_num);
-
-
-    // // normalizes the roll, pitch and yaw factors so maximum magnitude is 0.5
-    // void                normalise_rpy_factors();
-
-    // // call vehicle supplied thrust compensation if set
-    // void                thrust_compensation(void) override;
-
-    // float               _roll_factor[AP_MOTORS_MAX_NUM_MOTORS]; // each motors contribution to roll
-    // float               _pitch_factor[AP_MOTORS_MAX_NUM_MOTORS]; // each motors contribution to pitch
-    // float               _yaw_factor[AP_MOTORS_MAX_NUM_MOTORS];  // each motors contribution to yaw (normally 1 or -1)
-    // float               _thrust_rpyt_out[AP_MOTORS_MAX_NUM_MOTORS]; // combined roll, pitch, yaw and throttle outputs to motors in 0~1 range
-    // uint8_t             _test_order[AP_MOTORS_MAX_NUM_MOTORS];  // order of the motors in the test sequence
-    // motor_frame_class   _last_frame_class; // most recently requested frame class (i.e. quad, hexa, octa, etc)
-    // motor_frame_type    _last_frame_type; // most recently requested frame type (i.e. plus, x, v, etc)
-
-    // // motor failure handling
-    // float               _thrust_rpyt_out_filt[AP_MOTORS_MAX_NUM_MOTORS];    // filtered thrust outputs with 1 second time constant
-    // uint8_t             _motor_lost_index;  // index number of the lost motor
 };

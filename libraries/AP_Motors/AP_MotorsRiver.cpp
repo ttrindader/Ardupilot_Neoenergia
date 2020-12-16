@@ -7,7 +7,31 @@
 #include "AP_MotorsRiver.h"
 #include <GCS_MAVLink/GCS.h>
 
+
+
 extern const AP_HAL::HAL &hal;
+
+const AP_Param::GroupInfo AP_MotorsRiver::var_info[] = {
+    AP_NESTEDGROUPINFO(AP_MotorsMulticopter, 0),
+    
+    // @Param: SRVO_MIN_PWM
+    // @DisplayName: Servo Min
+    // @Description: PWM value sent by the Receiver for the minimum value of the servo position
+    // @Range: 0 3000
+    // @Units: PWM
+    // @User: Advanced
+    AP_GROUPINFO("SRVO_MIN_PWM",1,AP_MotorsRiver, _r_srv_min_pwm, 550),
+
+    // @Param: SRVO_MAX_PWM
+    // @DisplayName: Servo Max
+    // @Description: PWM value sent by the Receiver for the maximum value of the servo position
+    // @Range: 0 3000
+    // @Units: PWM
+    // @User: Advanced
+    AP_GROUPINFO("SRVO_MAX_PWM",2,AP_MotorsRiver, _r_srv_max_pwm,  2500),
+
+    AP_GROUPEND
+};
 
 void AP_MotorsRiver::output_to_motors() {
     int8_t i;
@@ -82,6 +106,7 @@ float AP_MotorsRiver::NormtoPWM(float val) {
 int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_max_pwm) {
     /// Nessa função deve-se inserir os valores mínimos e maxímos do pwm  considerando 0 a 180 como angulos mínimos e máximos
     //Entrada de angulo deve ser  de -180 a 180 ELE CHEGARÁ A 180 DEVIDO A ENGRENAGEM
+    
     angle = constrain_float(angle,-180.0f,180.0f);
 
     angle = 180.0f - angle;
@@ -242,9 +267,6 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
     Theta4 = Theta4 * RAD_TO_DEG;
 }
 
-
-/* ****************************** Mathaus *********************************
-***************************************************************************/
 void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
     // remove existing motors
     for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {

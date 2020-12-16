@@ -255,6 +255,8 @@ protected:
 
     AP_Relay relay;
 
+    // AP_MotorsRiver river;
+
     AP_ServoRelayEvents ServoRelayEvents;
 
     // notification object for LEDs, buzzers etc (parameter set to
