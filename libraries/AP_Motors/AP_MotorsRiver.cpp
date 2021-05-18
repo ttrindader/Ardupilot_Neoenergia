@@ -275,7 +275,7 @@ void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,f
     TN = TN * Nmax;
     FX = FX * Fmax;
 
-    FT = sqrt(sq(TN/L) + sq(FX));
+    FT = sqrtf(sq(TN/L) + sq(FX));
     FT = constrain_float(FT,0.0f,Fmax);
 
     // Converte o valor normalizado de 0  a 1 para PWM

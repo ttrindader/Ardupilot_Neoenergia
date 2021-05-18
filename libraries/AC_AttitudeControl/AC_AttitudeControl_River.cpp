@@ -353,15 +353,15 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-static uint8_t counter = 0;
+// static uint8_t counter = 0;
 
 void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){    
 
-    counter++;
-    if (counter > 150) {
-        counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
-    }
+    // counter++;
+    // if (counter > 150) {
+    //     counter = 0;
+    //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
+    // }
 
     x*=-1.0f;
     
