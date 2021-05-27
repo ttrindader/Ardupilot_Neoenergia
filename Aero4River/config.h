@@ -473,11 +473,11 @@
 
 // Acro Mode
 #ifndef ACRO_RP_P
- # define ACRO_RP_P                 4.5f
+ # define ACRO_RP_P                 1.0f
 #endif
 
 #ifndef ACRO_YAW_P
- # define ACRO_YAW_P                4.5f
+ # define ACRO_YAW_P                1.0f
 #endif
 
 #ifndef ACRO_LEVEL_MAX_ANGLE
