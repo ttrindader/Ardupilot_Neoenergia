@@ -2,19 +2,22 @@
 #include <GCS_MAVLink/GCS.h>
 
 bool Max = false;
+bool Min = false;
 static uint8_t counter = 0;
 // Mathaus
 float Copter::get_gain(){
     if (channel_gain->norm_input() > 0.5){
         Gain = Gain - 1.0f / 400.0f;
         Max = false;
+        Min = false;
     }
     if (channel_gain->norm_input() < -0.5){
         Gain = Gain + 1.0f / 400.0f;
         Max = false;
+        Min = false;
     }
 
-    Gain = constrain_float(Gain, 0.0f, 1.0f);
+    Gain = constrain_float(Gain, 0.05f, 1.0f);
 
     if (Gain > 0.9975f && !Max){
         counter++;
@@ -22,6 +25,15 @@ float Copter::get_gain(){
             counter = 0;
             gcs().send_text(MAV_SEVERITY_WARNING, "MAXIMUM GAIN REACHED");
             Max = true;
+        }
+    }
+
+    if (Gain < 0.0525f && !Min){
+        counter++;
+        if (counter > 100){
+            counter = 0;
+            gcs().send_text(MAV_SEVERITY_WARNING, "MINIMUM GAIN REACHED");
+            Min = true;
         }
     }
 
