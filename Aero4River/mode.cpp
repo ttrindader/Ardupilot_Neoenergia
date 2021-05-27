@@ -33,9 +33,12 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
 
     switch (mode) {
         case Mode::Number::STABILIZE:
-        case Mode::Number::ALT_HOLD:
         case Mode::Number::LAND:
             ret = &mode_stabilize;
+            break;
+
+            case Mode::Number::ALT_HOLD:
+            ret = &mode_althold;
             break;
 
 #if MODE_AUTO_ENABLED == ENABLED

@@ -191,7 +191,7 @@ public:
     friend class Mode;
     friend class ModeAcro;
     friend class ModeAcro_Heli;
-    // friend class ModeAltHold;
+    friend class ModeAltHold;
     friend class ModeAuto;
     friend class ModeAutoTune;
     // friend class ModeAvoidADSB;
@@ -490,9 +490,9 @@ private:
     AC_Fence fence;
 #endif
 
-// #if AC_AVOID_ENABLED == ENABLED
-//     AC_Avoid avoid;
-// #endif
+#if AC_AVOID_ENABLED == ENABLED
+     AC_Avoid avoid;
+#endif
 
     // Rally library
 #if AC_RALLY == ENABLED
@@ -887,7 +887,7 @@ private:
     ModeAcro mode_acro;
 #endif
 #endif
-    // ModeAltHold mode_althold;
+    ModeAltHold mode_althold;
 #if MODE_AUTO_ENABLED == ENABLED
     ModeAuto mode_auto;
 #endif

@@ -165,10 +165,10 @@ void ModePosHold::run()
     case AltHold_Flying:
         motors->set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
 
-// #if AC_AVOID_ENABLED == ENABLED
-//         // apply avoidance
-//         copter.avoid.adjust_roll_pitch(target_roll, target_pitch, copter.aparm.angle_max);
-// #endif
+#if AC_AVOID_ENABLED == ENABLED
+        // apply avoidance
+        copter.avoid.adjust_roll_pitch(target_roll, target_pitch, copter.aparm.angle_max);
+#endif
 
         // adjust climb rate using rangefinder
         if (copter.rangefinder_alt_ok()) {
