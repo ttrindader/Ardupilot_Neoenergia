@@ -119,6 +119,7 @@ protected:
     AP_Float        _r_srv_min_pwm; // valor de pwm para o  minimo do direcionamento dos servos (-180 graus)
     AP_Float        _r_srv_max_pwm; // valor de pwm para o  máximo do direcionamento dos servos (+180 graus)
  
+    float map_cube(float x, float y, float z);
     void FOSSEN_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
     void Differential_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
     void pwm_servo_angle(float &Pwm_servo_m1,float &Pwm_servo_m2,float &Pwm_servo_m3,float &Pwm_servo_m4,float theta_m1,float theta_m2,float theta_m3,float theta_m4);

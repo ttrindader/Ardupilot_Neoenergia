@@ -148,7 +148,7 @@ void AP_MotorsRiver::radio_key_passthrough_to_motors(float key)
 // output_armed - sends commands to the motors
 // includes new scaling stability patch
 
-float map_cube(float x, float y, float z)
+float AP_MotorsRiver::map_cube(float x, float y, float z)
 {
     float out = 0.0f;
     out = x*sqrtf(1 - powf(y,2)/2.0f - powf(z,2)/2.0f + (powf(y,2)*powf(z,2))/3.0f);
