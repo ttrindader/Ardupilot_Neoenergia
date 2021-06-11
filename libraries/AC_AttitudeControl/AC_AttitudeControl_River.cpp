@@ -369,18 +369,10 @@ void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){
 
     x*=-1.0f;
     
-    x = constrain_float(x,-1.0f,1.0f);
-    y = constrain_float(y,-1.0f,1.0f);
-    z = constrain_float(z,-1.0f,1.0f);
-
-    X = map_cube(x,y,z);
-    Y = map_cube(y,x,z);
-    Z = map_cube(z,y,x);
-
     // utilizado na alocação do barco
-    _motors.set_forward(X);
-    _motors.set_lateral(Y);
-    _motors.set_yaw(Z);
+    _motors.set_forward(x);
+    _motors.set_lateral(y);
+    // _motors.set_yaw(Z);
 
 }
 
@@ -593,6 +585,8 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_c
 // Command an angular velocity with angular velocity smoothing using rate loops only with no attitude loop stabilization
 void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
+    output_to_boat(pitch_rate_bf_cds/(4.5f*lean_angle_max()),roll_rate_bf_cds/(4.5f*lean_angle_max()),yaw_rate_bf_cds/(4.5f*lean_angle_max())); //Mathaus
+    
     // Convert from centidegrees on public interface to radians
     float roll_rate_rads = 0.0f;
     float pitch_rate_rads = 0.0f;
@@ -616,6 +610,7 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf
 // Command an angular velocity with angular velocity smoothing using rate loops only with integrated rate error stabilization
 void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_3(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
+    output_to_boat(pitch_rate_bf_cds/(4.5f*lean_angle_max()),roll_rate_bf_cds/(4.5f*lean_angle_max()),yaw_rate_bf_cds/(4.5f*lean_angle_max())); //Mathaus
     // Convert from centidegrees on public interface to radians
     float roll_rate_rads = 0.0f;
     float pitch_rate_rads = 0.0f;
@@ -670,6 +665,7 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_3(float roll_rate_bf
 // Used to command a step in angle without exciting the orthogonal axis during autotune
 void AC_AttitudeControl_River::input_angle_step_bf_roll_pitch_yaw(float roll_angle_step_bf_cd, float pitch_angle_step_bf_cd, float yaw_angle_step_bf_cd)
 {
+    output_to_boat(pitch_angle_step_bf_cd/(4.5f*lean_angle_max()),roll_angle_step_bf_cd/(4.5f*lean_angle_max()),yaw_angle_step_bf_cd/(4.5f*lean_angle_max())); //Mathaus
     // Convert from centidegrees on public interface to radians
     float roll_step_rads  = 0.0f;
     float pitch_step_rads = 0.0f;

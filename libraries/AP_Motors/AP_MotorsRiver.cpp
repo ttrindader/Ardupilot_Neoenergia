@@ -148,11 +148,32 @@ void AP_MotorsRiver::radio_key_passthrough_to_motors(float key)
 // output_armed - sends commands to the motors
 // includes new scaling stability patch
 
+float map_cube(float x, float y, float z)
+{
+    float out = 0.0f;
+    out = x*sqrtf(1 - powf(y,2)/2.0f - powf(z,2)/2.0f + (powf(y,2)*powf(z,2))/3.0f);
+    return out;
+}
+
+
 void AP_MotorsRiver::output_armed_stabilizing() {
+
+    float x = get_forward();
+    float y = get_forward();
+    float z = get_forward();
+
+    x = constrain_float(x,-1.0f,1.0f);
+    y = constrain_float(y,-1.0f,1.0f);
+    z = constrain_float(z,-1.0f,1.0f);
+
+    Fx = map_cube(x,y,z);
+    Fy = map_cube(y,x,z);
+    Tn = map_cube(z,y,x);
     
-    Fx = get_forward();
-    Fy = get_lateral(); //Colocar zero para calibrar
-    Tn = get_yaw();
+    // Fx = get_forward();
+    // Fy = get_lateral(); //Colocar zero para calibrar
+    // Tn = get_yaw();
+    
     
     if(_key_radio_passthrough<0)
     {
@@ -228,7 +249,7 @@ void AP_MotorsRiver::FOSSEN_allocation_matrix(float FX,float FY,float TN,float &
     PWM3 = NormtoPWM(PWM3);
     PWM4 = NormtoPWM(PWM4);
 
-    // Convertendo de grau para Radianos
+    // Convertendo de grau para Radianos_
     Theta1 = Theta1 * DEG_TO_RAD;
     Theta2 = Theta2 * DEG_TO_RAD;
     Theta3 = Theta3 * DEG_TO_RAD;
