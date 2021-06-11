@@ -129,36 +129,36 @@ int16_t tn;
 
 void Copter::Log_Write_Accacio()
 {
-float lat = current_loc.lat;
-float lon = current_loc.lng;
-float Roll = ahrs.roll;
-float Pitch = ahrs.pitch;
-float Yaw = ahrs.yaw;
+    float lat = current_loc.lat;
+    float lon = current_loc.lng;
+    float Roll = ahrs.roll;
+    float Pitch = ahrs.pitch;
+    float Yaw = ahrs.yaw;
 
-//const Vector3f &position = inertial_nav.get_position();
-const Vector3f &velocity = inertial_nav.get_velocity();
-const Vector3f &gyro = ins.get_gyro();
+    //const Vector3f &position = inertial_nav.get_position();
+    const Vector3f &velocity = inertial_nav.get_velocity();
+    const Vector3f &gyro = ins.get_gyro();
 
-// Body Velocity
-float vx_body = +cosf(Yaw)*(velocity.x) + sinf(Yaw)*(velocity.y);
-float vy_body = -sinf(Yaw)*(velocity.x) + cosf(Yaw)*(velocity.y);
+    // Body Velocity
+    float vx_body = +cosf(Yaw) * (velocity.x) + sinf(Yaw) * (velocity.y);
+    float vy_body = -sinf(Yaw) * (velocity.x) + cosf(Yaw) * (velocity.y);
 
-struct log_Accacio pkt={
-LOG_PACKET_HEADER_INIT(LOG_ACCACIO_MSG),
-time_us : AP_HAL::micros64(),
-Lat : lat,
-Lon : lon,
-roll : Roll,
-pitch : Pitch,
-yaw : Yaw,
-Vx : vx_body,
-Vy : vy_body,
-r : gyro.z,
-fx : channel_pitch->get_radio_in(),
-fy : channel_roll->get_radio_in(),
-tn : channel_yaw->get_radio_in(),
-};
-logger.WriteBlock(&pkt, sizeof(pkt));
+    struct log_Accacio pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_ACCACIO_MSG),
+        time_us : AP_HAL::micros64(),
+        Lat : lat,
+        Lon : lon,
+        roll : Roll,
+        pitch : Pitch,
+        yaw : Yaw,
+        Vx : vx_body,
+        Vy : vy_body,
+        r : gyro.z,
+        fx : channel_pitch->get_radio_in(),
+        fy : channel_roll->get_radio_in(),
+        tn : channel_yaw->get_radio_in(),
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
 // -----------------------------------------------------------

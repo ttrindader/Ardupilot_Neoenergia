@@ -160,6 +160,8 @@ public:
         k_param_single_servo_2,         // remove
         k_param_single_servo_3,         // remove
         k_param_single_servo_4,         // 78 - remove
+        
+
 
         //
         // 80: Heli
@@ -198,6 +200,10 @@ public:
         k_param_pos_control,
         k_param_circle_nav,
         k_param_loiter_nav,     // 105
+
+                // RIVER
+        k_param_r_srv_max = 106,
+        k_param_r_srv_min,
 
         // 110: Telemetry control
         //
@@ -376,6 +382,7 @@ public:
         // 511: reserved
     };
 
+    
     AP_Int16        format_version;
 
     // Telemetry control
@@ -394,7 +401,7 @@ public:
 #if RANGEFINDER_ENABLED == ENABLED
     AP_Float        rangefinder_gain;
 #endif
-
+        
     AP_Int8         failsafe_gcs;               // ground station failsafe behavior
     AP_Int16        gps_hdop_good;              // GPS Hdop value at or below this value represent a good position
 
@@ -444,6 +451,7 @@ public:
     AP_Int8         fs_crash_check;
     AP_Float        fs_ekf_thresh;
     AP_Int16        gcs_pid_mask;
+    // AP_Int16        river;
 
 // #if MODE_THROW_ENABLED == ENABLED
 //     AP_Int8         throw_motor_start;

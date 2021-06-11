@@ -7,7 +7,31 @@
 #include "AP_MotorsRiver.h"
 #include <GCS_MAVLink/GCS.h>
 
+
+
 extern const AP_HAL::HAL &hal;
+
+const AP_Param::GroupInfo AP_MotorsRiver::var_info[] = {
+    AP_NESTEDGROUPINFO(AP_MotorsMulticopter, 0),
+    
+    // @Param: SRVO_MIN_PWM
+    // @DisplayName: Servo Min
+    // @Description: PWM value sent by the Receiver for the minimum value of the servo position
+    // @Range: 0 3000
+    // @Units: PWM
+    // @User: Advanced
+    AP_GROUPINFO("SRVO_MIN_PWM",1,AP_MotorsRiver, _r_srv_min_pwm, 550),
+
+    // @Param: SRVO_MAX_PWM
+    // @DisplayName: Servo Max
+    // @Description: PWM value sent by the Receiver for the maximum value of the servo position
+    // @Range: 0 3000
+    // @Units: PWM
+    // @User: Advanced
+    AP_GROUPINFO("SRVO_MAX_PWM",2,AP_MotorsRiver, _r_srv_max_pwm,  2500),
+
+    AP_GROUPEND
+};
 
 void AP_MotorsRiver::output_to_motors() {
     int8_t i;
@@ -82,6 +106,7 @@ float AP_MotorsRiver::NormtoPWM(float val) {
 int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_max_pwm) {
     /// Nessa função deve-se inserir os valores mínimos e maxímos do pwm  considerando 0 a 180 como angulos mínimos e máximos
     //Entrada de angulo deve ser  de -180 a 180 ELE CHEGARÁ A 180 DEVIDO A ENGRENAGEM
+    
     angle = constrain_float(angle,-180.0f,180.0f);
 
     angle = 180.0f - angle;
@@ -166,6 +191,11 @@ void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, f
     Pwm_servo_m2 = servo_angle_to_pwm(theta_2,550.0,2475.0);//664.0,2144.0);
     Pwm_servo_m3 = servo_angle_to_pwm(theta_3,550.0,2475.0);//656.0,2400.0);
     Pwm_servo_m4 = servo_angle_to_pwm(theta_4,550.0,2475.0);//700.0,2345.0);
+
+    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1,_r_srv_min_pwm,_r_srv_max_pwm);//675.0,2329.0);
+    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2,_r_srv_min_pwm,_r_srv_max_pwm);//664.0,2144.0);
+    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3,_r_srv_min_pwm,_r_srv_max_pwm);//656.0,2400.0);
+    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4,_r_srv_min_pwm,_r_srv_max_pwm);//700.0,2345.0);
 
     // BARCO PEQUENO
     // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
