@@ -524,7 +524,7 @@ void Copter::init_simple_bearing()
     }
 }
 
-//mathaus
+// mathaus
 void Copter::update_simple_mode(void) //mathaus
 {
     float fy, fx;

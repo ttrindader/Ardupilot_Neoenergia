@@ -8,13 +8,9 @@ static uint8_t counter = 0;
 float Copter::get_gain(){
     if (channel_gain->norm_input() > 0.5){
         Gain = Gain - 1.0f / 400.0f;
-        Max = false;
-        Min = false;
     }
     if (channel_gain->norm_input() < -0.5){
         Gain = Gain + 1.0f / 400.0f;
-        Max = false;
-        Min = false;
     }
 
     Gain = constrain_float(Gain, 0.05f, 1.0f);
@@ -24,18 +20,21 @@ float Copter::get_gain(){
         if (counter > 100){
             counter = 0;
             gcs().send_text(MAV_SEVERITY_WARNING, "MAXIMUM GAIN REACHED");
-            Max = true;
         }
+        Max = true;
     }
+
+    Max = (Gain < 0.9975f)? false: true;
 
     if (Gain < 0.0525f && !Min){
         counter++;
         if (counter > 100){
             counter = 0;
             gcs().send_text(MAV_SEVERITY_WARNING, "MINIMUM GAIN REACHED");
-            Min = true;
         }
     }
+    
+    Min = (Gain > 0.0525f)? false: true;
 
     // Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
     return Gain;
