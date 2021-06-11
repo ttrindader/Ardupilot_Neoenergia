@@ -162,7 +162,6 @@ void AP_MotorsRiver::output_armed_stabilizing() {
     }
 
 
-
     motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
     motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
     motor_enabled[2] ? _thrust_rpyt_out[2] = Pwm3 : _thrust_rpyt_out[2] = 0.0f;

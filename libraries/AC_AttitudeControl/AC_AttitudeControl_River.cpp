@@ -390,7 +390,7 @@ void AC_AttitudeControl_River::passthrough_servo(float PWM){
   
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
-void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds float euler_yaw_rate_cds)
+void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)
 {
 
      output_to_boat(euler_pitch_angle_cd/lean_angle_max(),euler_roll_angle_cd/lean_angle_max(),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
