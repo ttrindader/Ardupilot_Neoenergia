@@ -282,9 +282,9 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // flip - fly vehicle in flip in pitch and roll direction mode
-#ifndef MODE_FLIP_ENABLED
-# define MODE_FLIP_ENABLED ENABLED
-#endif
+// #ifndef MODE_FLIP_ENABLED
+// # define MODE_FLIP_ENABLED ENABLED
+// #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Follow - follow another vehicle or GCS
@@ -342,9 +342,9 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // Throw - fly vehicle after throwing it in the air
-#ifndef MODE_THROW_ENABLED
-# define MODE_THROW_ENABLED ENABLED
-#endif
+// #ifndef MODE_THROW_ENABLED
+// # define MODE_THROW_ENABLED ENABLED
+// #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // ZigZag - allow vehicle to fly in a zigzag manner with predefined point A B
@@ -717,9 +717,9 @@
   #error SmartRTL requires ModeRTL which is disabled
 #endif
 
-#if HAL_ADSB_ENABLED && !MODE_GUIDED_ENABLED
-  #error ADSB requires ModeGuided which is disabled
-#endif
+// #if HAL_ADSB_ENABLED && !MODE_GUIDED_ENABLED
+//   #error ADSB requires ModeGuided which is disabled
+// #endif
 
 #if MODE_FOLLOW_ENABLED && !MODE_GUIDED_ENABLED
   #error Follow requires ModeGuided which is disabled

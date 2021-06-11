@@ -453,9 +453,9 @@ public:
     AP_Int16        gcs_pid_mask;
     // AP_Int16        river;
 
-#if MODE_THROW_ENABLED == ENABLED
-    AP_Int8         throw_motor_start;
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//     AP_Int8         throw_motor_start;
+// #endif
 
     AP_Int8         rtl_alt_type;
 
@@ -501,11 +501,11 @@ public:
     AP_Gripper gripper;
 #endif
 
-#if MODE_THROW_ENABLED == ENABLED
-    // Throw mode parameters
-    AP_Int8 throw_nextmode;
-    AP_Int8 throw_type;
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//     // Throw mode parameters
+//     AP_Int8 throw_nextmode;
+//     AP_Int8 throw_type;
+// #endif
 
     // ground effect compensation enable/disable
     AP_Int8 gndeffect_comp_enabled;

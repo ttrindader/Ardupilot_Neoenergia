@@ -98,6 +98,8 @@ public:
     // output_to_motors - sends minimum values out to the motors
     void                output_to_motors() override;
 
+    void radio_key_passthrough_to_motors( float key) ;
+
     // // get_motor_mask - returns a bitmask of which outputs are being used for motors (1 means being used)
     // //  this can be used to ensure other pwm outputs (i.e. for servos) do not conflict
     // uint16_t            get_motor_mask() override;
@@ -117,7 +119,8 @@ protected:
     AP_Float        _r_srv_min_pwm; // valor de pwm para o  minimo do direcionamento dos servos (-180 graus)
     AP_Float        _r_srv_max_pwm; // valor de pwm para o  máximo do direcionamento dos servos (+180 graus)
  
-    void FOSSEN_alocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
+    void FOSSEN_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
+    void Differential_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
     void pwm_servo_angle(float &Pwm_servo_m1,float &Pwm_servo_m2,float &Pwm_servo_m3,float &Pwm_servo_m4,float theta_m1,float theta_m2,float theta_m3,float theta_m4);
     void CalibrateServo(float &Pwm_servo);
     void direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4);

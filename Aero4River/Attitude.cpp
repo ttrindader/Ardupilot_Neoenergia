@@ -1,16 +1,45 @@
 #include "Copter.h"
+#include <GCS_MAVLink/GCS.h>
 
+bool Max = false;
+bool Min = false;
+static uint8_t counter = 0;
 // Mathaus
-float Copter::get_gain() {   
-    Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
-
-    if ((channel_throttle->get_radio_in() - channel_throttle->get_radio_min())<10){
-        Gain = 0.0f;
+float Copter::get_gain(){
+    if (channel_gain->norm_input() > 0.5){
+        Gain = Gain - 1.0f / 400.0f;
+        Max = false;
+        Min = false;
     }
+    if (channel_gain->norm_input() < -0.5){
+        Gain = Gain + 1.0f / 400.0f;
+        Max = false;
+        Min = false;
+    }
+
+    Gain = constrain_float(Gain, 0.05f, 1.0f);
+
+    if (Gain > 0.9975f && !Max){
+        counter++;
+        if (counter > 100){
+            counter = 0;
+            gcs().send_text(MAV_SEVERITY_WARNING, "MAXIMUM GAIN REACHED");
+            Max = true;
+        }
+    }
+
+    if (Gain < 0.0525f && !Min){
+        counter++;
+        if (counter > 100){
+            counter = 0;
+            gcs().send_text(MAV_SEVERITY_WARNING, "MINIMUM GAIN REACHED");
+            Min = true;
+        }
+    }
+
+    // Gain = (float)(1.0f*channel_gain->get_radio_in() - channel_gain->get_radio_min())/(channel_gain->get_radio_max()-channel_gain->get_radio_min());
     return Gain;
 }
-
-
 
 // transform pilot's yaw input into a desired yaw rate
 // returns desired yaw rate in centi-degrees per second
@@ -24,20 +53,8 @@ float Copter::get_pilot_desired_yaw_rate(int16_t stick_angle) {
     // range check expo
     g2.acro_y_expo = constrain_float(g2.acro_y_expo, 0.0f, 1.0f);
 
-    // calculate yaw rate request
-    // if (is_zero(g2.acro_y_expo)) {
-        yaw_request = stick_angle * g.acro_yaw_p;
-    // } else {
-    //     // expo variables
-    //     float y_in, y_in3, y_out;
+    yaw_request = stick_angle * g.acro_yaw_p;
 
-    //     // yaw expo
-    //     y_in = float(stick_angle)/ROLL_PITCH_YAW_INPUT_MAX;
-    //     y_in3 = y_in*y_in*y_in;
-    //     y_out = (g2.acro_y_expo * y_in3) + ((1.0f - g2.acro_y_expo) * y_in);
-    //     yaw_request = ROLL_PITCH_YAW_INPUT_MAX * y_out * g.acro_yaw_p;
-    // }
-    // convert pilot input to the desired yaw rate
     return yaw_request;
 }
 

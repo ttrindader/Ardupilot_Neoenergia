@@ -439,7 +439,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, float pitch, float euler_yaw_angle_cd, bool slew_yaw){
 
-    output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_angle_cd/lean_angle_max()); //Mathaus
+    // output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),0*euler_yaw_angle_cd/lean_angle_max()); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float euler_yaw_angle = radians(euler_yaw_angle_cd * 0.01f);
@@ -456,7 +456,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, floa
         // and an exponential decay specified by _input_tc at the end.
         _attitude_target_euler_rate.x = 0.0f;
         _attitude_target_euler_rate.y = 0.0f;
-        _attitude_target_euler_rate.z = input_shaping_angle(wrap_PI(euler_yaw_angle - _attitude_target_euler_angle.z)*0.0f, _input_tc, euler_accel.z, _attitude_target_euler_rate.z, _dt);
+        _attitude_target_euler_rate.z = input_shaping_angle(wrap_PI(euler_yaw_angle - _attitude_target_euler_angle.z), _input_tc, euler_accel.z, _attitude_target_euler_rate.z, _dt);
         if (slew_yaw) {
             _attitude_target_euler_rate.z = constrain_float(_attitude_target_euler_rate.z, -get_slew_yaw_rads(), get_slew_yaw_rads());
         }
@@ -487,6 +487,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float roll, floa
         _attitude_target_ang_vel = Vector3f(0.0f, 0.0f, 0.0f);
     }
 
+    output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),_attitude_target_euler_angle.z/M_PI); //Mathaus
     // Call quaternion attitude controller
     attitude_controller_run_quat();
 }

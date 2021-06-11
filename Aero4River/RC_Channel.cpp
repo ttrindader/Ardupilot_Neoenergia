@@ -164,13 +164,6 @@ void RC_Channel_Copter::do_aux_function_armdisarm(const AuxSwitchPos ch_flag)
 void RC_Channel_Copter::do_aux_function(const aux_func_t ch_option, const AuxSwitchPos ch_flag)
 {
     switch(ch_option) {
-        case AUX_FUNC::FLIP:
-            // flip if switch is on, positive throttle and we're actually flying
-            if (ch_flag == AuxSwitchPos::HIGH) {
-                copter.set_mode(Mode::Number::FLIP, ModeReason::RC_COMMAND);
-            }
-            break;
-
         case AUX_FUNC::SIMPLE_MODE:
             // low = simple mode off, middle or high position turns simple mode on
             copter.set_simple_mode((ch_flag == AuxSwitchPos::LOW) ? Copter::SimpleMode::NONE : Copter::SimpleMode::SIMPLE);
@@ -397,9 +390,9 @@ void RC_Channel_Copter::do_aux_function(const aux_func_t ch_option, const AuxSwi
             break;
 
         case AUX_FUNC::THROW:
-#if MODE_THROW_ENABLED == ENABLED
-            do_aux_function_change_mode(Mode::Number::THROW, ch_flag);
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//             do_aux_function_change_mode(Mode::Number::THROW, ch_flag);
+// #endif
             break;
 
         case AUX_FUNC::PRECISION_LOITER:

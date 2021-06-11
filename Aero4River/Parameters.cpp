@@ -679,28 +679,28 @@ const AP_Param::Info Copter::var_info[] = {
     GOBJECT(rpm_sensor, "RPM", AP_RPM),
 #endif
 
-#if HAL_ADSB_ENABLED
-    // @Group: ADSB_
-    // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp
-    GOBJECT(adsb,                "ADSB_", AP_ADSB),
+// #if HAL_ADSB_ENABLED
+//     // @Group: ADSB_
+//     // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp
+//     GOBJECT(adsb,                "ADSB_", AP_ADSB),
 
-    // @Group: AVD_
-    // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp
-    GOBJECT(avoidance_adsb, "AVD_", AP_Avoidance_Copter),
-#endif
+//     // @Group: AVD_
+//     // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp
+//     GOBJECT(avoidance_adsb, "AVD_", AP_Avoidance_Copter),
+// #endif
 
     // @Group: NTF_
     // @Path: ../libraries/AP_Notify/AP_Notify.cpp
     GOBJECT(notify, "NTF_",  AP_Notify),
 
-#if MODE_THROW_ENABLED == ENABLED
-    // @Param: THROW_MOT_START
-    // @DisplayName: Start motors before throwing is detected
-    // @Description: Used by Throw mode. Controls whether motors will run at the speed set by MOT_SPIN_MIN or will be stopped when armed and waiting for the throw.
-    // @Values: 0:Stopped,1:Running
-    // @User: Standard
-    GSCALAR(throw_motor_start, "THROW_MOT_START", 0),
-#endif
+// #if MODE_THROW_ENABLED == ENABLED
+//     // @Param: THROW_MOT_START
+//     // @DisplayName: Start motors before throwing is detected
+//     // @Description: Used by Throw mode. Controls whether motors will run at the speed set by MOT_SPIN_MIN or will be stopped when armed and waiting for the throw.
+//     // @Values: 0:Stopped,1:Running
+//     // @User: Standard
+//     GSCALAR(throw_motor_start, "THROW_MOT_START", 0),
+// #endif
 
     // @Param: RTL_ALT_TYPE
     // @DisplayName: RTL mode altitude type
@@ -744,21 +744,21 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_SUBGROUPPTR(button_ptr, "BTN_", 2, ParametersG2, AP_Button),
 #endif
 
-#if MODE_THROW_ENABLED == ENABLED
-    // @Param: THROW_NEXTMODE
-    // @DisplayName: Throw mode's follow up mode
-    // @Description: Vehicle will switch to this mode after the throw is successfully completed.  Default is to stay in throw mode (18)
-    // @Values: 3:Auto,4:Guided,5:LOITER,6:RTL,9:Land,17:Brake,18:Throw
-    // @User: Standard
-    AP_GROUPINFO("THROW_NEXTMODE", 3, ParametersG2, throw_nextmode, 18),
+// #if MODE_THROW_ENABLED == ENABLED
+//     // @Param: THROW_NEXTMODE
+//     // @DisplayName: Throw mode's follow up mode
+//     // @Description: Vehicle will switch to this mode after the throw is successfully completed.  Default is to stay in throw mode (18)
+//     // @Values: 3:Auto,4:Guided,5:LOITER,6:RTL,9:Land,17:Brake,18:Throw
+//     // @User: Standard
+//     AP_GROUPINFO("THROW_NEXTMODE", 3, ParametersG2, throw_nextmode, 18),
 
-    // @Param: THROW_TYPE
-    // @DisplayName: Type of Type
-    // @Description: Used by Throw mode. Specifies whether Copter is thrown upward or dropped.
-    // @Values: 0:Upward Throw,1:Drop
-    // @User: Standard
-    AP_GROUPINFO("THROW_TYPE", 4, ParametersG2, throw_type, ModeThrow::ThrowType_Upward),
-#endif
+//     // @Param: THROW_TYPE
+//     // @DisplayName: Type of Type
+//     // @Description: Used by Throw mode. Specifies whether Copter is thrown upward or dropped.
+//     // @Values: 0:Upward Throw,1:Drop
+//     // @User: Standard
+//     AP_GROUPINFO("THROW_TYPE", 4, ParametersG2, throw_type, ModeThrow::ThrowType_Upward),
+// #endif
 
     // @Param: GND_EFFECT_COMP
     // @DisplayName: Ground Effect Compensation Enable/Disable
@@ -888,11 +888,11 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("LAND_ALT_LOW", 25, ParametersG2, land_alt_low, 1000),
 
-#if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    // @Group: FHLD
-    // @Path: mode_flowhold.cpp
-    AP_SUBGROUPPTR(mode_flowhold_ptr, "FHLD", 26, ParametersG2, ModeFlowHold),
-#endif
+// #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
+//     // @Group: FHLD
+//     // @Path: mode_flowhold.cpp
+//     AP_SUBGROUPPTR(mode_flowhold_ptr, "FHLD", 26, ParametersG2, ModeFlowHold),
+// #endif
 
 #if MODE_FOLLOW_ENABLED == ENABLED
     // @Group: FOLL
@@ -1005,9 +1005,9 @@ ParametersG2::ParametersG2(void)
 #if MODE_SMARTRTL_ENABLED == ENABLED
     ,smart_rtl()
 #endif
-#if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
-    ,mode_flowhold_ptr(&copter.mode_flowhold)
-#endif
+// #if !HAL_MINIMIZE_FEATURES && OPTFLOW == ENABLED
+//     ,mode_flowhold_ptr(&copter.mode_flowhold)
+// #endif
 #if MODE_FOLLOW_ENABLED == ENABLED
     ,follow()
 #endif

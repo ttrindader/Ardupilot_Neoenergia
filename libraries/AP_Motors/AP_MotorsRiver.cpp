@@ -135,6 +135,16 @@ void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
     }
 }
 
+float _key_radio_passthrough = 0.0f;
+
+// pilot input in the -1 ~ +1 range for roll, pitch and yaw. 0~1 range for throttle
+void AP_MotorsRiver::radio_key_passthrough_to_motors(float key)
+{
+    _key_radio_passthrough = key;
+}
+
+
+
 // output_armed - sends commands to the motors
 // includes new scaling stability patch
 
@@ -143,8 +153,15 @@ void AP_MotorsRiver::output_armed_stabilizing() {
     Fx = get_forward();
     Fy = get_lateral(); //Colocar zero para calibrar
     Tn = get_yaw();
+    
+    if(_key_radio_passthrough<0)
+    {
+        FOSSEN_allocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
+    }else{
+        Differential_allocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
+    }
 
-    FOSSEN_alocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
+
 
     motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
     motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
@@ -170,10 +187,15 @@ void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, f
     
     // BARCO GRANDE
 
-    Pwm_servo_m1 = servo_angle_to_pwm(theta_1,_r_srv_min_pwm,_r_srv_max_pwm);//675.0,2329.0);
-    Pwm_servo_m2 = servo_angle_to_pwm(theta_2,_r_srv_min_pwm,_r_srv_max_pwm);//664.0,2144.0);
-    Pwm_servo_m3 = servo_angle_to_pwm(theta_3,_r_srv_min_pwm,_r_srv_max_pwm);//656.0,2400.0);
-    Pwm_servo_m4 = servo_angle_to_pwm(theta_4,_r_srv_min_pwm,_r_srv_max_pwm);//700.0,2345.0);
+    Pwm_servo_m1 = servo_angle_to_pwm(theta_1,550.0,2475.0);//675.0,2329.0);
+    Pwm_servo_m2 = servo_angle_to_pwm(theta_2,550.0,2475.0);//664.0,2144.0);
+    Pwm_servo_m3 = servo_angle_to_pwm(theta_3,550.0,2475.0);//656.0,2400.0);
+    Pwm_servo_m4 = servo_angle_to_pwm(theta_4,550.0,2475.0);//700.0,2345.0);
+
+    // Pwm_servo_m1 = servo_angle_to_pwm(theta_1,_r_srv_min_pwm,_r_srv_max_pwm);//675.0,2329.0);
+    // Pwm_servo_m2 = servo_angle_to_pwm(theta_2,_r_srv_min_pwm,_r_srv_max_pwm);//664.0,2144.0);
+    // Pwm_servo_m3 = servo_angle_to_pwm(theta_3,_r_srv_min_pwm,_r_srv_max_pwm);//656.0,2400.0);
+    // Pwm_servo_m4 = servo_angle_to_pwm(theta_4,_r_srv_min_pwm,_r_srv_max_pwm);//700.0,2345.0);
 
     // BARCO PEQUENO
     // Pwm_servo_m1 = servo_angle_to_pwm(theta_1, 550.0, 2500.0);
@@ -183,7 +205,7 @@ void AP_MotorsRiver::pwm_servo_angle(float &Pwm_servo_m1, float &Pwm_servo_m2, f
 
 }
 
-void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
+void AP_MotorsRiver::FOSSEN_allocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
     /// TRABALHA COM RADIANOS
     /// Fx = força no eixo X - Seu valor deve variar de -1 a 1
     /// Fy = força no eixo y - Seu valor deve variar de -1 a 1
@@ -267,6 +289,69 @@ void AP_MotorsRiver::FOSSEN_alocation_matrix(float FX,float FY,float TN,float &T
     Theta4 = Theta4 * RAD_TO_DEG;
 }
 
+void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4){
+    /// TRABALHA COM RADIANOS
+    /// Fx = força no eixo X - Seu valor deve variar de -1 a 1
+    /// Fy = força no eixo y - Seu valor deve variar de -1 a 1
+    /// N  = tork de guinada - Seu valor deve variar de -1 a 1
+    /// Função para alocar as forças do barco a partir da metodologia descrita em FOSSEN
+
+    FX = constrain_float(FX,-1.0f,1.0f);
+    TN = constrain_float(TN,-1.0f,1.0f);
+
+    FY = 0.0f;
+    FY = FY;
+
+    TN = TN * Nmax;
+    FX = FX * Fmax;
+
+    FT = sqrtf(sq(TN/L) + sq(FX));
+    FT = constrain_float(FT,0.0f,Fmax);
+
+    // Converte o valor normalizado de 0  a 1 para PWM
+    PWM1 = NormtoPWM(PWM1);
+    PWM2 = NormtoPWM(PWM2);
+    PWM3 = NormtoPWM(PWM3);
+    PWM4 = NormtoPWM(PWM4);
+
+    // Convertendo de grau para Radianos
+    Theta1 = 0.0f ;
+    Theta2 = 0.0f ;
+    Theta3 = 0.0f ;
+    Theta4 = 0.0f ;
+
+    if(FT<0.02*Fmax){
+        //Envia todos os PWMs muito pequenos (Nulos-Na prática) Os valores aqui, não estão normalizados entre 0 e 1
+        PWM1 = NormtoPWM(0.0f);
+        PWM2 = NormtoPWM(0.0f);
+        PWM3 = NormtoPWM(0.0f);
+        PWM4 = NormtoPWM(0.0f);
+
+    }else{
+        // ========================================== PWM calculado a partir da força e dos angulos ====================================
+        PWM1 = FX/(4*k1) - TN/(4*Ly*k1);
+        PWM2 = FX/(4*k2) + TN/(4*Ly*k2);
+        PWM3 = FX/(4*k3) + TN/(4*Ly*k3);
+        PWM4 = FX/(4*k4) - TN/(4*Ly*k4);
+
+        // Saturação
+        PWM1 = constrain_float(PWM1,Pwmmin,Pwmmax);
+        PWM2 = constrain_float(PWM2,Pwmmin,Pwmmax);
+        PWM3 = constrain_float(PWM3,Pwmmin,Pwmmax);
+        PWM4 = constrain_float(PWM4,Pwmmin,Pwmmax);
+    }
+
+    direct_allocation(Theta1, Theta2, Theta3, Theta4, PWM1, PWM2, PWM3, PWM4);
+
+    // Normaliza o valor de PWM encontrado entre 0 e 1 para ativar a saida entre mínima e maxima potência
+    PWM1 = PWMtoNorm(PWM1);
+    PWM2 = PWMtoNorm(PWM2);
+    PWM3 = PWMtoNorm(PWM3);
+    PWM4 = PWMtoNorm(PWM4);
+
+}
+/* ****************************** Mathaus *********************************
+***************************************************************************/
 void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
     // remove existing motors
     for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {

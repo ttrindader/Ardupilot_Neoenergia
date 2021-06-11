@@ -1,25 +1,24 @@
 #include "Copter.h"
 
-
 // Function that will read the radio data, limit servos and trigger a failsafe
 // ----------------------------------------------------------------------------
 
-void Copter::default_dead_zones()
-{
+void Copter::default_dead_zones(){
     channel_roll->set_default_dead_zone(20);
     channel_pitch->set_default_dead_zone(20);
     channel_throttle->set_default_dead_zone(30);
     channel_yaw->set_default_dead_zone(20);
     channel_gain->set_default_dead_zone(0);
+    channel_key->set_default_dead_zone(0);
 }
 
-void Copter::init_rc_in()
-{
+void Copter::init_rc_in(){
     channel_roll     = rc().channel(rcmap.roll()-1);
     channel_pitch    = rc().channel(rcmap.pitch()-1);
     channel_throttle = rc().channel(rcmap.throttle()-1);
     channel_yaw      = rc().channel(rcmap.yaw()-1);
     channel_gain     = rc().channel(CH_6);
+    channel_key      = rc().channel(CH_7);
 
     // set rc channel ranges
     channel_roll->set_angle(ROLL_PITCH_YAW_INPUT_MAX);
@@ -28,6 +27,7 @@ void Copter::init_rc_in()
     channel_throttle->set_range(1000);
 
     channel_gain->set_range(1000);
+    channel_key->set_range(1000);
 
     // set default dead zones
     default_dead_zones();
@@ -37,8 +37,7 @@ void Copter::init_rc_in()
 }
 
  // init_rc_out -- initialise motors
-void Copter::init_rc_out()
-{
+void Copter::init_rc_out(){
     motors->set_loop_rate(scheduler.get_loop_rate_hz());
     motors->init((AP_Motors::motor_frame_class)g2.frame_class.get(), (AP_Motors::motor_frame_type)g.frame_type.get());
 
@@ -48,13 +47,7 @@ void Copter::init_rc_out()
     // update rate must be set after motors->init() to allow for motor mapping
     motors->set_update_rate(g.rc_speed);
 
-#if FRAME_CONFIG != HELI_FRAME
     motors->set_throttle_range(channel_throttle->get_radio_min(), channel_throttle->get_radio_max());
-#else
-    // setup correct scaling for ESCs like the UAVCAN ESCs which
-    // take a proportion of speed.
-    hal.rcout->set_esc_scaling(channel_throttle->get_radio_min(), channel_throttle->get_radio_max());
-#endif
 
     // refresh auxiliary channel to function map
     SRV_Channels::update_aux_servo_function();
@@ -70,14 +63,12 @@ void Copter::init_rc_out()
 
 
 // enable_motor_output() - enable and output lowest possible value to motors
-void Copter::enable_motor_output()
-{
+void Copter::enable_motor_output(){
     // enable motors
     motors->output_min();
 }
 
-void Copter::read_radio()
-{
+void Copter::read_radio(){
     const uint32_t tnow_ms = millis();
 
     if (rc().read_input()) {
@@ -91,6 +82,8 @@ void Copter::read_radio()
 
         // pass pilot input through to motors (used to allow wiggling servos while disarmed on heli, single, coax copters)
         radio_passthrough_to_motors();
+
+        radio_key_passthrough_to_motors();
 
         const float dt = (tnow_ms - last_radio_update_ms)*1.0e-3f;
         rc_throttle_control_in_filter.apply(channel_throttle->get_control_in(), dt);
@@ -193,6 +186,11 @@ void Copter::radio_passthrough_to_motors()
                                   channel_pitch->norm_input(),
                                   channel_throttle->get_control_in_zero_dz()*0.001f,
                                   channel_yaw->norm_input());
+}
+
+void Copter::radio_key_passthrough_to_motors()
+{
+    motors->radio_key_passthrough_to_motors(channel_key->norm_input());
 }
 
 /*
