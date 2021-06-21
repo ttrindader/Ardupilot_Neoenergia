@@ -753,14 +753,14 @@ const struct LogStructure Copter::log_structure[] = {
 
     { LOG_GUIDEDTARGET_MSG, sizeof(log_GuidedTarget),
       "GUID",  "QBffffff",    "TimeUS,Type,pX,pY,pZ,vX,vY,vZ", "s-mmmnnn", "F-BBBBBB" },
-// mathaus
+// // mathaus
 
-{ LOG_MATHAUS_MSG, sizeof(log_Mathaus),
-"MAT", "Qffffffffffffff","TimeUS,Th1,Th2,Th3,Th4,Pwm1,Pwm2,Pwm3,Pwm4,Fx,Fy,TN,FxO,FyO,TNO" },
-{ LOG_GRIN_MSG, sizeof(log_Grin),
-"GRIN", "Qfffffffff","TimeUS,Lat,Lon,Px,Py,Vx,Vy,yaw,cyaw,syaw" },
-{ LOG_ACCACIO_MSG, sizeof(log_Accacio),
-"AFSN", "Qffffffffhhh","TimeUS,Lat,Lon,Roll,Pitch,Yaw,Vx,Vy,r,fx,fy,tn" },
+// { LOG_MATHAUS_MSG, sizeof(log_Mathaus),
+// "MAT", "Qffffffffffffff","TimeUS,Th1,Th2,Th3,Th4,Pwm1,Pwm2,Pwm3,Pwm4,Fx,Fy,TN,FxO,FyO,TNO" },
+// { LOG_GRIN_MSG, sizeof(log_Grin),
+// "GRIN", "Qfffffffff","TimeUS,Lat,Lon,Px,Py,Vx,Vy,yaw,cyaw,syaw" },
+// { LOG_ACCACIO_MSG, sizeof(log_Accacio),
+// "AFSN", "Qffffffffhhh","TimeUS,Lat,Lon,Roll,Pitch,Yaw,Vx,Vy,r,fx,fy,tn"},
 
 };
 

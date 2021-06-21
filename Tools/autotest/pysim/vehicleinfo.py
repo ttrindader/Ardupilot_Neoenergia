@@ -12,12 +12,12 @@ class VehicleInfo(object):
         "frames": {
             "+": {
                 "waf_target": "bin/aero4river",
-                "default_params_filename": "default_params/copter.parm",
+                "default_params_filename": "default_params/river.parm",
             },
             "quad": {
                 "model": "+",
                 "waf_target": "bin/aero4river",
-                "default_params_filename": "default_params/copter.parm",
+                "default_params_filename": "default_params/river.parm",
             },
         },
     },
