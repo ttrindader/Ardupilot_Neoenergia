@@ -87,131 +87,6 @@ const AP_HAL::HAL& hal = AP_HAL::get_HAL();
   should be listed here, along with how often they should be called (in hz)
   and the maximum time they are expected to take (in microseconds)
  */
-// const AP_Scheduler::Task Copter::scheduler_tasks[] = {
-//     SCHED_TASK(rc_loop,              100,    130),
-//     SCHED_TASK(throttle_loop,         50,     75),
-//     SCHED_TASK_CLASS(AP_GPS, &copter.gps, update, 50, 200),
-// #if OPTFLOW == ENABLED
-//     SCHED_TASK_CLASS(OpticalFlow,          &copter.optflow,             update,         200, 160),
-// #endif
-//     SCHED_TASK(update_batt_compass,   10,    120),
-//     SCHED_TASK_CLASS(RC_Channels,          (RC_Channels*)&copter.g2.rc_channels,      read_aux_all,    10,     50),
-//     SCHED_TASK(arm_motors_check,      10,     50),
-// #if TOY_MODE_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(ToyMode,              &copter.g2.toy_mode,         update,          10,  50),
-// #endif
-//     SCHED_TASK(auto_disarm_check,     10,     50),
-//     SCHED_TASK(auto_trim,             10,     75),
-// #if RANGEFINDER_ENABLED == ENABLED
-//     SCHED_TASK(read_rangefinder,      20,    100),
-// #endif
-// #if PROXIMITY_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Proximity,         &copter.g2.proximity,        update,         200,  50),
-// #endif
-// #if BEACON_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Beacon,            &copter.g2.beacon,           update,         400,  50),
-// #endif
-//     SCHED_TASK(update_altitude,       10,    100),
-//     SCHED_TASK(run_nav_updates,       50,    100),
-//     SCHED_TASK(update_throttle_hover,100,     90),
-// #if MODE_SMARTRTL_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(ModeSmartRTL, &copter.mode_smartrtl,       save_position,    3, 100),
-// #endif
-// #if SPRAYER_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AC_Sprayer,           &copter.sprayer,             update,           3,  90),
-// #endif
-//     SCHED_TASK(three_hz_loop,          3,     75),
-//     SCHED_TASK_CLASS(AP_ServoRelayEvents,  &copter.ServoRelayEvents,      update_events, 50,     75),
-//     SCHED_TASK_CLASS(AP_Baro,              &copter.barometer,           accumulate,      50,  90),
-// #if AC_FENCE == ENABLED
-//     SCHED_TASK_CLASS(AC_Fence,             &copter.fence,               update,          10, 100),
-// #endif
-// #if PRECISION_LANDING == ENABLED
-//     SCHED_TASK(update_precland,      400,     50),
-// #endif
-// #if FRAME_CONFIG == HELI_FRAME
-//     SCHED_TASK(check_dynamic_flight,  50,     75),
-// #endif
-// #if LOGGING_ENABLED == ENABLED
-//     SCHED_TASK(fourhundred_hz_logging,400,    50),
-// #endif
-//     SCHED_TASK_CLASS(AP_Notify,            &copter.notify,              update,          50,  90),
-//     SCHED_TASK(one_hz_loop,            1,    100),
-//     SCHED_TASK(ekf_check,             10,     75),
-//     SCHED_TASK(check_vibration,       10,     50),
-//     SCHED_TASK(gpsglitch_check,       10,     50),
-//     SCHED_TASK(landinggear_update,    10,     75),
-//     SCHED_TASK(standby_update,        100,    75),
-//     SCHED_TASK(lost_vehicle_check,    10,     50),
-//     SCHED_TASK(Log_Write_Mathaus, 20, 100), // mathaus
-//     SCHED_TASK(Log_Write_Grin,    20, 100),
-//     SCHED_TASK(Log_Write_Accacio, 20, 100),
-//     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_receive, 400, 180),
-//     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_send,    400, 550),
-// #if HAL_MOUNT_ENABLED
-//     SCHED_TASK_CLASS(AP_Mount,             &copter.camera_mount,        update,          50,  75),
-// #endif
-// #if CAMERA == ENABLED
-//     SCHED_TASK_CLASS(AP_Camera,            &copter.camera,              update,          50,  75),
-// #endif
-// #if LOGGING_ENABLED == ENABLED
-//     SCHED_TASK(ten_hz_logging_loop,   10,    350),
-//     SCHED_TASK(twentyfive_hz_logging, 25,    110),
-//     SCHED_TASK_CLASS(AP_Logger,      &copter.logger,           periodic_tasks, 400, 300),
-// #endif
-//     SCHED_TASK_CLASS(AP_InertialSensor,    &copter.ins,                 periodic,       400,  50),
-
-//     SCHED_TASK_CLASS(AP_Scheduler,         &copter.scheduler,           update_logging, 0.1,  75),
-// #if RPM_ENABLED == ENABLED
-//     SCHED_TASK(rpm_update,            40,    200),
-// #endif
-//     SCHED_TASK(compass_cal_update,   100,    100),
-//     SCHED_TASK(accel_cal_update,      10,    100),
-//     SCHED_TASK_CLASS(AP_TempCalibration,   &copter.g2.temp_calibration, update,          10, 100),
-// // #if HAL_ADSB_ENABLED
-// //     SCHED_TASK(avoidance_adsb_update, 10,    100),
-// // #endif
-// #if ADVANCED_FAILSAFE == ENABLED
-//     SCHED_TASK(afs_fs_check,          10,    100),
-// #endif
-// #if AC_TERRAIN == ENABLED
-//     SCHED_TASK(terrain_update,        10,    100),
-// #endif
-// #if GRIPPER_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Gripper,           &copter.g2.gripper,          update,          10,  75),
-// #endif
-// #if WINCH_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Winch,             &copter.g2.winch,            update,          50,  50),
-// #endif
-// #if GENERATOR_ENABLED
-//     SCHED_TASK_CLASS(AP_Generator_RichenPower,     &copter.generator,      update,    10,     50),
-// #endif
-// #ifdef USERHOOK_FASTLOOP
-//     SCHED_TASK(userhook_FastLoop,    100,     75),
-// #endif
-// #ifdef USERHOOK_50HZLOOP
-//     SCHED_TASK(userhook_50Hz,         50,     75),
-// #endif
-// #ifdef USERHOOK_MEDIUMLOOP
-//     SCHED_TASK(userhook_MediumLoop,   10,     75),
-// #endif
-// #ifdef USERHOOK_SLOWLOOP
-//     SCHED_TASK(userhook_SlowLoop,     3.3,    75),
-// #endif
-// #ifdef USERHOOK_SUPERSLOWLOOP
-//     SCHED_TASK(userhook_SuperSlowLoop, 1,   75),
-// #endif
-// #if BUTTON_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Button,            &copter.button,           update,           5, 100),
-// #endif
-// #if STATS_ENABLED == ENABLED
-//     SCHED_TASK_CLASS(AP_Stats,             &copter.g2.stats,            update,           1, 100),
-// #endif
-// #if OSD_ENABLED == ENABLED
-//     SCHED_TASK(publish_osd_info, 1, 10),
-// #endif
-// };
-
 const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(rc_loop,              100,    130),
     SCHED_TASK(throttle_loop,         50,     75),
@@ -268,6 +143,9 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(landinggear_update,    10,     75),
     SCHED_TASK(standby_update,        100,    75),
     SCHED_TASK(lost_vehicle_check,    10,     50),
+    SCHED_TASK(Log_Write_Mathaus, 20, 100), // mathaus
+    SCHED_TASK(Log_Write_Grin,    20, 100),
+    SCHED_TASK(Log_Write_Accacio, 20, 100),
     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_receive, 400, 180),
     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_send,    400, 550),
 #if HAL_MOUNT_ENABLED
@@ -290,6 +168,9 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(compass_cal_update,   100,    100),
     SCHED_TASK(accel_cal_update,      10,    100),
     SCHED_TASK_CLASS(AP_TempCalibration,   &copter.g2.temp_calibration, update,          10, 100),
+// #if HAL_ADSB_ENABLED
+//     SCHED_TASK(avoidance_adsb_update, 10,    100),
+// #endif
 #if ADVANCED_FAILSAFE == ENABLED
     SCHED_TASK(afs_fs_check,          10,    100),
 #endif
@@ -330,6 +211,125 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK(publish_osd_info, 1, 10),
 #endif
 };
+
+// const AP_Scheduler::Task Copter::scheduler_tasks[] = {
+//     SCHED_TASK(rc_loop,              100,    130),
+//     SCHED_TASK(throttle_loop,         50,     75),
+//     SCHED_TASK_CLASS(AP_GPS, &copter.gps, update, 50, 200),
+// #if OPTFLOW == ENABLED
+//     SCHED_TASK_CLASS(OpticalFlow,          &copter.optflow,             update,         200, 160),
+// #endif
+//     SCHED_TASK(update_batt_compass,   10,    120),
+//     SCHED_TASK_CLASS(RC_Channels,          (RC_Channels*)&copter.g2.rc_channels,      read_aux_all,    10,     50),
+//     SCHED_TASK(arm_motors_check,      10,     50),
+// #if TOY_MODE_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(ToyMode,              &copter.g2.toy_mode,         update,          10,  50),
+// #endif
+//     SCHED_TASK(auto_disarm_check,     10,     50),
+//     SCHED_TASK(auto_trim,             10,     75),
+// #if RANGEFINDER_ENABLED == ENABLED
+//     SCHED_TASK(read_rangefinder,      20,    100),
+// #endif
+// #if PROXIMITY_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Proximity,         &copter.g2.proximity,        update,         200,  50),
+// #endif
+// #if BEACON_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Beacon,            &copter.g2.beacon,           update,         400,  50),
+// #endif
+//     SCHED_TASK(update_altitude,       10,    100),
+//     SCHED_TASK(run_nav_updates,       50,    100),
+//     SCHED_TASK(update_throttle_hover,100,     90),
+// #if MODE_SMARTRTL_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(ModeSmartRTL, &copter.mode_smartrtl,       save_position,    3, 100),
+// #endif
+// #if SPRAYER_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AC_Sprayer,           &copter.sprayer,             update,           3,  90),
+// #endif
+//     SCHED_TASK(three_hz_loop,          3,     75),
+//     SCHED_TASK_CLASS(AP_ServoRelayEvents,  &copter.ServoRelayEvents,      update_events, 50,     75),
+//     SCHED_TASK_CLASS(AP_Baro,              &copter.barometer,           accumulate,      50,  90),
+// #if AC_FENCE == ENABLED
+//     SCHED_TASK_CLASS(AC_Fence,             &copter.fence,               update,          10, 100),
+// #endif
+// #if PRECISION_LANDING == ENABLED
+//     SCHED_TASK(update_precland,      400,     50),
+// #endif
+// #if FRAME_CONFIG == HELI_FRAME
+//     SCHED_TASK(check_dynamic_flight,  50,     75),
+// #endif
+// #if LOGGING_ENABLED == ENABLED
+//     SCHED_TASK(fourhundred_hz_logging,400,    50),
+// #endif
+//     SCHED_TASK_CLASS(AP_Notify,            &copter.notify,              update,          50,  90),
+//     SCHED_TASK(one_hz_loop,            1,    100),
+//     SCHED_TASK(ekf_check,             10,     75),
+//     SCHED_TASK(check_vibration,       10,     50),
+//     SCHED_TASK(gpsglitch_check,       10,     50),
+//     SCHED_TASK(landinggear_update,    10,     75),
+//     SCHED_TASK(standby_update,        100,    75),
+//     SCHED_TASK(lost_vehicle_check,    10,     50),
+//     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_receive, 400, 180),
+//     SCHED_TASK_CLASS(GCS,                  (GCS*)&copter._gcs,          update_send,    400, 550),
+// #if HAL_MOUNT_ENABLED
+//     SCHED_TASK_CLASS(AP_Mount,             &copter.camera_mount,        update,          50,  75),
+// #endif
+// #if CAMERA == ENABLED
+//     SCHED_TASK_CLASS(AP_Camera,            &copter.camera,              update,          50,  75),
+// #endif
+// #if LOGGING_ENABLED == ENABLED
+//     SCHED_TASK(ten_hz_logging_loop,   10,    350),
+//     SCHED_TASK(twentyfive_hz_logging, 25,    110),
+//     SCHED_TASK_CLASS(AP_Logger,      &copter.logger,           periodic_tasks, 400, 300),
+// #endif
+//     SCHED_TASK_CLASS(AP_InertialSensor,    &copter.ins,                 periodic,       400,  50),
+
+//     SCHED_TASK_CLASS(AP_Scheduler,         &copter.scheduler,           update_logging, 0.1,  75),
+// #if RPM_ENABLED == ENABLED
+//     SCHED_TASK(rpm_update,            40,    200),
+// #endif
+//     SCHED_TASK(compass_cal_update,   100,    100),
+//     SCHED_TASK(accel_cal_update,      10,    100),
+//     SCHED_TASK_CLASS(AP_TempCalibration,   &copter.g2.temp_calibration, update,          10, 100),
+// #if ADVANCED_FAILSAFE == ENABLED
+//     SCHED_TASK(afs_fs_check,          10,    100),
+// #endif
+// #if AC_TERRAIN == ENABLED
+//     SCHED_TASK(terrain_update,        10,    100),
+// #endif
+// #if GRIPPER_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Gripper,           &copter.g2.gripper,          update,          10,  75),
+// #endif
+// #if WINCH_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Winch,             &copter.g2.winch,            update,          50,  50),
+// #endif
+// #if GENERATOR_ENABLED
+//     SCHED_TASK_CLASS(AP_Generator_RichenPower,     &copter.generator,      update,    10,     50),
+// #endif
+// #ifdef USERHOOK_FASTLOOP
+//     SCHED_TASK(userhook_FastLoop,    100,     75),
+// #endif
+// #ifdef USERHOOK_50HZLOOP
+//     SCHED_TASK(userhook_50Hz,         50,     75),
+// #endif
+// #ifdef USERHOOK_MEDIUMLOOP
+//     SCHED_TASK(userhook_MediumLoop,   10,     75),
+// #endif
+// #ifdef USERHOOK_SLOWLOOP
+//     SCHED_TASK(userhook_SlowLoop,     3.3,    75),
+// #endif
+// #ifdef USERHOOK_SUPERSLOWLOOP
+//     SCHED_TASK(userhook_SuperSlowLoop, 1,   75),
+// #endif
+// #if BUTTON_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Button,            &copter.button,           update,           5, 100),
+// #endif
+// #if STATS_ENABLED == ENABLED
+//     SCHED_TASK_CLASS(AP_Stats,             &copter.g2.stats,            update,           1, 100),
+// #endif
+// #if OSD_ENABLED == ENABLED
+//     SCHED_TASK(publish_osd_info, 1, 10),
+// #endif
+// };
 
 void Copter::get_scheduler_tasks(const AP_Scheduler::Task *&tasks,
                                  uint8_t &task_count,
