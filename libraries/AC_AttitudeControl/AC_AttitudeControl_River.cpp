@@ -317,7 +317,7 @@ void AC_AttitudeControl_River::rate_controller_run(){
     
     // _motors.set_roll_ff(get_rate_roll_pid().get_ff());
     // _motors.set_pitch_ff(get_rate_pitch_pid().get_ff());
-    _motors.set_yaw_ff(get_rate_yaw_pid().get_ff()*_feedforward_scalar);
+    // _motors.set_yaw_ff(get_rate_yaw_pid().get_ff()*_feedforward_scalar);
     
     _rate_sysid_ang_vel.zero();
     _actuator_sysid.zero();
@@ -364,7 +364,7 @@ void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){
     counter++;
     if (counter > 150) {
         counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
+        // gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
     }
 
     x*=-1.0f;

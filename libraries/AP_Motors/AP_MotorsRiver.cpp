@@ -159,8 +159,8 @@ float AP_MotorsRiver::map_cube(float x, float y, float z)
 void AP_MotorsRiver::output_armed_stabilizing() {
 
     float x = get_forward();
-    float y = get_forward();
-    float z = get_forward();
+    float y = get_lateral();
+    float z = get_yaw();
 
     x = constrain_float(x,-1.0f,1.0f);
     y = constrain_float(y,-1.0f,1.0f);
