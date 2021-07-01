@@ -307,7 +307,7 @@ void AC_AttitudeControl_River::update_throttle_rpy_mix()
 
 void AC_AttitudeControl_River::rate_controller_run(){
     // move throttle vs attitude mixing towards desired (called from here because this is conveniently called on every iteration)
-    update_throttle_rpy_mix();
+    // update_throttle_rpy_mix();
     _rate_target_ang_vel += _rate_sysid_ang_vel;
     
     Vector3f gyro_latest = _ahrs.get_gyro_latest();
@@ -357,15 +357,15 @@ float AC_AttitudeControl_River::map_cube(float x, float y, float z)
     return out;
 }
 
-static uint8_t counter = 0;
+// static uint8_t counter = 0;
 
 void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){    
 
-    counter++;
-    if (counter > 150) {
-        counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
-    }
+    // counter++;
+    // if (counter > 150) {
+    //     counter = 0;
+    //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Fx:  %5.3f  Fy:  %5.3f   Tn:  %5.3f  ", x,y,z);
+    // }
 
     x*=-1.0f;
     
@@ -373,8 +373,10 @@ void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){
     _motors.set_forward(x);
     _motors.set_lateral(y);
     // _motors.set_yaw(Z);
+    // SE DER MERDA FAZER O MAPCUBE AQUI E COLOCAR O TN DE UMA VEZ
 
 }
+
 
 void AC_AttitudeControl_River::passthrough_servo(float PWM){
     _motors.set_lateral(PWM);
@@ -388,15 +390,15 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
      output_to_boat(euler_pitch_angle_cd/lean_angle_max(),euler_roll_angle_cd/lean_angle_max(),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
 
     // Convert from centidegrees on public interface to radians
-    float euler_roll_angle = 0*radians(euler_roll_angle_cd * 0.01f);
-    float euler_pitch_angle = 0*radians(euler_pitch_angle_cd * 0.01f);
+    // float euler_roll_angle = 0*radians(euler_roll_angle_cd * 0.01f);
+    // float euler_pitch_angle = 0*radians(euler_pitch_angle_cd * 0.01f);
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
 
     // calculate the attitude target euler angles
     _attitude_target_quat.to_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
 
     // Add roll trim to compensate tail rotor thrust in heli (will return zero on multirotors)
-    euler_roll_angle += get_roll_trim_rad();
+    // euler_roll_angle += get_roll_trim_rad();
 
     if (_rate_bf_ff_enabled) {
         // translate the roll pitch and yaw acceleration limits to the euler axis
@@ -420,8 +422,8 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
         ang_vel_to_euler_rate(_attitude_target_euler_angle, _attitude_target_ang_vel, _attitude_target_euler_rate);
     } else {
         // When feedforward is not enabled, the target euler angle is input into the target and the feedforward rate is zeroed.
-        _attitude_target_euler_angle.x = euler_roll_angle;
-        _attitude_target_euler_angle.y = euler_pitch_angle;
+        _attitude_target_euler_angle.x = 0.0f;
+        _attitude_target_euler_angle.y = 0.0f;
         _attitude_target_euler_angle.z += euler_yaw_rate*_dt;
         // Compute quaternion target attitude
         _attitude_target_quat.from_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
@@ -495,8 +497,6 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float euler_roll
     // Call quaternion attitude controller
     attitude_controller_run_quat();
 }
-
-
 
 // Command an euler roll, pitch, and yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float euler_roll_rate_cds, float euler_pitch_rate_cds, float euler_yaw_rate_cds)
@@ -686,4 +686,12 @@ void AC_AttitudeControl_River::input_angle_step_bf_roll_pitch_yaw(float roll_ang
 
     // Call quaternion attitude controller
     attitude_controller_run_quat();
+}
+
+//  MATHAUS
+void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float roll, float pitch, float yaw)
+{
+    _motors.set_forward(pitch);
+    _motors.set_lateral(roll);
+    _motors.set_yaw(yaw);
 }

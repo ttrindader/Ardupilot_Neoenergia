@@ -701,10 +701,10 @@ void Mode::land_run_horizontal_control(){
     // call attitude controller
     if (auto_yaw.mode() == AUTO_YAW_HOLD) {
         // roll & pitch from waypoint controller, yaw rate from pilot
-        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(nav_roll, nav_pitch, target_yaw_rate);
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(0.0f, 0.0f, target_yaw_rate);
     } else {
         // roll, pitch from waypoint controller, yaw heading from auto_heading()
-        attitude_control->input_euler_angle_roll_pitch_yaw(nav_roll, nav_pitch, auto_yaw.yaw(), true);
+        attitude_control->input_euler_angle_roll_pitch_yaw(0.0f, 0.0f, auto_yaw.yaw(), true);
     }
 }
 
