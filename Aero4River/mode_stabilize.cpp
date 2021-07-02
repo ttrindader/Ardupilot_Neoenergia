@@ -63,10 +63,10 @@ void ModeStabilize::run(){
     }
 
     // call attitude controller
-    attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll*get_gain(), target_pitch*get_gain(), target_yaw_rate*get_gain());
-    // get_pilot_desired_forces(target_roll,target_pitch,target_yaw_rate);
+    // attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll*get_gain(), target_pitch*get_gain(), target_yaw_rate*get_gain());
+    get_pilot_desired_forces(target_roll,target_pitch,target_yaw_rate);
 
-    // attitude_control->input_rate_stabilize_roll_pitch_yaw(target_roll*get_gain(),target_pitch*get_gain(),target_yaw_rate*get_gain());
+    attitude_control->input_rate_stabilize_roll_pitch_yaw(target_roll*get_gain(),target_pitch*get_gain(),target_yaw_rate*get_gain());
 
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(),false,g.throttle_filt);
