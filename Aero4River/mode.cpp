@@ -450,7 +450,7 @@ void Mode::get_pilot_desired_lean_angles(float &roll_out, float &pitch_out, floa
     // roll_out and pitch_out are returned
 }
 
-void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
+void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) 
 {
     if (copter.failsafe.radio || !copter.ap.rc_receiver_present){
         fy = 0.0f;
@@ -460,7 +460,7 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn) const
     }
     // fetch Fx Fy and Yaw inputs
     fy = 1.0f * channel_roll->norm_input();
-    fx = 1.0f * channel_pitch->norm_input();
+    fx = -1.0f * channel_pitch->norm_input();
     tn = 1.0f * channel_yaw->norm_input();
 
     //VERIFICAR PARA HABILITAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

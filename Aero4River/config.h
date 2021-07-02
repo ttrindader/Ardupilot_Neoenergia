@@ -403,7 +403,7 @@
  # define FLIGHT_MODE_4                  Mode::Number::STABILIZE
 #endif
 #ifndef FLIGHT_MODE_5
- # define FLIGHT_MODE_5                  Mode::Number::AUTO
+ # define FLIGHT_MODE_5                  Mode::Number::POSHOLD
 #endif
 #ifndef FLIGHT_MODE_6
  # define FLIGHT_MODE_6                  Mode::Number::AUTO
