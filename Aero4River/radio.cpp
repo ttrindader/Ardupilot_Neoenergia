@@ -93,6 +93,9 @@ void Copter::read_radio(){
 
     // No radio input this time
     if (failsafe.radio) {
+        // motors->set_forward(0);
+        // motors->set_lateral(0);
+        // motors->set_yaw(0);
         // already in failsafe!
         return;
     }
@@ -110,6 +113,9 @@ void Copter::read_radio(){
     }
     if (!ap.rc_receiver_present && !motors->armed()) {
         // we only failsafe if we are armed OR we have ever seen an RC receiver
+        // motors->set_forward(0);
+        // motors->set_lateral(0);
+        // motors->set_yaw(0);
         return;
     }
 

@@ -269,23 +269,23 @@ void RC_Channel_Copter::do_aux_function(const aux_func_t ch_option, const AuxSwi
 #endif
             break;
 
-        case AUX_FUNC::ACRO_TRAINER:
-#if MODE_ACRO_ENABLED == ENABLED
-            switch(ch_flag) {
-                case AuxSwitchPos::LOW:
-                    copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::OFF;
-                    AP::logger().Write_Event(LogEvent::ACRO_TRAINER_OFF);
-                    break;
-                case AuxSwitchPos::MIDDLE:
-                    copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::LEVELING;
-                    AP::logger().Write_Event(LogEvent::ACRO_TRAINER_LEVELING);
-                    break;
-                case AuxSwitchPos::HIGH:
-                    copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::LIMITED;
-                    AP::logger().Write_Event(LogEvent::ACRO_TRAINER_LIMITED);
-                    break;
-            }
-#endif
+//         case AUX_FUNC::ACRO_TRAINER:
+// #if MODE_ACRO_ENABLED == ENABLED
+//             switch(ch_flag) {
+//                 case AuxSwitchPos::LOW:
+//                     copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::OFF;
+//                     AP::logger().Write_Event(LogEvent::ACRO_TRAINER_OFF);
+//                     break;
+//                 case AuxSwitchPos::MIDDLE:
+//                     copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::LEVELING;
+//                     AP::logger().Write_Event(LogEvent::ACRO_TRAINER_LEVELING);
+//                     break;
+//                 case AuxSwitchPos::HIGH:
+//                     copter.g.acro_trainer = (uint8_t)ModeAcro::Trainer::LIMITED;
+//                     AP::logger().Write_Event(LogEvent::ACRO_TRAINER_LIMITED);
+//                     break;
+//             }
+// #endif
             break;
 
 //         case AUX_FUNC::AUTOTUNE:
@@ -583,9 +583,9 @@ void RC_Channel_Copter::do_aux_function(const aux_func_t ch_option, const AuxSwi
 
         case AUX_FUNC::AIRMODE:
             do_aux_function_change_air_mode(ch_flag);
-#if MODE_ACRO_ENABLED == ENABLED && FRAME_CONFIG != HELI_FRAME
-            copter.mode_acro.air_mode_aux_changed();
-#endif
+// #if MODE_ACRO_ENABLED == ENABLED && FRAME_CONFIG != HELI_FRAME
+//             copter.mode_acro.air_mode_aux_changed();
+// #endif
             break;
             
     default:

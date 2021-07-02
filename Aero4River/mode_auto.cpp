@@ -999,20 +999,20 @@ void ModeAuto::payload_place_run()
 
     switch (nav_payload_place.state) {
     case PayloadPlaceStateType_FlyToLocation:
-        return wp_run();
     case PayloadPlaceStateType_Calibrating_Hover_Start:
     case PayloadPlaceStateType_Calibrating_Hover:
-        return payload_place_run_loiter();
+        // return payload_place_run_loiter();
     case PayloadPlaceStateType_Descending_Start:
     case PayloadPlaceStateType_Descending:
-        return payload_place_run_descend();
+        // return payload_place_run_descend();
     case PayloadPlaceStateType_Releasing_Start:
     case PayloadPlaceStateType_Releasing:
     case PayloadPlaceStateType_Released:
     case PayloadPlaceStateType_Ascending_Start:
     case PayloadPlaceStateType_Ascending:
     case PayloadPlaceStateType_Done:
-        return payload_place_run_loiter();
+        return wp_run();
+        // return payload_place_run_loiter();
     }
 }
 

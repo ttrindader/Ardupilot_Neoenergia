@@ -7,8 +7,6 @@
 // stabilize_run - runs the main stabilize controller
 // should be called at 100hz or more
 void ModeStabilize::run(){
-    // // apply simple mode transform to pilot inputs
-    // update_simple_mode();
 
     //     // convert pilot input to forces and moments
     // float fy, fx, tn;
@@ -64,9 +62,9 @@ void ModeStabilize::run(){
 
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll*get_gain(), target_pitch*get_gain(), target_yaw_rate*get_gain());
-    // get_pilot_desired_forces(target_roll,target_pitch,target_yaw_rate);
 
-    // attitude_control->input_rate_stabilize_roll_pitch_yaw(target_roll*get_gain(),target_pitch*get_gain(),target_yaw_rate*get_gain());
+    // get_pilot_desired_forces(target_roll,target_pitch,target_yaw_rate);
+    // attitude_control->input_rate_stabilize_roll_pitch_yaw(target_roll,target_pitch,target_yaw_rate);
 
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(),false,g.throttle_filt);

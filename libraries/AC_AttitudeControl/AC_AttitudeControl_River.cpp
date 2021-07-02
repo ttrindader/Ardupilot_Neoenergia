@@ -307,12 +307,12 @@ void AC_AttitudeControl_River::update_throttle_rpy_mix()
 
 void AC_AttitudeControl_River::rate_controller_run(){
     // move throttle vs attitude mixing towards desired (called from here because this is conveniently called on every iteration)
-    // update_throttle_rpy_mix();
+    update_throttle_rpy_mix();
     _rate_target_ang_vel += _rate_sysid_ang_vel;
     
     Vector3f gyro_latest = _ahrs.get_gyro_latest();
-    // _motors.set_roll(get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x);
-    // _motors.set_pitch(get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
+    _motors.set_roll(get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x);
+    _motors.set_pitch(get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
     _motors.set_yaw(get_rate_yaw_pid().update_all(_rate_target_ang_vel.z, gyro_latest.z, _motors.limit.yaw) + _actuator_sysid.z);
     
     // _motors.set_roll_ff(get_rate_roll_pid().get_ff());
@@ -368,8 +368,6 @@ void AC_AttitudeControl_River::output_to_boat(float x, float y, float z){
     // }
 
     x*=-1.0f;
-    
-    // utilizado na alocação do barco
     _motors.set_forward(x);
     _motors.set_lateral(y);
     // _motors.set_yaw(Z);
@@ -501,7 +499,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float euler_roll
 // Command an euler roll, pitch, and yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float euler_roll_rate_cds, float euler_pitch_rate_cds, float euler_yaw_rate_cds)
 {
-    output_to_boat(euler_pitch_rate_cds/(4.5f*lean_angle_max()),euler_roll_rate_cds/(4.5f*lean_angle_max()),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
+    output_to_boat(euler_pitch_rate_cds/(lean_angle_max()),euler_roll_rate_cds/(lean_angle_max()),euler_yaw_rate_cds/(lean_angle_max())); //Mathaus
     
 
     // Convert from centidegrees on public interface to radians
@@ -546,7 +544,7 @@ void AC_AttitudeControl_River::input_euler_rate_roll_pitch_yaw(float euler_roll_
 // Command an angular velocity with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
-    output_to_boat(pitch_rate_bf_cds/(4.5f*lean_angle_max()),roll_rate_bf_cds/(4.5f*lean_angle_max()),yaw_rate_bf_cds/(4.5f*lean_angle_max())); //Mathaus
+    output_to_boat(pitch_rate_bf_cds/(lean_angle_max()),roll_rate_bf_cds/(lean_angle_max()),yaw_rate_bf_cds/(lean_angle_max())); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float roll_rate_rads  = 0.0f;
@@ -560,8 +558,8 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_c
         // Compute acceleration-limited body frame rates
         // When acceleration limiting is enabled, the input shaper constrains angular acceleration about the axis, slewing
         // the output rate towards the input rate.
-        _attitude_target_ang_vel.x = input_shaping_ang_vel(_attitude_target_ang_vel.x, roll_rate_rads, get_accel_roll_max_radss(), _dt);
-        _attitude_target_ang_vel.y = input_shaping_ang_vel(_attitude_target_ang_vel.y, pitch_rate_rads, get_accel_pitch_max_radss(), _dt);
+        _attitude_target_ang_vel.x = input_shaping_ang_vel(_attitude_target_ang_vel.x*0.0f, roll_rate_rads, get_accel_roll_max_radss(), _dt);
+        _attitude_target_ang_vel.y = input_shaping_ang_vel(_attitude_target_ang_vel.y*0.0f, pitch_rate_rads, get_accel_pitch_max_radss(), _dt);
         _attitude_target_ang_vel.z = input_shaping_ang_vel(_attitude_target_ang_vel.z, yaw_rate_rads, get_accel_yaw_max_radss(), _dt);
 
         // Convert body-frame angular velocity into euler angle derivative of desired attitude
@@ -585,7 +583,7 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw(float roll_rate_bf_c
 // Command an angular velocity with angular velocity smoothing using rate loops only with no attitude loop stabilization
 void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
-    output_to_boat(pitch_rate_bf_cds/(4.5f*lean_angle_max()),roll_rate_bf_cds/(4.5f*lean_angle_max()),yaw_rate_bf_cds/(4.5f*lean_angle_max())); //Mathaus
+    output_to_boat(pitch_rate_bf_cds/(lean_angle_max()),roll_rate_bf_cds/(lean_angle_max()),yaw_rate_bf_cds/(lean_angle_max())); //Mathaus
     
     // Convert from centidegrees on public interface to radians
     float roll_rate_rads = 0.0f;
@@ -610,7 +608,7 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf
 // Command an angular velocity with angular velocity smoothing using rate loops only with integrated rate error stabilization
 void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_3(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)
 {
-    output_to_boat(pitch_rate_bf_cds/(4.5f*lean_angle_max()),roll_rate_bf_cds/(4.5f*lean_angle_max()),yaw_rate_bf_cds/(4.5f*lean_angle_max())); //Mathaus
+    output_to_boat(pitch_rate_bf_cds/(lean_angle_max()),roll_rate_bf_cds/(lean_angle_max()),yaw_rate_bf_cds/(lean_angle_max())); //Mathaus
     // Convert from centidegrees on public interface to radians
     float roll_rate_rads = 0.0f;
     float pitch_rate_rads = 0.0f;
@@ -665,7 +663,7 @@ void AC_AttitudeControl_River::input_rate_bf_roll_pitch_yaw_3(float roll_rate_bf
 // Used to command a step in angle without exciting the orthogonal axis during autotune
 void AC_AttitudeControl_River::input_angle_step_bf_roll_pitch_yaw(float roll_angle_step_bf_cd, float pitch_angle_step_bf_cd, float yaw_angle_step_bf_cd)
 {
-    output_to_boat(pitch_angle_step_bf_cd/(4.5f*lean_angle_max()),roll_angle_step_bf_cd/(4.5f*lean_angle_max()),yaw_angle_step_bf_cd/(4.5f*lean_angle_max())); //Mathaus
+    output_to_boat(pitch_angle_step_bf_cd/(lean_angle_max()),roll_angle_step_bf_cd/(lean_angle_max()),yaw_angle_step_bf_cd/(lean_angle_max())); //Mathaus
     // Convert from centidegrees on public interface to radians
     float roll_step_rads  = 0.0f;
     float pitch_step_rads = 0.0f;
@@ -691,7 +689,7 @@ void AC_AttitudeControl_River::input_angle_step_bf_roll_pitch_yaw(float roll_ang
 //  MATHAUS
 void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float roll, float pitch, float yaw)
 {
-    _motors.set_forward(pitch);
-    _motors.set_lateral(roll);
+    // _motors.set_forward(-1.0f*pitch);
+    // _motors.set_lateral(roll);
     _motors.set_yaw(yaw);
 }

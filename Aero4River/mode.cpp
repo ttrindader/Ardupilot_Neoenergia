@@ -77,11 +77,11 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
-#if MODE_SPORT_ENABLED == ENABLED
-        case Mode::Number::SPORT:
-            ret = &mode_sport;
-            break;
-#endif
+// #if MODE_SPORT_ENABLED == ENABLED
+//         case Mode::Number::SPORT:
+//             ret = &mode_sport;
+//             break;
+// #endif
 
 
 // #if AUTOTUNE_ENABLED == ENABLED
@@ -138,17 +138,17 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
 //             break;
 // #endif
 
-#if MODE_ZIGZAG_ENABLED == ENABLED
-        case Mode::Number::ZIGZAG:
-            ret = &mode_zigzag;
-            break;
-#endif
+// #if MODE_ZIGZAG_ENABLED == ENABLED
+//         case Mode::Number::ZIGZAG:
+//             ret = &mode_zigzag;
+//             break;
+// #endif
 
-#if MODE_SYSTEMID_ENABLED == ENABLED
-        case Mode::Number::SYSTEMID:
-            ret = (Mode *)g2.mode_systemid_ptr;
-            break;
-#endif
+// #if MODE_SYSTEMID_ENABLED == ENABLED
+//         case Mode::Number::SYSTEMID:
+//             ret = (Mode *)g2.mode_systemid_ptr;
+//             break;
+// #endif
 
 #if MODE_AUTOROTATE_ENABLED == ENABLED
         case Mode::Number::AUTOROTATE:
@@ -329,11 +329,11 @@ void Copter::exit_mode(Mode *&old_flightmode,
     }
 #endif
 
-#if MODE_ACRO_ENABLED == ENABLED
-    if (old_flightmode == &mode_acro) {
-        mode_acro.exit();
-    }
-#endif
+// #if MODE_ACRO_ENABLED == ENABLED
+//     if (old_flightmode == &mode_acro) {
+//         mode_acro.exit();
+//     }
+// #endif
 
 #if FRAME_CONFIG == HELI_FRAME
     // firmly reset the flybar passthrough to false when exiting acro mode.
@@ -460,7 +460,7 @@ void Mode::get_pilot_desired_forces(float &fx, float &fy, float &tn)
     }
     // fetch Fx Fy and Yaw inputs
     fy = 1.0f * channel_roll->norm_input();
-    fx = -1.0f * channel_pitch->norm_input();
+    fx = 1.0f * channel_pitch->norm_input();
     tn = 1.0f * channel_yaw->norm_input();
 
     //VERIFICAR PARA HABILITAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

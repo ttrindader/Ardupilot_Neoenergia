@@ -881,11 +881,11 @@ private:
 
     Mode *flightmode;
 #if MODE_ACRO_ENABLED == ENABLED
-#if FRAME_CONFIG == HELI_FRAME
-    ModeAcro_Heli mode_acro;
-#else
-    ModeAcro mode_acro;
-#endif
+// #if FRAME_CONFIG == HELI_FRAME
+//     ModeAcro_Heli mode_acro;
+// #else
+//     ModeAcro mode_acro;
+// #endif
 #endif
     ModeAltHold mode_althold;
 #if MODE_AUTO_ENABLED == ENABLED
@@ -928,9 +928,9 @@ private:
 #else
     ModeStabilize mode_stabilize;
 #endif
-#if MODE_SPORT_ENABLED == ENABLED
-    ModeSport mode_sport;
-#endif
+// #if MODE_SPORT_ENABLED == ENABLED
+//     ModeSport mode_sport;
+// #endif
 #if MODE_SYSTEMID_ENABLED == ENABLED
     ModeSystemId mode_systemid;
 #endif
