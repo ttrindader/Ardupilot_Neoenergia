@@ -349,7 +349,10 @@ void Copter::fast_loop()
     ins.update();
 
     // run low level rate controllers that only require IMU data
-    attitude_control->rate_controller_run();
+    if(copter.control_mode==Mode::Number::AUTO)
+    {
+        attitude_control->rate_controller_run();
+    }
 
     // send outputs to the motors library immediately
     motors_output();
