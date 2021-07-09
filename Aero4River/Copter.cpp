@@ -349,7 +349,7 @@ void Copter::fast_loop()
     ins.update();
 
     // run low level rate controllers that only require IMU data
-    if(copter.control_mode==Mode::Number::AUTO)
+    if(copter.control_mode!=Mode::Number::STABILIZE)
     {
         attitude_control->rate_controller_run();
     }
