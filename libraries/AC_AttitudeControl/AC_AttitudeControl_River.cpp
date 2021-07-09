@@ -687,9 +687,9 @@ void AC_AttitudeControl_River::input_angle_step_bf_roll_pitch_yaw(float roll_ang
 }
 
 //  MATHAUS
-void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float roll, float pitch, float yaw)
+void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float fx, float fy, float yaw)
 {
-    // _motors.set_forward(-1.0f*pitch);
-    // _motors.set_lateral(roll);
+    _motors.set_forward(fx);
+    _motors.set_lateral(fy);
     _motors.set_yaw(yaw);
 }
