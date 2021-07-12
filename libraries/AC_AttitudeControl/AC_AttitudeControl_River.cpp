@@ -389,7 +389,7 @@ void AC_AttitudeControl_River::passthrough_servo(float PWM){
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float roll, float pitch, float euler_yaw_rate_cds)
 {
 
-     output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),euler_yaw_rate_cds/(4.5f*lean_angle_max())); //Mathaus
+     output_to_boat(pitch/lean_angle_max(),roll/lean_angle_max(),radians(euler_yaw_rate_cds*0.01f)/get_slew_yaw_rads()); //Mathaus
 
     // Convert from centidegrees on public interface to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
