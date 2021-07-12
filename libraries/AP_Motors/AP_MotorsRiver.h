@@ -61,6 +61,11 @@ public:
     float Fy = 0.0f;
     float Tn = 0.0f;
 
+    // auxiliar
+    float xo = 0.0f;
+    float yo = 0.0f;
+    float zo = 0.0f;
+
     float Fx_out = 0.0f;
     float Fy_out = 0.0f;
     float Tn_out = 0.0f;  

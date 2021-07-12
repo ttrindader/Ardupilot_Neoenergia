@@ -158,17 +158,17 @@ float AP_MotorsRiver::map_cube(float x, float y, float z)
 
 void AP_MotorsRiver::output_armed_stabilizing() {
 
-    float x = get_forward();
-    float y = get_lateral();
-    float z = get_yaw();
+    xo = get_forward();
+    yo = get_lateral();
+    zo = get_yaw();
 
-    x = constrain_float(x,-1.0f,1.0f);
-    y = constrain_float(y,-1.0f,1.0f);
-    z = constrain_float(z,-1.0f,1.0f);
+    xo = constrain_float(xo,-1.0f,1.0f);
+    yo = constrain_float(yo,-1.0f,1.0f);
+    zo= constrain_float(zo,-1.0f,1.0f);
 
-    Fx = map_cube(x,y,z);
-    Fy = map_cube(y,x,z);
-    Tn = map_cube(z,y,x);
+    Fx = map_cube(xo,yo,zo);
+    Fy = map_cube(yo,xo,zo);
+    Tn = map_cube(zo,yo,xo);
     
     // Fx = get_forward();
     // Fy = get_lateral(); //Colocar zero para calibrar

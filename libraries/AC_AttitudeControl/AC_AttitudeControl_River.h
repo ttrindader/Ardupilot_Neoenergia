@@ -84,7 +84,7 @@ public:
     void parameter_sanity_check() override;
 
     float map_cube(float x, float y, float z);
-    void output_to_boat(float fx, float fy, float tn);
+    void output_to_boat(float fx, float fy);
     void passthrough_servo(float PWM);
     void input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)override;
     void input_euler_angle_roll_pitch_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_angle_cd, bool slew_yaw)override;
