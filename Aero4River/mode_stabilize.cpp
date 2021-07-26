@@ -8,12 +8,6 @@
 // should be called at 100hz or more
 void ModeStabilize::run(){
 
-    //     // convert pilot input to forces and moments
-    // float fy, fx, tn;
-    // get_pilot_desired_forces(fx, fy, tn);
-
-    // float PWM = CalibrateServo();
-
     // apply simple mode transform to pilot inputs
     update_simple_mode();
 
@@ -64,7 +58,7 @@ void ModeStabilize::run(){
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll*get_gain(), target_pitch*get_gain(), target_yaw_rate*get_gain());
 
     get_pilot_desired_forces(target_roll,target_pitch,target_yaw_rate);
-    attitude_control->input_rate_stabilize_roll_pitch_yaw(target_pitch*get_gain(),target_roll*get_gain(), target_yaw_rate*get_gain());
+    attitude_control->input_rate_stabilize_roll_pitch_yaw(0,0, target_yaw_rate*get_gain());
 
     // output pilot's throttle
     attitude_control->set_throttle_out(get_pilot_desired_throttle(),false,g.throttle_filt);

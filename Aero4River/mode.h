@@ -23,8 +23,8 @@ public:
         LAND =          9,  // automatic landing with horizontal position control
         DRIFT =        11,  // semi-automous position, yaw and throttle control
         SPORT =        13,  // manual earth-frame angular rate control with manual throttle
-        // FLIP =         14,  // automatically flip the vehicle on the roll axis
-        // AUTOTUNE =     15,  // automatically tune the vehicle's roll and pitch gains
+        FLIP =         14,  // automatically flip the vehicle on the roll axis
+        AUTOTUNE =     15,  // automatically tune the vehicle's roll and pitch gains
         POSHOLD =      16,  // automatic position hold with manual override, with automatic throttle
         BRAKE =        17,  // full-brake using inertial/GPS system, no pilot input
         THROW =        18,  // throw to launch mode using inertial/GPS system, no pilot input
