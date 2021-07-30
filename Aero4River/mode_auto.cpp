@@ -71,10 +71,10 @@ bool ModeAuto::allows_arming(bool from_gcs) const
 void ModeAuto::run(){
     // call the correct auto controller
     switch (_mode) {
+    case Auto_Land:
     case Auto_TakeOff:
     case Auto_WP:
     case Auto_CircleMoveToEdge:
-    case Auto_Land:
         wp_run();
         break;
 

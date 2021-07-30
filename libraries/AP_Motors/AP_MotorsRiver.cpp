@@ -164,15 +164,11 @@ void AP_MotorsRiver::output_armed_stabilizing() {
 
     xo = constrain_float(xo,-1.0f,1.0f);
     yo = constrain_float(yo,-1.0f,1.0f);
-    zo= constrain_float(zo,-1.0f,1.0f);
+    zo = constrain_float(zo,-1.0f,1.0f);
 
     Fx = map_cube(xo,yo,zo);
     Fy = map_cube(yo,xo,zo);
     Tn = map_cube(zo,yo,xo);
-    
-    // Fx = get_forward();
-    // Fy = get_lateral(); //Colocar zero para calibrar
-    // Tn = get_yaw();
     
     
     if(_key_radio_passthrough<0)
