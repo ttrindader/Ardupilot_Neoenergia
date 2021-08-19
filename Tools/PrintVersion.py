@@ -20,6 +20,7 @@ includefiles = {
     "Rover": "version.h",
     "AntennaTracker": "version.h",
     "ArduSub": "version.h",
+    "Aero4River":"version.h",
 }
 
 if len(args) > 0:

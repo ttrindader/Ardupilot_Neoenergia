@@ -239,11 +239,13 @@ def kill_tasks():
             'JSBSIm.exe',
             'MAVProxy.exe',
             'runsim.py',
+            'Aero4River.elf',
             'AntennaTracker.elf',
             'scrimmage'
             'ardurover',
             'arduplane',
-            'arducopter'
+            'arducopter',
+            'aero4river'
         }
         for vehicle in vinfo.options:
             for frame in vinfo.options[vehicle]["frames"]:
