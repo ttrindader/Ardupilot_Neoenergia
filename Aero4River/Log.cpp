@@ -22,6 +22,8 @@ struct PACKED log_Control_Tuning {
     int16_t  climb_rate;
 };
 
+//TTR
+/*
 // Mathaus 
 // ==========================================================================================
 struct PACKED log_Mathaus{
@@ -41,8 +43,10 @@ float Tn;
 float fxo;
 float fyo;
 float Tno;
-};
+};*/
 
+//TTR
+/*
 // Write mathaus Packet
 void Copter::Log_Write_Mathaus()
 {
@@ -67,7 +71,10 @@ Tno : copter.motors->Tn_out,
 };
 logger.WriteBlock(&pkt, sizeof(pkt));
 }
+*/
 
+//TTR
+/*
 struct PACKED log_Grin{
 LOG_PACKET_HEADER;
 uint64_t time_us;
@@ -160,7 +167,7 @@ void Copter::Log_Write_Accacio()
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
-
+*/
 // -----------------------------------------------------------
 
 // Write a control tuning packet
