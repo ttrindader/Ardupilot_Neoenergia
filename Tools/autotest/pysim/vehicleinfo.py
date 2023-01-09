@@ -8,7 +8,7 @@ class VehicleInfo(object):
         """
         self.options = {
     "Aero4River": {
-        "default_frame": "quad",
+        "default_frame": "gazebo-migbot0",
         "frames": {
             "+": {
                 "waf_target": "bin/aero4river",
