@@ -8,7 +8,7 @@
 #define CRASH_CHECK_ACCEL_MAX           3.0f    // vehicle must be accelerating less than 3m/s/s to be considered crashed
 
 // Code to detect a thrust loss main ArduCopter code
-#define THRUST_LOSS_CHECK_TRIGGER_SEC         1     // 1 second descent while level and high throttle indicates thrust loss
+#define THRUST_LOSS_CHECK_TRIGGER_SEC         10     // 1 second descent while level and high throttle indicates thrust loss
 #define THRUST_LOSS_CHECK_ANGLE_DEVIATION_CD  1500  // we can't expect to maintain altitude beyond 15 degrees on all aircraft
 #define THRUST_LOSS_CHECK_MINIMUM_THROTTLE    0.9f  // we can expect to maintain altitude above 90 % throttle
 
@@ -136,21 +136,21 @@ void Copter::thrust_loss_check()
         return;
     }
 
-    // the aircraft is descending with low requested roll and pitch, at full available throttle, with attitude control
-    // we may have lost thrust
-    thrust_loss_counter++;
+    // // the aircraft is descending with low requested roll and pitch, at full available throttle, with attitude control
+    // // we may have lost thrust
+     thrust_loss_counter++;
 
-    // check if thrust loss for 1 second
-    if (thrust_loss_counter >= (THRUST_LOSS_CHECK_TRIGGER_SEC * scheduler.get_loop_rate_hz())) {
-        // reset counter
-        thrust_loss_counter = 0;
-        AP::logger().Write_Error(LogErrorSubsystem::THRUST_LOSS_CHECK, LogErrorCode::FAILSAFE_OCCURRED);
-        // send message to gcs
-        gcs().send_text(MAV_SEVERITY_EMERGENCY, "Potential Thrust Loss (%d)", (int)motors->get_lost_motor() + 1);
-        // enable thrust loss handling
-        motors->set_thrust_boost(true);
-        // the motors library disables this when it is no longer needed to achieve the commanded output
-    }
+    // // check if thrust loss for 1 second
+    // if (thrust_loss_counter >= (THRUST_LOSS_CHECK_TRIGGER_SEC * scheduler.get_loop_rate_hz())) {
+    //     // reset counter
+    //     thrust_loss_counter = 0;
+    //     AP::logger().Write_Error(LogErrorSubsystem::THRUST_LOSS_CHECK, LogErrorCode::FAILSAFE_OCCURRED);
+    //     // send message to gcs
+    //     gcs().send_text(MAV_SEVERITY_EMERGENCY, "Potential Thrust Loss (%d)", (int)motors->get_lost_motor() + 1);
+    //     // enable thrust loss handling
+    //     motors->set_thrust_boost(true);
+    //     // the motors library disables this when it is no longer needed to achieve the commanded output
+    // }
 }
 
 #if PARACHUTE == ENABLED
