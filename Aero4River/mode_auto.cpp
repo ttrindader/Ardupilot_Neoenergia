@@ -73,6 +73,9 @@ void ModeAuto::run(){
     switch (_mode) {
     case Auto_Land:
     case Auto_TakeOff:
+    // run takeoff controller
+        takeoff_run();
+        break;
     case Auto_WP:
     case Auto_CircleMoveToEdge:
         wp_run();
