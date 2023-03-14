@@ -23,19 +23,18 @@
 bool ModeAuto::init(bool ignore_checks)
 {
     if (mission.num_commands() > 1 || ignore_checks) {
-        _mode = Auto_Loiter;
+        _mode = Auto_WP; // Mathaus
 
         // reject switching to auto mode if landed with motors armed but first command is not a takeoff (reduce chance of flips)
-        //Mathaus
-        // if (motors->armed() && copter.ap.land_complete && !mission.starts_with_takeoff_cmd()) {
-        //     gcs().send_text(MAV_SEVERITY_CRITICAL, "Auto: Missing Takeoff Cmd");
-        //     return false;
-        // }
+        if (motors->armed() && copter.ap.land_complete && !mission.starts_with_takeoff_cmd()) {
+            gcs().send_text(MAV_SEVERITY_CRITICAL, "Auto: Missing Takeoff Cmd");
+            return false;
+        }
 
         // stop ROI from carrying over from previous runs of the mission
         // To-Do: reset the yaw as part of auto_wp_start when the previous command was not a wp command to remove the need for this special ROI check
         if (auto_yaw.mode() == AUTO_YAW_ROI) {
-            auto_yaw.set_mode(AUTO_YAW_HOLD);
+            auto_yaw.set_mode(AUTO_YAW_LOOK_AT_NEXT_WP);//Mathaus
         }
 
         // initialise waypoint and spline controller
@@ -68,17 +67,22 @@ bool ModeAuto::allows_arming(bool from_gcs) const
 // auto_run - runs the auto controller
 //      should be called at 100hz or more
 //      relies on run_autopilot being called at 10hz which handles decision making and non-navigation related commands
-void ModeAuto::run(){
+void ModeAuto::run()
+{
     // call the correct auto controller
     switch (_mode) {
-    case Auto_Land:
+
     case Auto_TakeOff:
-    // run takeoff controller
         takeoff_run();
         break;
+
     case Auto_WP:
     case Auto_CircleMoveToEdge:
         wp_run();
+        break;
+
+    case Auto_Land:
+        land_run();
         break;
 
     case Auto_RTL:
@@ -370,7 +374,8 @@ bool ModeAuto::is_taking_off() const
 }
 
 // auto_payload_place_start - initialises controller to implement a placing
-void ModeAuto::payload_place_start(){
+void ModeAuto::payload_place_start()
+{
     // set target to stopping point
     Vector3f stopping_point;
     loiter_nav->get_stopping_point_xy(stopping_point);
@@ -381,7 +386,8 @@ void ModeAuto::payload_place_start(){
 }
 
 // start_command - this function will be called when the ap_mission lib wishes to start a new command
-bool ModeAuto::start_command(const AP_Mission::Mission_Command& cmd){
+bool ModeAuto::start_command(const AP_Mission::Mission_Command& cmd)
+{
     // To-Do: logging when new commands start/end
     if (copter.should_log(MASK_LOG_CMD)) {
         copter.logger.Write_Mission_Cmd(mission, cmd);
@@ -738,6 +744,7 @@ void ModeAuto::takeoff_run()
     auto_takeoff_run();
 }
 
+
 // auto_wp_run - runs the auto waypoint controller
 //      called by auto_run at 100hz or more
 void ModeAuto::wp_run()
@@ -791,7 +798,6 @@ void ModeAuto::spline_run()
 
     // process pilot's yaw input
     float target_yaw_rate = 0;
-
     if (!copter.failsafe.radio) {
         // get pilot's desired yaw rate
         target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->get_control_in());
@@ -1002,20 +1008,20 @@ void ModeAuto::payload_place_run()
 
     switch (nav_payload_place.state) {
     case PayloadPlaceStateType_FlyToLocation:
+        return wp_run();
     case PayloadPlaceStateType_Calibrating_Hover_Start:
     case PayloadPlaceStateType_Calibrating_Hover:
-        // return payload_place_run_loiter();
+        return payload_place_run_loiter();
     case PayloadPlaceStateType_Descending_Start:
     case PayloadPlaceStateType_Descending:
-        // return payload_place_run_descend();
+        return payload_place_run_descend();
     case PayloadPlaceStateType_Releasing_Start:
     case PayloadPlaceStateType_Releasing:
     case PayloadPlaceStateType_Released:
     case PayloadPlaceStateType_Ascending_Start:
     case PayloadPlaceStateType_Ascending:
     case PayloadPlaceStateType_Done:
-        return wp_run();
-        // return payload_place_run_loiter();
+        return payload_place_run_loiter();
     }
 }
 
@@ -1507,7 +1513,7 @@ void ModeAuto::do_RTL(void)
 bool ModeAuto::verify_takeoff()
 {
     // have we reached our target altitude?
-    const bool reached_wp_dest = copter.wp_nav->reached_wp_destination();
+    const bool reached_wp_dest = true;// mathaus copter.wp_nav->reached_wp_destination();
 
     // retract the landing gear
     if (reached_wp_dest) {
