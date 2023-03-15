@@ -86,10 +86,10 @@ void AP_MotorsRiver::output_to_motors() {
 
 /* ****************************** Mathaus *********************************
 ***************************************************************************/
-void AP_MotorsRiver::direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
-    Fx_out = (float)(PWM1*k1*cosf(Theta1) + PWM2*k2*cosf(Theta2) + PWM3*k3*cosf(Theta3) + PWM4*k4*cosf(Theta4));
-    Fy_out = (float)(PWM1*k1*sinf(Theta1) + PWM2*k2*sinf(Theta2) + PWM3*k3*sinf(Theta3) + PWM4*k4*sinf(Theta4));
-    Tn_out = (float)(Lx*(PWM1*k1*sinf(Theta1) - PWM2*k2*sinf(Theta2) + PWM3*k3*sinf(Theta3) - PWM4*k4*sinf(Theta4)) - Ly*(PWM1*k1*cosf(Theta1) - PWM2*k2*cosf(Theta2) - PWM3*k3*cosf(Theta3) + PWM4*k4*cosf(Theta4)));
+void AP_MotorsRiver::direct_allocation(float &PWM1,float &PWM2,float &PWM3,float &PWM4) {
+    Fx_out = (float)(PWM1 + PWM2 + PWM3 + PWM4);
+    Fy_out = (float)(0.0);
+    Tn_out = (float)(Ly*(-PWM1 + PWM2 + PWM3 - PWM4));
 }
 
 float AP_MotorsRiver::PWMtoNorm(float pwm) {
@@ -222,44 +222,21 @@ void AP_MotorsRiver::FOSSEN_allocation_matrix(float FX,float FY,float TN,float &
     FY = constrain_float(FY,-1.0f,1.0f);
     TN = constrain_float(TN,-1.0f,1.0f);
 
-    TN = TN * Nmax;
-    FX = FX * Fmax;
-    FY = FY * Fmax;
 
-    FT = safe_sqrt(sq(TN) + sq(FX) + sq(FY));
-    FT = constrain_float(FT,0.0f,Fmax);
-
-    // Converte o valor normalizado de 0  a 1 para PWM
-    PWM1 = NormtoPWM(PWM1);
-    PWM2 = NormtoPWM(PWM2);
-    PWM3 = NormtoPWM(PWM3);
-    PWM4 = NormtoPWM(PWM4);
-
-    // Convertendo de grau para Radianos_
-    Theta1 = Theta1 * DEG_TO_RAD;
-    Theta2 = Theta2 * DEG_TO_RAD;
-    Theta3 = Theta3 * DEG_TO_RAD;
-    Theta4 = Theta4 * DEG_TO_RAD;
-
-    if(FT<0.02*Fmax) {
-        // Se as forças são muito pequenas (proximas a zero) nao executa a matriz de alocação envia todos os angulos  nulos
-        Theta1 = 0.0f;
-        Theta2 = 0.0f;
-        Theta3 = 0.0f;
-        Theta4 = 0.0f;
+    if(FT<0.02) {
 
         //Envia todos os PWMs muito pequenos (Nulos-Na prática) Os valores aqui, não estão normalizados entre 0 e 1
-        PWM1 = NormtoPWM(0.0f);
-        PWM2 = NormtoPWM(0.0f);
-        PWM3 = NormtoPWM(0.0f);
-        PWM4 = NormtoPWM(0.0f);
+        PWM2 = 0.0f;//NormtoPWM(0.0f);
+        PWM3 = 0.0f;//NormtoPWM(0.0f);
+        PWM4 = 0.0f;//NormtoPWM(0.0f);
+        PWM1 = 0.0f;//NormtoPWM(0.0f);
 
     } else {
         // ========================================== PWM calculado a partir da força e dos angulos ====================================
-        PWM1 = (safe_sqrt(sq(FX/(4*k1) - (Ly*TN)/(4*k1*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k1) + (Lx*TN)/(4*k1*(sq(Lx) + sq(Ly))))));
-        PWM2 = (safe_sqrt(sq(FX/(4*k2) + (Ly*TN)/(4*k2*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k2) - (Lx*TN)/(4*k2*(sq(Lx) + sq(Ly))))));
-        PWM3 = (safe_sqrt(sq(FX/(4*k3) + (Ly*TN)/(4*k3*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k3) + (Lx*TN)/(4*k3*(sq(Lx) + sq(Ly))))));
-        PWM4 = (safe_sqrt(sq(FX/(4*k4) - (Ly*TN)/(4*k4*(sq(Lx) + sq(Ly)))) + sq(FY/(4*k4) - (Lx*TN)/(4*k4*(sq(Lx) + sq(Ly))))));
+        PWM1 = (safe_sqrt(sq(FX/(4*k1) - (Ly*TN)/(4*k1*(sq(Lx) + sq(Ly)))) + (Lx*TN)/(4*k1*(sq(Lx) + sq(Ly))))));
+        PWM2 = (safe_sqrt(sq(FX/(4*k2) + (Ly*TN)/(4*k2*(sq(Lx) + sq(Ly)))) - (Lx*TN)/(4*k2*(sq(Lx) + sq(Ly))))));
+        PWM3 = (safe_sqrt(sq(FX/(4*k3) + (Ly*TN)/(4*k3*(sq(Lx) + sq(Ly)))) + (Lx*TN)/(4*k3*(sq(Lx) + sq(Ly))))));
+        PWM4 = (safe_sqrt(sq(FX/(4*k4) - (Ly*TN)/(4*k4*(sq(Lx) + sq(Ly)))) - (Lx*TN)/(4*k4*(sq(Lx) + sq(Ly))))));
 
         // Saturação
         PWM1 = constrain_float(PWM1,Pwmmin,Pwmmax);

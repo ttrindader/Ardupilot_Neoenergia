@@ -12,12 +12,12 @@ class VehicleInfo(object):
         "frames": {
             "+": {
                 "waf_target": "bin/aero4river",
-                "default_params_filename": "default_params/river.parm",
+                "default_params_filename": "default_params/migbot0.parm",
             },
             "gazebo-quad": {
                 "make_target": "sitl",            
                 "waf_target": "bin/aero4river",
-                "default_params_filename": "default_params/river.parm",
+                "default_params_filename": "default_params/migbot0.parm",
             },
             "gazebo-migbot0": {
                 "make_target": "sitl",            

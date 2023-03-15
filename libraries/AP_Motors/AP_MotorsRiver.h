@@ -22,7 +22,7 @@ public:
     float FM3 = GRAVITY_MSS*2.1f;
     float FM4 = GRAVITY_MSS*2.1f;
 
-    float Fmax = FM1 + FM2 + FM3 + FM4;       // Força e torque maximos do barco
+    float Fmax =5*( FM1 + FM2 + FM3 + FM4);       // Força e torque maximos do barco
 
     float L  = 0.54f;          // Tamanho do braço do barco
     float Lx = L*cosf(M_PI/4.0f);
@@ -31,12 +31,8 @@ public:
     //
     float Pwmmax = 1001.0f; // Esse valor será a faixa de pwm que eu vou escolher para trabalhar --------------- // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
     float Pwmmin = 1.0f;    // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
-    float Nmax = L*Fmax;
+    float Nmax = 5*L*Fmax;
 
-    float k1 = (FM1)/(Pwmmax-Pwmmin); // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
-    float k2 = (FM2)/(Pwmmax-Pwmmin); // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
-    float k3 = (FM3)/(Pwmmax-Pwmmin); // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
-    float k4 = (FM4)/(Pwmmax-Pwmmin); // Esse valor é atualizado no AduCopter.cpp para corresponder aos valores de memória
 
     uint8_t counter = 0;
     //  PWM do Servo Motores Barco
@@ -129,7 +125,7 @@ protected:
     void Differential_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
     void pwm_servo_angle(float &Pwm_servo_m1,float &Pwm_servo_m2,float &Pwm_servo_m3,float &Pwm_servo_m4,float theta_m1,float theta_m2,float theta_m3,float theta_m4);
     void CalibrateServo(float &Pwm_servo);
-    void direct_allocation(float &Theta1,float &Theta2,float &Theta3,float &Theta4,float &PWM1,float &PWM2,float &PWM3,float &PWM4);
+    void direct_allocation(float &PWM1,float &PWM2,float &PWM3,float &PWM4);
     float PWMtoNorm(float pwm);
     float NormtoPWM(float pwm);
     int servo_angle_to_pwm(float angle,float srv_min_pwm,float srv_max_pwm);
