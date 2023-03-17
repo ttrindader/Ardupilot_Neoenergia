@@ -8,7 +8,6 @@
 #include <GCS_MAVLink/GCS.h>
 
 
-
 extern const AP_HAL::HAL &hal;
 
 const AP_Param::GroupInfo AP_MotorsRiver::var_info[] = {
@@ -33,9 +32,27 @@ const AP_Param::GroupInfo AP_MotorsRiver::var_info[] = {
     AP_GROUPEND
 };
 
-void AP_MotorsRiver::output_to_motors() {
-    int8_t i;
+/* ****************************** Mathaus *********************************
+***************************************************************************/
+void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
+    // remove existing motors
+    for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
+        remove_motor(i);
+    }
+    bool success = true;
 
+    add_motor(AP_MOTORS_MOT_1, 45, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 1);
+    add_motor(AP_MOTORS_MOT_2, -135, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 3);
+    add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
+    add_motor(AP_MOTORS_MOT_4, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 2);
+  
+    normalise_rpy_factors();
+    set_initialised_ok(success);
+}
+
+void AP_MotorsRiver::output_to_motors() 
+{
+    int8_t i;
     switch (_spool_state) {
     case SpoolState::SHUT_DOWN: {
         // no output
@@ -66,10 +83,6 @@ void AP_MotorsRiver::output_to_motors() {
         }
         break;
     }
-
-    // pwm_servo_angle(_actuator[8],_actuator[9],_actuator[10],_actuator[11],theta_m1,theta_m2,theta_m3,theta_m4);
-
-    // CalibrateServo(_actuator[8]);// Descomentar se for calibrar
 
     // convert output to PWM and send to each motor
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
@@ -159,12 +172,11 @@ void AP_MotorsRiver::output_armed_stabilizing() {
     
     if(_key_radio_passthrough<0)
     {
-          Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
+        Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
         //FOSSEN_allocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
     }else{
         Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
     }
-
 
     motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
     motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
@@ -181,11 +193,10 @@ void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,f
     /// N  = tork de guinada - Seu valor deve variar de -1 a 1
     /// Função para alocar as forças do barco a partir da metodologia descrita em FOSSEN
 
-    FX = constrain_float(FX,-1.0f,1.0f)*4.0f;
-    FY = constrain_float(FY,-1.0f,1.0f)*4.0f;
+    FX = constrain_float(FX,-1.0f,1.0f)*4.0f; // Se o PWM de cada motor varia de 0 a 1, a força tem que variar de 0 a N*1, onde N é o número de motores
     TN = constrain_float(TN,-1.0f,1.0f)*4.0f;
 
-    FT = sqrtf(sq(FX)+sq(FY)+sq(TN));
+    FT = sqrtf(sq(FX)+sq(TN));
 
     if(FT<0.02) {
 
@@ -212,51 +223,6 @@ void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,f
     direct_allocation(PWM1, PWM2, PWM3, PWM4);
 }
 
-/* ****************************** Mathaus *********************************
-***************************************************************************/
-void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_type frame_type){
-    // remove existing motors
-    for (int8_t i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
-        remove_motor(i);
-    }
-
-    bool success = true;
-
-    add_motor(AP_MOTORS_MOT_1, 45, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 1);
-    add_motor(AP_MOTORS_MOT_2, -135, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 3);
-    add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
-    add_motor(AP_MOTORS_MOT_4, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 2);
-
-    add_motor_raw(AP_MOTORS_MOT_9 , 0, 0, 0, 5);
-    add_motor_raw(AP_MOTORS_MOT_10, 0, 0, 0, 6);
-    add_motor_raw(AP_MOTORS_MOT_11, 0, 0, 0, 7);
-    add_motor_raw(AP_MOTORS_MOT_12, 0, 0, 0, 8);
-  
-    normalise_rpy_factors();
-
-    set_initialised_ok(success);
-
-    // switch (frame_class)
-    // {
-    // case MOTOR_FRAME_QUAD:
-    //     switch (frame_type)
-    //     {
-    //     case MOTOR_FRAME_TYPE_PLUS:
-    //     case MOTOR_FRAME_TYPE_X:
-    //         break;
-    //     default:
-    //         // quad frame class does not support this frame type
-    //             // success = false
-    //         break;
-    //     }
-    //     break; // quad
-    // default:
-    //     // quad frame class does not support this frame type
-    //     // success = false;
-    //     break;
-    // } // switch frame_class
-    // normalise factors to magnitude 0.5
-}
 
 // // check for failed motor
 // //   should be run immediately after output_armed_stabilizing
