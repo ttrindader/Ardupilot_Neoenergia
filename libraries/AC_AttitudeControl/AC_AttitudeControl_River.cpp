@@ -381,9 +381,9 @@ void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float fx, flo
 {
     // _motors.set_forward(fx);
     // _motors.set_lateral(fy);
-    float euler_yaw_rate = radians(yaw * 0.01f)/radians(_ang_vel_yaw_max);
+    float yaw_rate = radians(yaw * 0.01f)/radians(_ang_vel_yaw_max);
 
-    _motors.set_yaw(euler_yaw_rate);
+    _motors.set_yaw(yaw_rate);
 }
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
