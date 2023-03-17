@@ -381,13 +381,17 @@ void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float fx, flo
 {
     // _motors.set_forward(fx);
     // _motors.set_lateral(fy);
-    _motors.set_yaw(yaw);
+    float euler_yaw_rate = radians(yaw * 0.01f)/radians(_ang_vel_yaw_max);
+
+    _motors.set_yaw(euler_yaw_rate);
 }
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)
 {
     output_to_boat(euler_roll_angle_cd,euler_pitch_angle_cd);
+
+    input_rate_stabilize_roll_pitch_yaw(0.0f,0.0f,euler_yaw_rate_cds); //new
     
 
     // Convert from centidegrees on public interface to radians

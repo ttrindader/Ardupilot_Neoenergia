@@ -101,26 +101,6 @@ void AP_MotorsRiver::direct_allocation(float &PWM1,float &PWM2,float &PWM3,float
     Tn_out = (float)((-PWM1 + PWM2 + PWM3 - PWM4))/2.0f;
 }
 
-
-int AP_MotorsRiver::servo_angle_to_pwm(float angle,float srv_min_pwm, float srv_max_pwm) {
-    /// Nessa função deve-se inserir os valores mínimos e maxímos do pwm  considerando 0 a 180 como angulos mínimos e máximos
-    //Entrada de angulo deve ser  de -180 a 180 ELE CHEGARÁ A 180 DEVIDO A ENGRENAGEM
-    
-    angle = constrain_float(angle,-180.0f,180.0f);
-
-    angle = 180.0f - angle;
-
-    //valor que o servo entende como 0 graus
-    float srv_min_angle = 0.0f;
-
-    //valor que o servo entende como 360
-    float srv_max_angle = 360.0f;
-
-    int pwm =  srv_min_pwm + angle * (srv_max_pwm - srv_min_pwm)/(srv_max_angle - srv_min_angle);
-
-    return pwm;
-}
-
 uint8_t counter = 0;
 
 void AP_MotorsRiver::CalibrateServo(float &Pwm_servo){
@@ -153,7 +133,6 @@ float AP_MotorsRiver::map_cube(float x, float y, float z)
     out = x*sqrtf(1 - powf(y,2)/2.0f - powf(z,2)/2.0f + (powf(y,2)*powf(z,2))/3.0f);
     return out;
 }
-
 
 void AP_MotorsRiver::output_armed_stabilizing() {
 
