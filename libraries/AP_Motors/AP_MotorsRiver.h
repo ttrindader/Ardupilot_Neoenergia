@@ -22,7 +22,7 @@ public:
     float FM3 = GRAVITY_MSS*2.1f;
     float FM4 = GRAVITY_MSS*2.1f;
 
-    float Fmax =5*( FM1 + FM2 + FM3 + FM4);       // Força e torque maximos do barco
+    float Fmax =( FM1 + FM2 + FM3 + FM4);       // Força e torque maximos do barco
 
     float L  = 0.54f;          // Tamanho do braço do barco
     float Lx = L*cosf(M_PI/4.0f);
@@ -35,17 +35,7 @@ public:
 
 
     uint8_t counter = 0;
-    //  PWM do Servo Motores Barco
-    float servo_m1 = 0.0f;
-    float servo_m2 = 0.0f;
-    float servo_m3 = 0.0f;
-    float servo_m4 = 0.0f;
 
-    // Angulo dos Servo Motores Barco
-    float theta_m1 =  0.0f;
-    float theta_m2 =  0.0f;
-    float theta_m3 =  0.0f;
-    float theta_m4 =  0.0f;
 
     float Pwm1 = 0.0f;
     float Pwm2 = 0.0f;
@@ -121,9 +111,8 @@ protected:
     AP_Float        _r_srv_max_pwm; // valor de pwm para o  máximo do direcionamento dos servos (+180 graus)
  
     float map_cube(float x, float y, float z);
-    void FOSSEN_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
-    void Differential_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
-    void pwm_servo_angle(float &Pwm_servo_m1,float &Pwm_servo_m2,float &Pwm_servo_m3,float &Pwm_servo_m4,float theta_m1,float theta_m2,float theta_m3,float theta_m4);
+    // void FOSSEN_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
+    void Differential_allocation_matrix(float FX,float FY,float tN,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
     void CalibrateServo(float &Pwm_servo);
     void direct_allocation(float &PWM1,float &PWM2,float &PWM3,float &PWM4);
     float PWMtoNorm(float pwm);
