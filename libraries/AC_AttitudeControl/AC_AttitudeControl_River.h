@@ -92,7 +92,7 @@ public:
     void input_rate_bf_roll_pitch_yaw(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds)override;
     void input_rate_bf_roll_pitch_yaw_2(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds);
     void input_rate_bf_roll_pitch_yaw_3(float roll_rate_bf_cds, float pitch_rate_bf_cds, float yaw_rate_bf_cds);
-    void input_rate_stabilize_roll_pitch_yaw(float roll, float pitch,float yaw);
+    void input_rate_stabilize_roll_pitch_yaw(float yaw);
     // void input_angle_step_bf_roll_pitch_yaw(float roll_angle_step_bf_cd, float pitch_angle_step_bf_cd, float yaw_angle_step_bf_cd)override;
 
     // void input_euler_rate_roll_pitch_yaw(float roll, float pitch, float euler_yaw_rate_cds) override;

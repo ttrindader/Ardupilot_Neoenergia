@@ -136,13 +136,19 @@ float AP_MotorsRiver::map_cube(float x, float y, float z)
 
 void AP_MotorsRiver::output_armed_stabilizing() {
 
-    xo = get_forward();
-    yo = get_lateral();
-    zo = get_yaw();
+    xo = constrain_float(get_forward(),-1.0f,1.0f);
+    yo = constrain_float(get_lateral(),-1.0f,1.0f);
+    zo = constrain_float(get_yaw(),-1.0f,1.0f);
 
-    xo = constrain_float(xo,-1.0f,1.0f);
-    yo = constrain_float(yo,-1.0f,1.0f);
-    zo = constrain_float(zo,-1.0f,1.0f);
+    float theta = atan2f(yo,xo)*RAD_TO_DEG;
+
+    // Angular Speed for Theta, when Theta = 180 Speed = max(1)
+    float theta_spd = theta / 180.0f;
+
+
+    yo = 0.0f;
+
+    zo = zo + theta_spd;
 
     Fx = map_cube(xo,yo,zo);
     Fy = map_cube(yo,xo,zo);
