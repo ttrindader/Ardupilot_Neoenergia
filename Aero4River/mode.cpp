@@ -463,11 +463,6 @@ void Mode::get_pilot_desired_forces(float &fy, float &fx, float &tn)
     fx = -1.0f * channel_pitch->norm_input();
     tn = 1.0f * channel_yaw->norm_input();
 
-    //VERIFICAR PARA HABILITAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    // Set para o simple mode 
-    // channel_roll->set_control_in(fy);
-    // channel_pitch->set_control_in(fx);
-    // channel_yaw->set_control_in(tn);
 }
 
 float Mode::CalibrateServo(){

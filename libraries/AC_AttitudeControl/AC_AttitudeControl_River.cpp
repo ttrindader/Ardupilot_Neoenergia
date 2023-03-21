@@ -366,8 +366,6 @@ void AC_AttitudeControl_River::output_to_boat(float roll, float pitch)
 
     _motors.set_forward(X);
     _motors.set_lateral(Y);
-    // _motors.set_yaw(Z);
-    // SE DER MERDA FAZER O MAPCUBE AQUI E COLOCAR O TN DE UMA VEZ
 
 }
 
@@ -390,6 +388,7 @@ void AC_AttitudeControl_River::input_rate_stabilize_roll_pitch_yaw(float yaw)
 }
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
+// AUTO MODE
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)
 {
     output_to_boat(euler_roll_angle_cd,euler_pitch_angle_cd);
@@ -397,7 +396,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
     // convert to radians
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
 
-    input_rate_stabilize_roll_pitch_yaw(euler_yaw_rate_cds); //new
+    // input_rate_stabilize_roll_pitch_yaw(euler_yaw_rate_cds); //new
 
     // calculate the attitude target euler angles
     _attitude_target_quat.to_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
@@ -444,6 +443,7 @@ void AC_AttitudeControl_River::input_euler_angle_roll_pitch_euler_rate_yaw(float
 
 
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
+// AUTO MODE
 void AC_AttitudeControl_River::input_euler_angle_roll_pitch_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_angle_cd, bool slew_yaw){
 
     output_to_boat(euler_roll_angle_cd,euler_pitch_angle_cd); //Mathaus
