@@ -133,7 +133,7 @@ void ModeRTL::climb_start()
     wp_nav->set_fast_waypoint(true);
 
     // hold current yaw during initial climb
-    auto_yaw.set_mode(AUTO_YAW_HOLD);
+    auto_yaw.set_mode(AUTO_YAW_LOOK_AT_NEXT_WP);
 }
 
 // rtl_return_start - initialise return to home
@@ -201,10 +201,10 @@ void ModeRTL::loiterathome_start()
     _loiter_start_time = millis();
 
     // yaw back to initial take-off heading yaw unless pilot has already overridden yaw
-    if(auto_yaw.default_mode(true) != AUTO_YAW_HOLD) {
-        auto_yaw.set_mode(AUTO_YAW_RESETTOARMEDYAW);
+    if(auto_yaw.default_mode(true) != AUTO_YAW_LOOK_AT_NEXT_WP) {
+        auto_yaw.set_mode(AUTO_YAW_LOOK_AT_NEXT_WP);
     } else {
-        auto_yaw.set_mode(AUTO_YAW_HOLD);
+        auto_yaw.set_mode(AUTO_YAW_LOOK_AT_NEXT_WP);
     }
 }
 
@@ -410,10 +410,10 @@ void ModeRTL::build_path()
     compute_return_target();
 
     // climb target is above our origin point at the return altitude
-    rtl_path.climb_target = Location(rtl_path.origin_point.lat, rtl_path.origin_point.lng, rtl_path.return_target.alt, rtl_path.return_target.get_alt_frame());
+    rtl_path.climb_target = Location(rtl_path.origin_point.lat, rtl_path.origin_point.lng, rtl_path.return_target.alt*0.0f, rtl_path.return_target.get_alt_frame()); //Mathaus
 
     // descent target is below return target at rtl_alt_final
-    rtl_path.descent_target = Location(rtl_path.return_target.lat, rtl_path.return_target.lng, g.rtl_alt_final, Location::AltFrame::ABOVE_HOME);
+    rtl_path.descent_target = Location(rtl_path.return_target.lat, rtl_path.return_target.lng, g.rtl_alt_final*0.0f, Location::AltFrame::ABOVE_HOME);
 
     // set land flag
     rtl_path.land = g.rtl_alt_final <= 0;
