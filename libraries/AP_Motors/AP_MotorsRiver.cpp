@@ -41,9 +41,12 @@ void AP_MotorsRiver::setup_motors(motor_frame_class frame_class, motor_frame_typ
     bool success = true;
 
     add_motor(AP_MOTORS_MOT_1, 45, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 1);
-    add_motor(AP_MOTORS_MOT_2, -135, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 3);
-    add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
-    add_motor(AP_MOTORS_MOT_4, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 2);
+    add_motor(AP_MOTORS_MOT_2, -135, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 2);
+    add_motor(AP_MOTORS_MOT_3, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 3);
+    add_motor(AP_MOTORS_MOT_4, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 4);
+    add_motor(AP_MOTORS_MOT_5, -45, AP_MOTORS_MATRIX_YAW_FACTOR_CCW, 5);
+    add_motor(AP_MOTORS_MOT_6, 135, AP_MOTORS_MATRIX_YAW_FACTOR_CW, 6);
+    
   
     normalise_rpy_factors();
     set_initialised_ok(success);
@@ -139,21 +142,23 @@ void AP_MotorsRiver::output_armed_stabilizing() {
     // float theta = atan2f(yo,xo)*RAD_TO_DEG;
     // Angular Speed for Theta, when Theta = 180 Speed = max(1)
     // float theta_spd = theta / 180.0f;
-    // yo = 0.0f;
+    yo = 0.0f;
 
     // zo = zo + theta_spd;
 
     Fx = map_cube(xo,yo,zo);
     Fy = map_cube(yo,xo,zo);
     Tn = map_cube(zo,yo,xo);
+
+    allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4, Pwm5, Pwm6);
         
-    if(_key_radio_passthrough < 0)
-    {
-        Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
-        //FOSSEN_allocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
-    }else{
-        Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
-    }
+    // if(_key_radio_passthrough < 0)
+    // {
+    //     Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
+    //     //FOSSEN_allocation_matrix(Fx, Fy, Tn, theta_m1, theta_m2, theta_m3, theta_m4, Pwm1, Pwm2, Pwm3, Pwm4);
+    // }else{
+    //     Differential_allocation_matrix(Fx, Fy, Tn, Pwm1, Pwm2, Pwm3, Pwm4);
+    // }
 
     motor_enabled[0] ? _thrust_rpyt_out[0] = Pwm1 : _thrust_rpyt_out[0] = 0.0f;
     motor_enabled[1] ? _thrust_rpyt_out[1] = Pwm2 : _thrust_rpyt_out[1] = 0.0f;
@@ -196,5 +201,48 @@ void AP_MotorsRiver::Differential_allocation_matrix(float FX,float FY,float TN,f
         PWM4 = constrain_float(PWM4,0.0f,1.0f);
     }
 
-    direct_allocation(PWM1, PWM2, PWM3, PWM4);
+    // direct_allocation(PWM1, PWM2, PWM3, PWM4);
+}
+
+void AP_MotorsRiver::allocation_matrix(float FX,float FY,float TN,float &PWM1,float &PWM2,float &PWM3,float &PWM4,float &PWM5,float &PWM6) {
+    /// TRABALHA COM RADIANOS
+    /// Fx = força no eixo X - Seu valor deve variar de -1 a 1
+    /// Fy = força no eixo y - Seu valor deve variar de -1 a 1
+    /// N  = tork de guinada - Seu valor deve variar de -1 a 1
+    /// Função para alocar as forças do barco a partir da metodologia descrita em FOSSEN
+
+    FX = constrain_float(FX,-1.0f,1.0f)*4.0f; // Se o PWM de cada motor varia de 0 a 1, a força tem que variar de 0 a N*1, onde N é o número de motores
+    TN = constrain_float(TN,-1.0f,1.0f)*3.0f;
+
+    FT = sqrtf(sq(FX)+sq(TN));
+
+    if(FT<0.02) {
+
+        //Envia todos os PWMs muito pequenos (Nulos-Na prática) Os valores aqui, não estão normalizados entre 0 e 1
+        PWM2 = 0.0f;//NormtoPWM(0.0f);
+        PWM3 = 0.0f;//NormtoPWM(0.0f);
+        PWM4 = 0.0f;//NormtoPWM(0.0f);
+        PWM1 = 0.0f;//NormtoPWM(0.0f);
+        PWM5 = 0.0f;//NormtoPWM(0.0f);
+        PWM6 = 0.0f;//NormtoPWM(0.0f);
+
+    } else {
+        // ========================================== PWM calculado a partir da força e dos angulos ====================================
+        PWM1 = FX/(6) - TN/(6*Ly);
+        PWM2 = FX/(6) + TN/(6*Ly);
+        PWM3 = FX/(6) + TN/(6*Ly);
+        PWM4 = FX/(6) - TN/(6*Ly);
+        PWM5 = -FX/(6) - TN/(6*Ly);
+        PWM6 = -FX/(6) + TN/(6*Ly);
+
+        // Saturação
+        PWM1 = constrain_float(PWM1,0.0f,1.0f);
+        PWM2 = constrain_float(PWM2,0.0f,1.0f);
+        PWM3 = constrain_float(PWM3,0.0f,1.0f);
+        PWM4 = constrain_float(PWM4,0.0f,1.0f);
+        PWM5 = constrain_float(PWM5,0.0f,1.0f);
+        PWM6 = constrain_float(PWM6,0.0f,1.0f);
+    }
+
+    // direct_allocation(PWM1, PWM2, PWM3, PWM4);
 }

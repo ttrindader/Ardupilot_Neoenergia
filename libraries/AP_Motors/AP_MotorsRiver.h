@@ -41,6 +41,8 @@ public:
     float Pwm2 = 0.0f;
     float Pwm3 = 0.0f;
     float Pwm4 = 0.0f;
+    float Pwm5 = 0.0f;
+    float Pwm6 = 0.0f;
 
     // Para o Log
     float Fx = 0.0f;
@@ -112,7 +114,10 @@ protected:
  
     float map_cube(float x, float y, float z);
     // void FOSSEN_allocation_matrix(float FX,float FY,float tN,float &theta_motor1,float &theta_motor2,float &theta_motor3,float &theta_motor4,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
+   
     void Differential_allocation_matrix(float FX,float FY,float tN,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4);
+    void allocation_matrix(float FX,float FY,float tN,float &PWM1 ,float &PWM2 ,float &PWM3 ,float &PWM4,float &PWM5 ,float &PWM6);
+
     void CalibrateServo(float &Pwm_servo);
     void direct_allocation(float &PWM1,float &PWM2,float &PWM3,float &PWM4);
     float PWMtoNorm(float pwm);
