@@ -8,6 +8,7 @@
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 
 #include "AP_Compass_SITL.h"
+#include "AP_Compass_GAZEBO.h"
 #include "AP_Compass_AK8963.h"
 #include "AP_Compass_Backend.h"
 #include "AP_Compass_BMM150.h"
@@ -34,6 +35,10 @@
 #include <stdio.h>
 
 extern const AP_HAL::HAL& hal;
+
+///////////////////////////////////
+#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
+///////////////////////////////////
 
 #ifndef COMPASS_LEARN_DEFAULT
 #define COMPASS_LEARN_DEFAULT Compass::LEARN_NONE
@@ -857,7 +862,7 @@ void Compass::mag_state::copy_from(const Compass::mag_state& state)
 //
 bool Compass::register_compass(int32_t dev_id, uint8_t& instance)
 {
-
+ gcs().send_text(MAV_SEVERITY_CRITICAL, "ESTOU AQUI" ); //TTR: initial debug    */   
 #if COMPASS_MAX_INSTANCES == 1 && !COMPASS_MAX_UNREG_DEV
     // simple single compass setup for AP_Periph
     Priority priority(0);
@@ -1183,8 +1188,16 @@ void Compass::_detect_backends(void)
 #endif
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
+        ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
+        return;
+     }
+        //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
+    
+    else{
     ADD_BACKEND(DRIVER_SITL, new AP_Compass_SITL());
     return;
+    }
 #endif
 
 #ifdef HAL_PROBE_EXTERNAL_I2C_COMPASSES
@@ -1268,6 +1281,7 @@ void Compass::_detect_backends(void)
         break;
 
     case AP_BoardConfig::PX4_BOARD_FMUV5:
+        ADD_BACKEND(DRIVER_SITL, new AP_Compass_GAZEBO());
     case AP_BoardConfig::PX4_BOARD_FMUV6:
         FOREACH_I2C_EXTERNAL(i) {
             ADD_BACKEND(DRIVER_IST8310, AP_Compass_IST8310::probe(GET_I2C_DEVICE(i, HAL_COMPASS_IST8310_I2C_ADDR),

@@ -22,6 +22,10 @@
 #include <AP_Baro/AP_Baro.h>
 #include <AP_NMEA_Output/AP_NMEA_Output.h>
 
+#include <GCS_MAVLink/GCS.h> //TTR: TO debug
+
+float yaw_gps = 0;
+
 extern const AP_HAL::HAL& hal;
 
 // table of user settable parameters
@@ -360,10 +364,19 @@ void AP_AHRS::update_cd_values(void)
 {
     roll_sensor  = degrees(roll) * 100;
     pitch_sensor = degrees(pitch) * 100;
-    yaw_sensor   = degrees(yaw) * 100;
-    if (yaw_sensor < 0)
-        yaw_sensor += 36000;
+    yaw_sensor   = degrees(yaw) * 100; //TTR: TO GET YAW FROM GAZEBO
+   // yaw_sensor   = (int32_t)yaw_gps * 100;
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "yaw_sensor: %f", (float) yaw_sensor); //TTR: TO GET YAW FROM GAZEBO
+    //if (yaw_sensor < 0)
+     //   yaw_sensor += 36000;
 }
+
+/*TTR: TO GET YAW FROM GAZEBO*/
+void AP_AHRS::set_yaw(float yaw) //TTR: TO GET YAW FROM GAZEBO
+{
+    yaw_gps = yaw; //TTR: TO GET YAW FROM GAZEBO
+}
+
 
 /*
   create a rotated view of AP_AHRS with optional pitch trim

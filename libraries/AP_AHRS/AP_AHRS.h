@@ -128,6 +128,8 @@ public:
     // allow for runtime change of orientation
     // this makes initial config easier
     void update_orientation();
+    
+    static void set_yaw(float yaw); //TTR: TO GET YAW FROM GAZEBO
 
     void set_airspeed(AP_Airspeed *airspeed) {
         _airspeed = airspeed;

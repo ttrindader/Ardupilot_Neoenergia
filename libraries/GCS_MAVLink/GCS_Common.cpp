@@ -15,6 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "GCS.h"
+#include "GazeboMsgs.h" //TTR: TO COLLECT GAZEBO DATA
 
 #include <AC_Fence/AC_Fence.h>
 #include <AP_AHRS/AP_AHRS.h>
@@ -80,6 +81,8 @@ struct GCS_MAVLINK::LastRadioStatus GCS_MAVLINK::last_radio_status;
 uint8_t GCS_MAVLINK::mavlink_active = 0;
 uint8_t GCS_MAVLINK::chan_is_streaming = 0;
 uint32_t GCS_MAVLINK::reserve_param_space_start_ms;
+
+GazeboData GazeboMsgs::data;
 
 // private channels are ones used for point-to-point protocols, and
 // don't get broadcasts or fwded packets
@@ -3029,6 +3032,67 @@ void GCS_MAVLINK::handle_att_pos_mocap(const mavlink_message_t &msg)
 #endif
 }
 
+//TTR: HANDLE GAZEBO MESSAGE
+void GCS_MAVLINK::handle_gazebo_message(const mavlink_message_t &msg)
+    {
+#if GAZEBO_MESSAGE_ENABLED //TO ADD      
+       /*TOMAR ISSO AQUI COMO BASE:
+       void GCS_MAVLINK::handle_att_pos_mocap(const mavlink_message_t &msg)
+	{
+	#if HAL_VISUALODOM_ENABLED
+	    mavlink_att_pos_mocap_t m;
+	    mavlink_msg_att_pos_mocap_decode(&msg, &m);
+
+	    // correct offboard timestamp to be in local ms since boot
+	    uint32_t timestamp_ms = correct_offboard_timestamp_usec_to_ms(m.time_usec, PAYLOAD_SIZE(chan, ATT_POS_MOCAP));
+	   
+	    AP_VisualOdom *visual_odom = AP::visualodom();
+	    if (visual_odom == nullptr) {
+		return;
+	    }
+	    // note: att_pos_mocap does not include reset counter
+	    visual_odom->handle_vision_position_estimate(m.time_usec, timestamp_ms, m.x, m.y, m.z, m.q, 0);
+	#endif
+	}
+
+*/     
+       mavlink_gazebo_message_t m;
+       mavlink_msg_gazebo_message_decode(&msg, &m);
+       //GazeboMsgs gasebo_message;
+
+       //gazebo_message.updateSensorValues(m.sensor_1, m.sensor_2);
+       
+       GazeboMsgs::data.imuLinearAccelerationXYZ[0] = m.imuLinearAccelerationXYZ[0];
+       GazeboMsgs::data.imuLinearAccelerationXYZ[1] = m.imuLinearAccelerationXYZ[1];
+       GazeboMsgs::data.imuLinearAccelerationXYZ[2] = m.imuLinearAccelerationXYZ[2];              
+       GazeboMsgs::data.imuAngularVelocityRPY[0] = m.imuAngularVelocityRPY[0];      
+       GazeboMsgs::data.imuAngularVelocityRPY[1] = m.imuAngularVelocityRPY[1];       
+       GazeboMsgs::data.imuAngularVelocityRPY[2] = m.imuAngularVelocityRPY[2];     
+       GazeboMsgs::data.magneticFieldXYZ[0] = m.magneticFieldXYZ[0];      
+       GazeboMsgs::data.magneticFieldXYZ[1] = m.magneticFieldXYZ[1];       
+       GazeboMsgs::data.magneticFieldXYZ[2] = m.magneticFieldXYZ[2];       
+       GazeboMsgs::data.latitude = m.latitude;      
+       GazeboMsgs::data.longitude = m.longitude;       
+       GazeboMsgs::data.altitude = m.altitude;      
+       GazeboMsgs::data.velocityENU[0] = m.velocityENU[0];      
+       GazeboMsgs::data.velocityENU[1] = m.velocityENU[1];       
+       GazeboMsgs::data.velocityENU[2] = m.velocityENU[2];                              
+       
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuLinearAccelerationX = %f", GazeboMsgs::data.imuLinearAccelerationXYZ[0]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuLinearAccelerationY = %f", GazeboMsgs::data.imuLinearAccelerationXYZ[1]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuLinearAccelerationZ = %f", GazeboMsgs::data.imuLinearAccelerationXYZ[2]); //TTR: initial debug    
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuAngularVelocityR = %f", GazeboMsgs::data.imuAngularVelocityRPY[0]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuAngularVelocityP = %f", GazeboMsgs::data.imuAngularVelocityRPY[1]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "imuAngularVelocityY = %f", GazeboMsgs::data.imuAngularVelocityRPY[2]); //TTR: initial debug       
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "latitude = %f", GazeboMsgs::data.latitude); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "longitude = %f", GazeboMsgs::data.longitude); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "altitude = %f", GazeboMsgs::data.altitude); //TTR: initial debug 
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "velocityE = %f", GazeboMsgs::data.velocityENU[0]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "velocityN = %f", GazeboMsgs::data.velocityENU[1]); //TTR: initial debug
+       //gcs().send_text(MAV_SEVERITY_CRITICAL, "velocityU = %f", GazeboMsgs::data.velocityENU[2]); //TTR: initial debug                      
+#endif
+}
+
 void GCS_MAVLINK::handle_vision_speed_estimate(const mavlink_message_t &msg)
 {
 #if HAL_VISUALODOM_ENABLED
@@ -3153,6 +3217,14 @@ void GCS_MAVLINK::handle_osd_param_config(const mavlink_message_t &msg)
 void GCS_MAVLINK::handle_common_message(const mavlink_message_t &msg)
 {
     switch (msg.msgid) {
+    
+    //TTR: to receive gazebo message form a custom msg
+    case MAVLINK_MSG_ID_GAZEBO_MESSAGE: {    
+       handle_gazebo_message(msg);
+       break;
+    }
+    //
+    
     case MAVLINK_MSG_ID_COMMAND_ACK: {
         handle_command_ack(msg);
         break;

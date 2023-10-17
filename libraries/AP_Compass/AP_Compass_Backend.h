@@ -63,6 +63,7 @@ public:
         DEVTYPE_SITL  = 0x0F,
         DEVTYPE_IST8308 = 0x10,
         DEVTYPE_RM3100 = 0x11,
+        DEVTYPE_GAZEBO = 0x13,        
     };
 
 #if HAL_MSP_COMPASS_ENABLED

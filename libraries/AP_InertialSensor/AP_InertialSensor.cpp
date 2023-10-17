@@ -24,6 +24,8 @@
 #include "AP_InertialSensor_BMI088.h"
 #include "AP_InertialSensor_Invensensev2.h"
 #include "AP_InertialSensor_ADIS1647x.h"
+#include "AP_InertialSensor_GAZEBO.h"
+
 
 /* Define INS_TIMING_DEBUG to track down scheduling issues with the main loop.
  * Output is on the debug console. */
@@ -40,7 +42,9 @@
 
 extern const AP_HAL::HAL& hal;
 
-
+///////////////////////////////////
+#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
+///////////////////////////////////
 
 #if APM_BUILD_TYPE(APM_BUILD_ArduCopter)
 #define DEFAULT_GYRO_FILTER  20
@@ -814,9 +818,16 @@ AP_InertialSensor::detect_backends(void)
     // IMUs defined by IMU lines in hwdef.dat
     HAL_INS_PROBE_LIST;
 #elif CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
-        ADD_BACKEND(AP_InertialSensor_SITL::detect(*this, i==1?INS_SITL_SENSOR_B:INS_SITL_SENSOR_A));
+    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
+      for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
+        ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this, i==1?INS_GAZEBO_SENSOR_B:INS_GAZEBO_SENSOR_A));
+     }
+        //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
     }
+    else{
+      for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
+        ADD_BACKEND(AP_InertialSensor_SITL::detect(*this, i==1?INS_SITL_SENSOR_B:INS_SITL_SENSOR_A));
+     }}
 #elif HAL_INS_DEFAULT == HAL_INS_HIL
     ADD_BACKEND(AP_InertialSensor_HIL::detect(*this));
 #elif AP_FEATURE_BOARD_DETECT
@@ -852,7 +863,9 @@ AP_InertialSensor::detect_backends(void)
         ADD_BACKEND(AP_InertialSensor_Invensensev2::probe(*this, hal.spi->get_device("icm20948"), ROTATION_YAW_270));
         break;
 
-    case AP_BoardConfig::PX4_BOARD_FMUV5:
+    case AP_BoardConfig::PX4_BOARD_FMUV5: //TTR
+        ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this));  //TTR   
+    
     case AP_BoardConfig::PX4_BOARD_FMUV6:
         _fast_sampling_mask.set_default(1);
         ADD_BACKEND(AP_InertialSensor_Invensense::probe(*this, hal.spi->get_device("icm20689"), ROTATION_NONE));
