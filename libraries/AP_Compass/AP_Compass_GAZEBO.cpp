@@ -2,16 +2,18 @@
 
 #include <AP_HAL/AP_HAL.h>
 
+#include <GCS_MAVLink/GCS.h>
+
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 extern const AP_HAL::HAL& hal;
 
 AP_Compass_GAZEBO::AP_Compass_GAZEBO()
-    : _sitl(AP::sitl())
+    //: _sitl(AP::sitl())
 {
-    if (_sitl != nullptr) {
-        _compass._setup_earth_field();
+   // if (_sitl != nullptr) {
+        //_compass._setup_earth_field();
         for (uint8_t i=0; i<1; i++) {
-            uint32_t dev_id = _sitl->mag_devid[i];
+            uint32_t dev_id = 19;
             if (dev_id == 0) {
                 continue;
             }
@@ -46,14 +48,15 @@ AP_Compass_GAZEBO::AP_Compass_GAZEBO()
         set_external(_compass_instance[0], true);
 
         hal.scheduler->register_timer_process(FUNCTOR_BIND(this, &AP_Compass_GAZEBO::_timer, void));
-    }
+    //}
 }
 
 
 /*
   create correction matrix for diagnonals and off-diagonals
 */
-void AP_Compass_GAZEBO::_setup_eliptical_correcion(uint8_t i)
+
+/*void AP_Compass_GAZEBO::_setup_eliptical_correcion(uint8_t i)
 {
     Vector3f diag = _sitl->mag_diag[i].get();
     if (diag.is_zero()) {
@@ -74,7 +77,7 @@ void AP_Compass_GAZEBO::_setup_eliptical_correcion(uint8_t i)
     }
     _last_dia = diag;
     _last_odi = offdiagonals;
-}
+}*/
 
 void AP_Compass_GAZEBO::_timer()
 {
@@ -93,12 +96,15 @@ void AP_Compass_GAZEBO::_timer()
     //Vector3f new_mag_data = _sitl->state.bodyMagField + noise;
     
     Vector3f new_mag_data = rand_vec3f();
-    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]*100*3;
-    new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]*100*1.5;
-    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]*100*128; 
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
+    float kx = 4.3;
+    float ky = -4.20;
+    float kz = 4.45;
+    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]*1000/kx;
+    new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]*1000/ky;
+    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]*1000/kz; 
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
     
 
     // add delay

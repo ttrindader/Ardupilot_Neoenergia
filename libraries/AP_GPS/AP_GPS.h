@@ -72,6 +72,7 @@ class AP_GPS
     friend class AP_GPS_SIRF;
     friend class AP_GPS_UBLOX;
     friend class AP_GPS_Backend;
+    friend class AP_GPS_GAZEBO;    
 
 public:
     AP_GPS();
@@ -110,6 +111,7 @@ public:
         GPS_TYPE_UBLOX_RTK_BASE = 17,
         GPS_TYPE_UBLOX_RTK_ROVER = 18,
         GPS_TYPE_MSP = 19,
+        GPS_TYPE_GAZEBO = 20,        
     };
 
     /// GPS status codes

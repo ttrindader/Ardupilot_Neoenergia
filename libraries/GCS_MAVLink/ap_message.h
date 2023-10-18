@@ -28,6 +28,7 @@ enum ap_message : uint8_t {
     MSG_SCALED_PRESSURE3,
     MSG_SENSOR_OFFSETS,
     MSG_GPS_RAW,
+    MSG_GAZEBO,    
     MSG_GPS_RTK,
     MSG_GPS2_RAW,
     MSG_GPS2_RTK,

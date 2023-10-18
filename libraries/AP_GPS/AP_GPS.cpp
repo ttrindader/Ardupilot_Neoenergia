@@ -35,6 +35,7 @@
 #include "AP_GPS_SIRF.h"
 #include "AP_GPS_UBLOX.h"
 #include "AP_GPS_MAV.h"
+#include "AP_GPS_GAZEBO.h"
 #include "AP_GPS_MSP.h"
 #include "GPS_Backend.h"
 
@@ -46,6 +47,10 @@
 
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Logger/AP_Logger.h>
+
+///////////////////////////////////
+#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
+///////////////////////////////////
 
 #define GPS_RTK_INJECT_TO_ALL 127
 #ifndef GPS_MAX_RATE_MS
@@ -348,6 +353,7 @@ bool AP_GPS::needs_uart(GPS_Type type) const
     case GPS_TYPE_UAVCAN:
     case GPS_TYPE_MAV:
     case GPS_TYPE_MSP:
+    case GPS_TYPE_GAZEBO:    
         return false;
     default:
         break;
@@ -501,6 +507,14 @@ void AP_GPS::detect_instance(uint8_t instance)
     state[instance].vdop = GPS_UNKNOWN_DOP;
 
     switch (_type[instance]) {
+    
+    case GPS_TYPE_GAZEBO:
+#ifndef HAL_BUILD_AP_PERIPH
+        dstate->auto_detected_baud = false; // specified, not detected
+        new_gps = new AP_GPS_GAZEBO(*this, state[instance], nullptr);
+        goto found_gps;
+#endif
+    
     // user has to explicitly set the MAV type, do not use AUTO
     // do not try to detect the MAV type, assume it's there
     case GPS_TYPE_MAV:
@@ -1187,7 +1201,6 @@ void AP_GPS::send_mavlink_gps2_raw(mavlink_channel_t chan)
     if (_type[1] == GPS_TYPE_NONE) {
         return;
     }
-
     const Location &loc = location(1);
     mavlink_msg_gps2_raw_send(
         chan,

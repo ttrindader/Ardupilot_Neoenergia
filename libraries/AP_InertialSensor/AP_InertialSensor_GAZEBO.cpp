@@ -50,7 +50,7 @@ void AP_InertialSensor_GAZEBO::generate_accel()
 {  
     float xAccel =  GazeboMsgs::data.imuLinearAccelerationXYZ[0];
     float yAccel =  GazeboMsgs::data.imuLinearAccelerationXYZ[1];
-    float zAccel =  GazeboMsgs::data.imuLinearAccelerationXYZ[2];        
+    float zAccel =  -GazeboMsgs::data.imuLinearAccelerationXYZ[2];        
     
    /*
     gcs().send_text(MAV_SEVERITY_CRITICAL, "com p = %f", xAccel); //TTR: initial debug
@@ -79,7 +79,7 @@ void AP_InertialSensor_GAZEBO::generate_gyro()
   
     float p =  GazeboMsgs::data.imuAngularVelocityRPY[0];
     float q =  GazeboMsgs::data.imuAngularVelocityRPY[1];
-    float r =  GazeboMsgs::data.imuAngularVelocityRPY[2];        
+    float r =  -GazeboMsgs::data.imuAngularVelocityRPY[2];        
     
    /*
     gcs().send_text(MAV_SEVERITY_CRITICAL, "com p = %f", p); //TTR: initial debug
