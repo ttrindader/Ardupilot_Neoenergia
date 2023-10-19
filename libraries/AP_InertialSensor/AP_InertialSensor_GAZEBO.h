@@ -2,7 +2,7 @@
 
 //#include <SITL/SITL.h>
 
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+//#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include "AP_InertialSensor.h"
 #include "AP_InertialSensor_Backend.h"
 #include <GCS_MAVLink/GazeboMsgs.h>
@@ -45,4 +45,4 @@ private:
 
     static uint8_t bus_id;
 };
-#endif // CONFIG_HAL_BOARD
+//#endif // CONFIG_HAL_BOARD

@@ -862,7 +862,7 @@ void Compass::mag_state::copy_from(const Compass::mag_state& state)
 //
 bool Compass::register_compass(int32_t dev_id, uint8_t& instance)
 {
- gcs().send_text(MAV_SEVERITY_CRITICAL, "ESTOU AQUI" ); //TTR: initial debug    */   
+ //gcs().send_text(MAV_SEVERITY_CRITICAL, "ESTOU AQUI" ); //TTR: initial debug    */   
 #if COMPASS_MAX_INSTANCES == 1 && !COMPASS_MAX_UNREG_DEV
     // simple single compass setup for AP_Periph
     Priority priority(0);
@@ -1192,7 +1192,6 @@ void Compass::_detect_backends(void)
         ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
         return;
      }
-        //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
     
     else{
     ADD_BACKEND(DRIVER_SITL, new AP_Compass_SITL());
@@ -1220,6 +1219,13 @@ void Compass::_detect_backends(void)
 #elif HAL_COMPASS_DEFAULT == HAL_COMPASS_HIL
     ADD_BACKEND(DRIVER_SITL, AP_Compass_HIL::detect());
 #elif AP_FEATURE_BOARD_DETECT
+    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
+        ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
+        return;
+     }
+    
+    else{
+
     switch (AP_BoardConfig::get_board_type()) {
     case AP_BoardConfig::PX4_BOARD_PX4V1:
     case AP_BoardConfig::PX4_BOARD_PIXHAWK:
@@ -1281,7 +1287,7 @@ void Compass::_detect_backends(void)
         break;
 
     case AP_BoardConfig::PX4_BOARD_FMUV5:
-        ADD_BACKEND(DRIVER_SITL, new AP_Compass_GAZEBO());
+
     case AP_BoardConfig::PX4_BOARD_FMUV6:
         FOREACH_I2C_EXTERNAL(i) {
             ADD_BACKEND(DRIVER_IST8310, AP_Compass_IST8310::probe(GET_I2C_DEVICE(i, HAL_COMPASS_IST8310_I2C_ADDR),
@@ -1324,7 +1330,7 @@ void Compass::_detect_backends(void)
     default:
         break;
     }
-
+}
 #elif HAL_COMPASS_DEFAULT == HAL_COMPASS_NONE
     // no compass, or only external probe
 #else

@@ -3,20 +3,23 @@
 #include "AP_Compass.h"
 #include "AP_Compass_Backend.h"
 
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+//#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 //#include <SITL/SITL.h>
 #include <AP_Math/vectorN.h>
 #include <AP_Math/AP_Math.h>
 #include <AP_Declination/AP_Declination.h>
 #include <GCS_MAVLink/GazeboMsgs.h>
 
-#define MAX_GAZEBO_COMPASSES 1
+#define MAX_GAZEBO_COMPASSES 3
 
 class AP_Compass_GAZEBO : public AP_Compass_Backend {
 public:
     AP_Compass_GAZEBO();
 
     void read(void) override;
+    
+    
+    static AP_Compass_Backend *detect();
 
 private:
     uint8_t _compass_instance[MAX_GAZEBO_COMPASSES];
@@ -30,7 +33,7 @@ private:
     };
     uint8_t store_index;
     uint32_t last_store_time;
-    static const uint8_t buffer_length = 2;
+    static const uint8_t buffer_length = 50;
     VectorN<readings_compass,buffer_length> buffer;
 
     void _timer();
@@ -43,4 +46,4 @@ private:
     //Vector3f _last_odi;
     //Vector3f _last_data[MAX_GAZEBO_COMPASSES];
 };
-#endif // CONFIG_HAL_BOARD
+//#endif // CONFIG_HAL_BOARD

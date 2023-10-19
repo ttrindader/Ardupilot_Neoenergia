@@ -51,11 +51,11 @@ void AP_GPS_GAZEBO::handle_msg(const mavlink_message_t &msg)
          
        mavlink_gps_input_t packet;
        
-       packet.lat = GazeboMsgs::data.latitude;
-       packet.lon = GazeboMsgs::data.longitude;       
+       packet.lat = GazeboMsgs::data.latitude*1E7;
+       packet.lon = GazeboMsgs::data.longitude*1E7;       
        packet.alt = GazeboMsgs::data.altitude * 100; // convert to centimeters
-       packet.vdop = 1 ; //TODO: EXPLORE GAZEBO PLUGIN
-       packet.hdop = 1 ; //TODO: EXPLORE GAZEBO PLUGIN
+       packet.vdop = 200; //TODO: EXPLORE GAZEBO PLUGIN
+       packet.hdop = 200 ; //TODO: EXPLORE GAZEBO PLUGIN
        //Vector3f vel(GazeboMsgs::data.velocityENU[1], GazeboMsgs::data.velocityENU[0], -GazeboMsgs::data.velocityENU[2]);
        //packet.ground_course = wrap_360(degrees(atan2f(vel.y, vel.x)));
        //packet.ground_speed = norm(vel.x, vel.y);
@@ -76,11 +76,17 @@ void AP_GPS_GAZEBO::handle_msg(const mavlink_message_t &msg)
         
         mavlink_msg_gps_input_decode(&msg, &packet);
  
+       
+       state.gps_yaw_configured = 0;
+       state.have_gps_yaw = 0;
+       state.have_gps_yaw_accuracy = 0;
+       state.time_week     = 0;
+       state.time_week_ms  = AP_HAL::millis();
         
             
-        state.gps_yaw_configured = 1;
-        state.have_gps_yaw = 1;
-        state.have_gps_yaw_accuracy = 1;
+       state.gps_yaw_configured = 1;
+       state.have_gps_yaw = 1;
+       state.have_gps_yaw_accuracy = 1;
  
        
        /*gcs().send_text(MAV_SEVERITY_CRITICAL, "latitude = %f", GazeboMsgs::data.latitude); //TTR: initial debug
@@ -91,12 +97,12 @@ void AP_GPS_GAZEBO::handle_msg(const mavlink_message_t &msg)
        gcs().send_text(MAV_SEVERITY_CRITICAL, "velocityU = %f", GazeboMsgs::data.velocityENU[2]); //TTR: initial debug*/
 
        Location loc = {};
-       loc.lat = GazeboMsgs::data.latitude;
-       loc.lng = GazeboMsgs::data.longitude;       
+       loc.lat = GazeboMsgs::data.latitude*1E7;
+       loc.lng = GazeboMsgs::data.longitude*1E7;       
        loc.alt = GazeboMsgs::data.altitude * 100; // convert to centimeters
        state.location = loc;   
-       state.vdop = 1 ; //TODO: EXPLORE GAZEBO PLUGIN
-       state.hdop = 1 ; //TODO: EXPLORE GAZEBO PLUGIN
+       state.vdop = 200 ; //TODO: EXPLORE GAZEBO PLUGIN
+       state.hdop = 200 ; //TODO: EXPLORE GAZEBO PLUGIN
        Vector3f vel(GazeboMsgs::data.velocityENU[1], GazeboMsgs::data.velocityENU[0], -GazeboMsgs::data.velocityENU[2]);
        state.velocity = vel;
        state.ground_course = wrap_360(degrees(atan2f(vel.y, vel.x)));
@@ -110,7 +116,7 @@ void AP_GPS_GAZEBO::handle_msg(const mavlink_message_t &msg)
 
                // uint32_t timestamp_ms = 0;
                // uint32_t corrected_ms = jitter.correct_offboard_timestamp_msec(timestamp_ms, AP_HAL::millis());
-               // state.uart_timestamp_ms = corrected_ms;
+       state.uart_timestamp_ms = AP_HAL::millis();
             
        state.status = (AP_GPS::GPS_Status)3; //TODO: EXPLORE GAZEBO PLUGIN
        state.num_sats = 13; //TODO: EXPLORE GAZEBO PLUGIN

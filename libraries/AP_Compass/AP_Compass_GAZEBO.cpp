@@ -11,7 +11,7 @@ AP_Compass_GAZEBO::AP_Compass_GAZEBO()
     //: _sitl(AP::sitl())
 {
    // if (_sitl != nullptr) {
-        //_compass._setup_earth_field();
+        _compass._setup_earth_field();
         for (uint8_t i=0; i<1; i++) {
             uint32_t dev_id = 19;
             if (dev_id == 0) {
@@ -34,15 +34,15 @@ AP_Compass_GAZEBO::AP_Compass_GAZEBO()
         // Scroll through the registered compasses, and set the offsets
        // for (uint8_t i=0; i<_num_compass; i++) {
        //     if (_compass.get_offsets(i).is_zero()) {
-       //         _compass.set_offsets(i, _sitl->mag_ofs[i]);
-       //     }
+        //        _compass.set_offsets(i, _sitl->mag_ofs[i]);
+        //    }
        // }
 
         // we want to simulate a calibrated compass by default, so set
         // scale to 1
-        //AP_Param::set_default_by_name("COMPASS_SCALE", 1);
-        //AP_Param::set_default_by_name("COMPASS_SCALE2", 1);
-        //AP_Param::set_default_by_name("COMPASS_SCALE3", 1);
+        AP_Param::set_default_by_name("COMPASS_SCALE", 1);
+        AP_Param::set_default_by_name("COMPASS_SCALE2", 1);
+        AP_Param::set_default_by_name("COMPASS_SCALE3", 1);
 
         // make first compass external
         set_external(_compass_instance[0], true);
@@ -96,12 +96,15 @@ void AP_Compass_GAZEBO::_timer()
     //Vector3f new_mag_data = _sitl->state.bodyMagField + noise;
     
     Vector3f new_mag_data = rand_vec3f();
-    float kx = 4.3;
-    float ky = -4.20;
-    float kz = 4.45;
-    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]*1000/kx;
-    new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]*1000/ky;
-    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]*1000/kz; 
+    //float kx = 4.3;
+    //float ky = -4.20;
+    //float kz = 4.45;
+    //new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]*1000/kx;
+    //new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]*1000/ky;
+    //new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]*1000/kz; 
+    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0];
+    new_mag_data[1] = -GazeboMsgs::data.magneticFieldXYZ[1];
+    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2];
     //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
     //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
     //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
@@ -167,7 +170,7 @@ void AP_Compass_GAZEBO::_timer()
         }*/
   //  }
     
-    accumulate_sample(new_mag_data, _compass_instance[0], 2);
+    accumulate_sample(new_mag_data, _compass_instance[0], 10);
 }
 
 void AP_Compass_GAZEBO::read()

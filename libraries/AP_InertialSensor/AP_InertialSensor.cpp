@@ -832,6 +832,16 @@ AP_InertialSensor::detect_backends(void)
     ADD_BACKEND(AP_InertialSensor_HIL::detect(*this));
 #elif AP_FEATURE_BOARD_DETECT
     switch (AP_BoardConfig::get_board_type()) {
+
+        if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
+           for (uint8_t i=0; i<1; i++) {
+           ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this, i==1?INS_GAZEBO_SENSOR_B:INS_GAZEBO_SENSOR_A));
+         }
+         //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
+         }
+         else{     
+    
+    
     case AP_BoardConfig::PX4_BOARD_PX4V1:
         ADD_BACKEND(AP_InertialSensor_Invensense::probe(*this, hal.spi->get_device(HAL_INS_MPU60x0_NAME), ROTATION_NONE));
         break;
@@ -863,10 +873,11 @@ AP_InertialSensor::detect_backends(void)
         ADD_BACKEND(AP_InertialSensor_Invensensev2::probe(*this, hal.spi->get_device("icm20948"), ROTATION_YAW_270));
         break;
 
-    case AP_BoardConfig::PX4_BOARD_FMUV5: //TTR
-        ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this));  //TTR   
+    case AP_BoardConfig::PX4_BOARD_FMUV5: 
+
     
     case AP_BoardConfig::PX4_BOARD_FMUV6:
+
         _fast_sampling_mask.set_default(1);
         ADD_BACKEND(AP_InertialSensor_Invensense::probe(*this, hal.spi->get_device("icm20689"), ROTATION_NONE));
         ADD_BACKEND(AP_InertialSensor_Invensense::probe(*this, hal.spi->get_device("icm20602"), ROTATION_NONE));
@@ -951,6 +962,8 @@ AP_InertialSensor::detect_backends(void)
 
     default:
         break;
+    }
+    
     }
 #elif HAL_INS_DEFAULT == HAL_INS_NONE
     // no INS device

@@ -43,7 +43,7 @@ AP_Compass_SITL::AP_Compass_SITL()
         AP_Param::set_default_by_name("COMPASS_SCALE3", 1);
 
         // make first compass external
-        set_external(_compass_instance[0], true);
+        //set_external(_compass_instance[0], true);
 
         hal.scheduler->register_timer_process(FUNCTOR_BIND(this, &AP_Compass_SITL::_timer, void));
     }
@@ -91,6 +91,10 @@ void AP_Compass_SITL::_timer()
     // units are milli-Gauss
     Vector3f noise = rand_vec3f() * _sitl->mag_noise;
     Vector3f new_mag_data = _sitl->state.bodyMagField + noise;
+    
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug  
 
     // add delay
     uint32_t best_time_delta = 1000; // initialise large time representing buffer entry closest to current time - delay.
