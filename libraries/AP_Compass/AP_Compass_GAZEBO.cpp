@@ -4,7 +4,7 @@
 
 #include <GCS_MAVLink/GCS.h>
 
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+//#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 extern const AP_HAL::HAL& hal;
 
 AP_Compass_GAZEBO::AP_Compass_GAZEBO()
@@ -95,7 +95,7 @@ void AP_Compass_GAZEBO::_timer()
     //Vector3f noise = rand_vec3f() * _sitl->mag_noise;
     //Vector3f new_mag_data = _sitl->state.bodyMagField + noise;
     
-    Vector3f new_mag_data = rand_vec3f();
+    Vector3f new_mag_data;
     //float kx = 4.3;
     //float ky = -4.20;
     //float kz = 4.45;
@@ -105,9 +105,9 @@ void AP_Compass_GAZEBO::_timer()
     new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0];
     new_mag_data[1] = -GazeboMsgs::data.magneticFieldXYZ[1];
     new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2];
-    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
-    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
-    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
     
 
     // add delay
@@ -179,4 +179,4 @@ void AP_Compass_GAZEBO::read()
         drain_accumulated_samples(_compass_instance[i], nullptr);
     }
 }
-#endif
+//#endif

@@ -18,8 +18,7 @@ public:
 
     void read(void) override;
     
-    
-    static AP_Compass_Backend *detect();
+   
 
 private:
     uint8_t _compass_instance[MAX_GAZEBO_COMPASSES];
