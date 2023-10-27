@@ -96,18 +96,18 @@ void AP_Compass_GAZEBO::_timer()
     //Vector3f new_mag_data = _sitl->state.bodyMagField + noise;
     
     Vector3f new_mag_data;
-    //float kx = 4.3;
-    //float ky = -4.20;
-    //float kz = 4.45;
-    //new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]*1000/kx;
-    //new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]*1000/ky;
-    //new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]*1000/kz; 
-    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0];
-    new_mag_data[1] = -GazeboMsgs::data.magneticFieldXYZ[1];
-    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2];
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
+    float kx = 1.7;
+    float ky = -1.7;
+    float kz = 1.7;
+    new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0]/kx;
+    new_mag_data[1] = GazeboMsgs::data.magneticFieldXYZ[1]/ky;
+    new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2]/kz; 
+    //new_mag_data[0] = GazeboMsgs::data.magneticFieldXYZ[0];
+    //new_mag_data[1] = -GazeboMsgs::data.magneticFieldXYZ[1];
+    //new_mag_data[2] = GazeboMsgs::data.magneticFieldXYZ[2];
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data0 = %f", new_mag_data[0]); //TTR: initial debug
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data1 = %f", new_mag_data[1]); //TTR: initial debug    
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "new_mag_data2 = %f", new_mag_data[2]); //TTR: initial debug       
     
 
     // add delay

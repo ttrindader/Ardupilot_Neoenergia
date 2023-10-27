@@ -4,7 +4,6 @@
 
 #include <AP_HAL/AP_HAL_Boards.h>
 
-#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
 
 // we have separate helpers disabled to make it possible
 // to select MAVLink 1.0 in the arduino GUI build

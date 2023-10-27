@@ -4,7 +4,7 @@
 #include <GCS_MAVLink/GCS.h> //TTR: TO DEBUG
 //#include <SITL/SITL.h>
 
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+//#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 
 const extern AP_HAL::HAL& hal;
 
@@ -81,11 +81,11 @@ void AP_InertialSensor_GAZEBO::generate_gyro()
     float q =  GazeboMsgs::data.imuAngularVelocityRPY[1];
     float r =  -GazeboMsgs::data.imuAngularVelocityRPY[2];        
     
-   /*
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "com p = %f", p); //TTR: initial debug
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "com q = %f", q); //TTR: initial debug   
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "com q = %f", r); //TTR: initial debug         
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI GERANDO GYRO" ); //TTR: initial debug    */   
+   
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "com p = %f", p); //TTR: initial debug
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "com q = %f", q); //TTR: initial debug   
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "com q = %f", r); //TTR: initial debug         
+    //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI GERANDO GYRO" ); //TTR: initial debug    
     
     Vector3f gyro = Vector3f(p, q, r);
     
@@ -106,9 +106,9 @@ void AP_InertialSensor_GAZEBO::timer_update(void)
     }
 #endif
 
-    if (now > 5e6 && now < 6e6) {
-        return;
-    }
+   // if (now > 5e6 && now < 6e6) {
+   //     return;
+   // }
 
     if (now >= next_accel_sample) {
         if (((1U << accel_instance) & accel_fail_mask) == 0) {
@@ -149,11 +149,11 @@ uint8_t AP_InertialSensor_GAZEBO::bus_id = 0;
 void AP_InertialSensor_GAZEBO::start()
 {
     gyro_instance = _imu.register_gyro(gyro_sample_hz,
-                                        AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_SITL, bus_id, 1, DEVTYPE_SITL));
+                                        AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_SITL, bus_id, 1, DEVTYPE_GAZEBO));
     accel_instance = _imu.register_accel(accel_sample_hz,
-                                        AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_SITL, bus_id, 2, DEVTYPE_SITL));
+                                        AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_SITL, bus_id, 2, DEVTYPE_GAZEBO));
     bus_id++;
     hal.scheduler->register_timer_process(FUNCTOR_BIND_MEMBER(&AP_InertialSensor_GAZEBO::timer_update, void));
 }
 
-#endif // HAL_BOARD_SITL
+//#endif // HAL_BOARD_SITL

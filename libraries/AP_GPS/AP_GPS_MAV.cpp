@@ -17,16 +17,11 @@
 //  MAVLINK GPS driver
 //
 #include "AP_GPS_MAV.h"
-#include <AP_AHRS/AP_AHRS.h>
 #include <stdint.h>
-
-#include <GCS_MAVLink/GCS.h> //TTR: TO debug
-#include <GCS_MAVLink/GazeboMsgs.h> //TTR: TO COLLECT GAZEBO DATA
-
 
 AP_GPS_MAV::AP_GPS_MAV(AP_GPS &_gps, AP_GPS::GPS_State &_state, AP_HAL::UARTDriver *_port) :
     AP_GPS_Backend(_gps, _state, _port)
-{ 	
+{
 }
 
 // Reading does nothing in this class; we simply return whether or not
@@ -46,15 +41,6 @@ bool AP_GPS_MAV::read(void)
 // corresponding gps data appropriately;
 void AP_GPS_MAV::handle_msg(const mavlink_message_t &msg)
 {
-    //ttr: teste para coleta das mensagens do gazebo
-    if(GAZEBO_MESSAGE_ENABLED){
-         
-       
-       //gcs().send_text(MAV_SEVERITY_CRITICAL, "com sensor 1 = %f", GazeboMsgs::data.sensor_1); //TTR: initial debug
-       //gcs().send_text(MAV_SEVERITY_CRITICAL, "com sensor 2 = %f", GazeboMsgs::data.sensor_2); //TTR: initial debug   
-      
-      }
-    
     switch (msg.msgid) {
 
         case MAVLINK_MSG_ID_GPS_INPUT: {
@@ -69,12 +55,8 @@ void AP_GPS_MAV::handle_msg(const mavlink_message_t &msg)
             bool have_sa     = ((packet.ignore_flags & GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY) == 0);
             bool have_ha     = ((packet.ignore_flags & GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY) == 0);
             bool have_va     = ((packet.ignore_flags & GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY) == 0);
-            //bool have_yaw    = (packet.yaw != 0);
-            bool have_yaw    = 1;
-            
-            state.gps_yaw_configured = 1;
-            state.have_gps_yaw = 1;
-            state.have_gps_yaw_accuracy = 1;
+            bool have_yaw    = (packet.yaw != 0);
+
             state.time_week     = packet.time_week;
             state.time_week_ms  = packet.time_week_ms;
             state.status = (AP_GPS::GPS_Status)packet.fix_type;
@@ -89,9 +71,6 @@ void AP_GPS_MAV::handle_msg(const mavlink_message_t &msg)
 
             if (have_hdop) {
                 state.hdop = packet.hdop * 100; // convert to centimeters
-                state.gps_yaw = wrap_360(degrees(packet.hdop));
-                AP_AHRS::set_yaw(state.gps_yaw); //TTR: TO GET YAW FROM GAZEBO
-                //gcs().send_text(MAV_SEVERITY_CRITICAL, "gps_yaw: %f", state.gps_yaw); TTR: debug
             }
 
             if (have_vdop) {
@@ -126,8 +105,8 @@ void AP_GPS_MAV::handle_msg(const mavlink_message_t &msg)
             }
 
             if (have_yaw) {
-                //state.gps_yaw = wrap_360(packet.yaw*0.01);
-                //state.have_gps_yaw = true;
+                state.gps_yaw = wrap_360(packet.yaw*0.01);
+                state.have_gps_yaw = true;
             }
 
             if (packet.fix_type >= 3 && packet.time_week > 0) {

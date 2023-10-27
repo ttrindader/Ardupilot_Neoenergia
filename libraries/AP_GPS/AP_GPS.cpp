@@ -48,9 +48,6 @@
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Logger/AP_Logger.h>
 
-///////////////////////////////////
-#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
-///////////////////////////////////
 
 #define GPS_RTK_INJECT_TO_ALL 127
 #ifndef GPS_MAX_RATE_MS

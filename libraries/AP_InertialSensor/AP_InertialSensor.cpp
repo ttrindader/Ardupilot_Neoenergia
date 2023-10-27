@@ -42,9 +42,6 @@
 
 extern const AP_HAL::HAL& hal;
 
-///////////////////////////////////
-#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
-///////////////////////////////////
 
 #if APM_BUILD_TYPE(APM_BUILD_ArduCopter)
 #define DEFAULT_GYRO_FILTER  20
@@ -810,6 +807,12 @@ AP_InertialSensor::detect_backends(void)
 // macro for use by HAL_INS_PROBE_LIST
 #define GET_I2C_DEVICE(bus, address) hal.i2c_mgr->get_device(bus, address)
 
+#undef HAL_INS_PROBE_LIST
+#undef CONFIG_HAL_BOARD
+#define CONFIG_GAZEBO  1
+
+
+
     if (_hil_mode) {
         ADD_BACKEND(AP_InertialSensor_HIL::detect(*this));
         return;
@@ -817,31 +820,33 @@ AP_InertialSensor::detect_backends(void)
 #if defined(HAL_INS_PROBE_LIST)
     // IMUs defined by IMU lines in hwdef.dat
     HAL_INS_PROBE_LIST;
-#elif CONFIG_HAL_BOARD == HAL_BOARD_SITL
+    
+#elif CONFIG_GAZEBO
     if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
-      for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
+      for (uint8_t i=0; i<2; i++) {
         ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this, i==1?INS_GAZEBO_SENSOR_B:INS_GAZEBO_SENSOR_A));
      }
         //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
     }
-    else{
-      for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
-        ADD_BACKEND(AP_InertialSensor_SITL::detect(*this, i==1?INS_SITL_SENSOR_B:INS_SITL_SENSOR_A));
-     }}
-#elif HAL_INS_DEFAULT == HAL_INS_HIL
-    ADD_BACKEND(AP_InertialSensor_HIL::detect(*this));
-#elif AP_FEATURE_BOARD_DETECT
-    switch (AP_BoardConfig::get_board_type()) {
 
-        if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
-           for (uint8_t i=0; i<1; i++) {
+#elif CONFIG_HAL_BOARD == HAL_BOARD_SITL
+    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
+           for (uint8_t i=0; i<2; i++) {
            ADD_BACKEND(AP_InertialSensor_GAZEBO::detect(*this, i==1?INS_GAZEBO_SENSOR_B:INS_GAZEBO_SENSOR_A));
          }
          //gcs().send_text(MAV_SEVERITY_CRITICAL, "OLHA EU AQUI" ); //TTR: initial debug        
          }
-         else{     
+         else{
+      for (uint8_t i=0; i<AP::sitl()->imu_count; i++) {
+        ADD_BACKEND(AP_InertialSensor_SITL::detect(*this, i==1?INS_SITL_SENSOR_B:INS_SITL_SENSOR_A));
+        }
+     }
+#elif HAL_INS_DEFAULT == HAL_INS_HIL
+    ADD_BACKEND(AP_InertialSensor_HIL::detect(*this));
     
-    
+#elif AP_FEATURE_BOARD_DETECT
+    switch (AP_BoardConfig::get_board_type()) {
+       
     case AP_BoardConfig::PX4_BOARD_PX4V1:
         ADD_BACKEND(AP_InertialSensor_Invensense::probe(*this, hal.spi->get_device(HAL_INS_MPU60x0_NAME), ROTATION_NONE));
         break;
@@ -962,7 +967,7 @@ AP_InertialSensor::detect_backends(void)
 
     default:
         break;
-    }
+   
     
     }
 #elif HAL_INS_DEFAULT == HAL_INS_NONE

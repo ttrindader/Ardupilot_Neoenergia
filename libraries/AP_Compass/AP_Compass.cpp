@@ -36,9 +36,6 @@
 
 extern const AP_HAL::HAL& hal;
 
-///////////////////////////////////
-#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
-///////////////////////////////////
 
 #ifndef COMPASS_LEARN_DEFAULT
 #define COMPASS_LEARN_DEFAULT Compass::LEARN_NONE
@@ -1013,6 +1010,7 @@ bool Compass::_have_i2c_driver(uint8_t bus, uint8_t address) const
 
 #define GET_I2C_DEVICE(bus, address) _have_i2c_driver(bus, address)?nullptr:hal.i2c_mgr->get_device(bus, address)
 
+
 /*
   look for compasses on external i2c buses
  */
@@ -1168,11 +1166,19 @@ void Compass::_probe_external_i2c_compasses(void)
 #endif
 }
 
+
 /*
   detect available backends for this board
  */
 void Compass::_detect_backends(void)
 {
+
+#if GAZEBO_MESSAGE_ENABLED //TTR: TO COLLECT GAZEBO DATA
+        ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
+        gcs().send_text(MAV_SEVERITY_CRITICAL, "batata batat bata bat ba b" ); //TTR: initial debug 
+        return;
+#else  
+
 #ifndef HAL_BUILD_AP_PERIPH
     if (_hil_mode) {
         _add_backend(AP_Compass_HIL::detect());
@@ -1188,15 +1194,8 @@ void Compass::_detect_backends(void)
 #endif
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
-        ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
-        return;
-     }
-    
-    else{
     ADD_BACKEND(DRIVER_SITL, new AP_Compass_SITL());
     return;
-    }
 #endif
 
 #ifdef HAL_PROBE_EXTERNAL_I2C_COMPASSES
@@ -1219,13 +1218,6 @@ void Compass::_detect_backends(void)
 #elif HAL_COMPASS_DEFAULT == HAL_COMPASS_HIL
     ADD_BACKEND(DRIVER_SITL, AP_Compass_HIL::detect());
 #elif AP_FEATURE_BOARD_DETECT
-    if(GAZEBO_MESSAGE_ENABLED==1){ //TTR: TO GET GAZEBO DATA
-        ADD_BACKEND(DRIVER_GAZEBO, new AP_Compass_GAZEBO());
-        return;
-     }
-    
-    else{
-
     switch (AP_BoardConfig::get_board_type()) {
     case AP_BoardConfig::PX4_BOARD_PX4V1:
     case AP_BoardConfig::PX4_BOARD_PIXHAWK:
@@ -1287,7 +1279,6 @@ void Compass::_detect_backends(void)
         break;
 
     case AP_BoardConfig::PX4_BOARD_FMUV5:
-
     case AP_BoardConfig::PX4_BOARD_FMUV6:
         FOREACH_I2C_EXTERNAL(i) {
             ADD_BACKEND(DRIVER_IST8310, AP_Compass_IST8310::probe(GET_I2C_DEVICE(i, HAL_COMPASS_IST8310_I2C_ADDR),
@@ -1330,7 +1321,7 @@ void Compass::_detect_backends(void)
     default:
         break;
     }
-}
+
 #elif HAL_COMPASS_DEFAULT == HAL_COMPASS_NONE
     // no compass, or only external probe
 #else
@@ -1410,11 +1401,16 @@ void Compass::_detect_backends(void)
     }
 #endif
 
+#endif
+
     if (_backend_count == 0 ||
         _compass_count == 0) {
         hal.console->printf("No Compass backends available\n");
     }
+    
+    
 }
+
 
 // Check if the devid is a potential replacement compass
 // Following are the checks done to ensure the compass is a replacement

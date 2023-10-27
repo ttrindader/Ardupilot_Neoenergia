@@ -10,6 +10,7 @@
 #define ENABLE ENABLED
 #define DISABLE DISABLED
 
+
 // Autopilot Yaw Mode enumeration
 enum autopilot_yaw_mode {
     AUTO_YAW_HOLD =             0,  // pilot controls the heading

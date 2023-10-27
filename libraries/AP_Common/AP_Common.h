@@ -24,6 +24,9 @@
 #include <stdlib.h>
 #include <type_traits>
 
+// Gazebo sensors
+#define GAZEBO_MESSAGE_ENABLED  1 //TTR: TO GENERALIZE IN CASE OF CREATE A LIBRAY (TAKE HAL_VISUALODOM_ENABLED as a base)
+
 // used to pack structures
 #define PACKED __attribute__((__packed__))
 
