@@ -3219,13 +3219,7 @@ void GCS_MAVLINK::handle_common_message(const mavlink_message_t &msg)
 {
     switch (msg.msgid) {
     
-    //TTR: to receive gazebo message form a custom msg
-    case MAVLINK_MSG_ID_GAZEBO_MESSAGE: {    
-       handle_gazebo_message(msg);
-       break;
-    }
-    //
-    
+   
     case MAVLINK_MSG_ID_COMMAND_ACK: {
         handle_command_ack(msg);
         break;
@@ -3324,6 +3318,14 @@ void GCS_MAVLINK::handle_common_message(const mavlink_message_t &msg)
         break;
 
     case MAVLINK_MSG_ID_GPS_RTCM_DATA:
+    
+    //TTR: to receive gazebo message form a custom msg
+    case MAVLINK_MSG_ID_GAZEBO_MESSAGE: 
+       handle_gazebo_message(msg);
+       AP::gps().handle_msg(msg);
+       break;
+   
+    //    
     case MAVLINK_MSG_ID_GPS_INPUT:
     case MAVLINK_MSG_ID_HIL_GPS:
     case MAVLINK_MSG_ID_GPS_INJECT_DATA:
